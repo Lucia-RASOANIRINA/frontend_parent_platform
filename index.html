@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Parentia - Communauté Parentale et Bien-être Éducatif</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Personnalisation du thème Tailwind avec couleurs café -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              'sans': ['Inter', 'system-ui', 'sans-serif'],
+            },
+            colors: {
+              coffee: {
+                50: '#faf8f5',
+                100: '#f0ebe3',
+                200: '#e0d5c8',
+                300: '#c9b9a6',
+                400: '#b0987f',
+                500: '#967a5e',
+                600: '#7a5c43',
+                700: '#5e4532',
+                800: '#422f22',
+                900: '#2b1f16',
+              },
+              amber: {
+                50: '#fffbeb',
+                100: '#fef3c7',
+                200: '#fde68a',
+                300: '#fcd34d',
+                400: '#fbbf24',
+                500: '#f59e0b',
+                600: '#d97706',
+                700: '#b45309',
+                800: '#92400e',
+                900: '#78350f',
+              }
+            },
+            animation: {
+              'gradient': 'gradient 3s ease infinite',
+              'shine': 'shine 1.5s infinite',
+              'pulse-slow': 'pulse-slow 6s ease-in-out infinite',
+              'pulse-slower': 'pulse-slower 8s ease-in-out infinite',
+              'float-slow': 'float-slow 12s ease-in-out infinite',
+              'float': 'float 6s ease-in-out infinite',
+            },
+            keyframes: {
+              gradient: {
+                '0%, 100%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+              },
+              shine: {
+                '0%': { transform: 'translateX(-150%) skewX(-20deg)' },
+                '100%': { transform: 'translateX(150%) skewX(-20deg)' },
+              },
+              'pulse-slow': {
+                '0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
+                '50%': { opacity: '0.5', transform: 'scale(1.05)' },
+              },
+              'pulse-slower': {
+                '0%, 100%': { opacity: '0.2', transform: 'scale(1)' },
+                '50%': { opacity: '0.4', transform: 'scale(1.08)' },
+              },
+              'float-slow': {
+                '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
+                '50%': { transform: 'translateY(-20px) translateX(10px)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+            },
+            boxShadow: {
+              'soft': '0 2px 12px -3px rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.02)',
+              'inner-soft': 'inset 0 1px 2px 0 rgba(255, 255, 255, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.5)',
+            },
+          }
+        }
+      }
+    </script>
+    <!-- Styles personnalisés -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+      
+      /* Glass morphism effects */
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      
+      .glass-effect-mobile {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+      
+      /* Custom scrollbar café */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: rgba(241, 245, 249, 0.5);
+        border-radius: 9999px;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #967a5e, #7a5c43);
+        border-radius: 9999px;
+        transition: all 0.3s;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #7a5c43, #5e4532);
+      }
+      
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Selection color café */
+      ::selection {
+        background: rgba(150, 122, 94, 0.2);
+        color: #7a5c43;
+      }
+      
+      /* Focus ring */
+      *:focus-visible {
+        outline: 2px solid #967a5e;
+        outline-offset: 2px;
+        border-radius: 8px;
+      }
+      
+      /* Animations supplémentaires */
+      @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      
+      .animate-spin-slow {
+        animation: spin-slow 8s linear infinite;
+      }
+      
+      @keyframes bounce-soft {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+      }
+      
+      .animate-bounce-soft {
+        animation: bounce-soft 2s ease-in-out infinite;
+      }
+      
+      /* Card effect minimal */
+      .card-minimal {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+        transition: all 0.3s ease;
+      }
+      
+      .card-minimal:hover {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(150, 122, 94, 0.2);
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+      }
+      
+      /* Pattern de fond subtil */
+      .bg-grid-pattern {
+        background-image: 
+          linear-gradient(to right, rgba(150, 122, 94, 0.05) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(150, 122, 94, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      
+      /* Transitions fluides */
+      .fade-enter-active,
+      .fade-leave-active {
+        transition: opacity 0.3s ease;
+      }
+      
+      .fade-enter-from,
+      .fade-leave-to {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
