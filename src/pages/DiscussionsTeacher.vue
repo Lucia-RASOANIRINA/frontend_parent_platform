@@ -1,13 +1,8 @@
 <template>
   <div class="chat-container">
     <!-- Sidebar gauche -->
-    <div class="chat-sidebar" :class="{ 'sidebar-open': isSidebarOpen }">
+    <div class="chat-sidebar">
       <div class="sidebar-header">
-        <button @click="toggleSidebar" class="sidebar-toggle mobile-only">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
         <h3>Messages</h3>
         <button @click="showNewMessageModal = true" class="new-message-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,45 +15,18 @@
         <div 
           v-for="conv in conversations" 
           :key="conv.id"
+          @click="selectConversation(conv)"
           :class="['conversation-item', { active: selectedConversation?.id === conv.id }]"
         >
-          <div @click="selectConversation(conv)" class="conversation-main">
-            <div class="avatar">
-              <span>{{ conv.otherUser.nom.charAt(0).toUpperCase() }}</span>
-              <span v-if="conv.unreadCount > 0" class="unread-badge">{{ conv.unreadCount }}</span>
-            </div>
-            <div class="conversation-info">
-              <div class="name">{{ conv.otherUser.nom }}</div>
-              <div class="last-message">{{ truncateText(conv.lastMessage, 30) }}</div>
-            </div>
-            <div class="time">{{ formatTime(conv.lastMessageTime) }}</div>
+          <div class="avatar">
+            <span>{{ conv.otherUser.nom.charAt(0).toUpperCase() }}</span>
+            <span v-if="conv.unreadCount > 0" class="unread-badge">{{ conv.unreadCount }}</span>
           </div>
-          
-          <!-- Menu 3 points Instagram style -->
-          <div class="conversation-menu">
-            <button @click.stop="toggleMenu(conv.id)" class="menu-trigger">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-              </svg>
-            </button>
-            
-            <!-- Menu dropdown -->
-            <div v-if="activeMenu === conv.id" class="menu-dropdown" @click.stop>
-              <button @click="markAsRead(conv)" class="menu-item">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                Marquer comme lu
-              </button>
-              <button @click="confirmDeleteConversation(conv)" class="menu-item delete">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Supprimer la conversation
-              </button>
-            </div>
+          <div class="conversation-info">
+            <div class="name">{{ conv.otherUser.nom }}</div>
+            <div class="last-message">{{ truncateText(conv.lastMessage, 30) }}</div>
           </div>
+          <div class="time">{{ formatTime(conv.lastMessageTime) }}</div>
         </div>
         
         <div v-if="conversations.length === 0 && !isLoadingConv" class="no-conversations">
@@ -68,8 +36,7 @@
           </button>
         </div>
         <div v-if="isLoadingConv" class="loading-conv">
-          <div class="spinner-small"></div>
-          <span>Chargement...</span>
+          Chargement...
         </div>
       </div>
     </div>
@@ -77,11 +44,6 @@
     <!-- Zone de chat principale -->
     <div class="chat-main" v-if="selectedConversation">
       <div class="chat-header">
-        <button @click="toggleSidebar" class="back-btn mobile-only">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
         <div class="user-info">
           <div class="avatar">
             {{ selectedConversation.otherUser.nom.charAt(0).toUpperCase() }}
@@ -97,14 +59,10 @@
 
       <div class="messages-area" ref="messagesArea">
         <div v-if="isLoadingMessages" class="loading-messages">
-          <div class="spinner-small"></div>
-          <span>Chargement des messages...</span>
+          Chargement des messages...
         </div>
         <div v-else-if="messages.length === 0" class="no-messages">
-          <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-          <p>Aucun message. Commencez la conversation !</p>
+          Aucun message. Commencez la conversation !
         </div>
         <div 
           v-for="message in messages" 
@@ -160,7 +118,7 @@
         >
         
         <button @click="sendMessage" class="send-btn">
-          <svg class="w-6 h-6 send-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
           </svg>
         </button>
@@ -227,34 +185,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Modal de confirmation suppression -->
-    <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
-      <div class="delete-modal">
-        <div class="delete-modal-icon">
-          <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </div>
-        <h3>Supprimer la conversation ?</h3>
-        <p>Cette action est irréversible. Tous les messages seront supprimés définitivement.</p>
-        <div class="delete-modal-buttons">
-          <button @click="closeDeleteModal" class="cancel-btn">Annuler</button>
-          <button @click="deleteConversation" class="confirm-delete-btn">Supprimer</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Toast notification -->
-    <div v-if="toast.show" :class="['toast-notification', toast.type]">
-      <svg v-if="toast.type === 'success'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-      </svg>
-      <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-      <span>{{ toast.message }}</span>
-    </div>
   </div>
 </template>
 
@@ -290,11 +220,6 @@ const searchResults = ref<any[]>([])
 const isSearching = ref(false)
 const isLoadingConv = ref(false)
 const isLoadingMessages = ref(false)
-const activeMenu = ref<number | null>(null)
-const isSidebarOpen = ref(false)
-const showDeleteModal = ref(false)
-const conversationToDelete = ref<any>(null)
-const toast = ref({ show: false, message: '', type: 'success' })
 let typingTimeout: any = null
 
 // WebSocket
@@ -304,100 +229,13 @@ let stompClient: Client | null = null
 const messagesArea = ref<HTMLElement | null>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
 
-// Afficher une notification toast
-const showToast = (message: string, type: 'success' | 'error') => {
-  toast.value = { show: true, message, type }
-  setTimeout(() => {
-    toast.value.show = false
-  }, 3000)
-}
-
-// Toggle sidebar mobile
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
-
-// Fermer le menu au clic ailleurs
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as HTMLElement
-  if (!target.closest('.conversation-menu')) {
-    activeMenu.value = null
-  }
-}
-
-// Toggle menu
-const toggleMenu = (convId: number) => {
-  activeMenu.value = activeMenu.value === convId ? null : convId
-}
-
-// Marquer comme lu sans ouvrir
-const markAsRead = async (conv: any) => {
-  try {
-    await api.post('/messages/mark-read', {
-      userId: user.id,
-      otherUserId: conv.otherUser.id
-    })
-    
-    // Mettre à jour localement
-    conv.unreadCount = 0
-    const conversation = conversations.value.find(c => c.id === conv.id)
-    if (conversation) {
-      conversation.unreadCount = 0
-    }
-    
-    activeMenu.value = null
-    showToast(`Conversation avec ${conv.otherUser.nom} marquée comme lue`, 'success')
-  } catch (error) {
-    console.error('Erreur lors du marquage:', error)
-    showToast('Erreur lors du marquage', 'error')
-  }
-}
-
-// Confirmer la suppression
-const confirmDeleteConversation = (conv: any) => {
-  conversationToDelete.value = conv
-  showDeleteModal.value = true
-  activeMenu.value = null
-}
-
-// Fermer le modal de suppression
-const closeDeleteModal = () => {
-  showDeleteModal.value = false
-  conversationToDelete.value = null
-}
-
-// Supprimer la conversation
-const deleteConversation = async () => {
-  if (!conversationToDelete.value) return
-  
-  try {
-    await api.delete(`/messages/conversation/${conversationToDelete.value.id}`)
-    
-    // Supprimer de la liste locale
-    const index = conversations.value.findIndex(c => c.id === conversationToDelete.value.id)
-    if (index !== -1) {
-      conversations.value.splice(index, 1)
-    }
-    
-    // Si la conversation supprimée était sélectionnée
-    if (selectedConversation.value?.id === conversationToDelete.value.id) {
-      selectedConversation.value = null
-      messages.value = []
-    }
-    
-    showToast(`Conversation avec ${conversationToDelete.value.otherUser.nom} supprimée`, 'success')
-    closeDeleteModal()
-  } catch (error) {
-    console.error('Erreur lors de la suppression:', error)
-    showToast('Erreur lors de la suppression', 'error')
-  }
-}
-
 // Récupérer les conversations
 const fetchConversations = async () => {
   isLoadingConv.value = true
   try {
+    console.log('Chargement des conversations...')
     const response = await api.get(`/messages/conversations/${user.id}`)
+    console.log('Réponse conversations:', response.data)
     if (response.data.conversations) {
       conversations.value = response.data.conversations
     }
@@ -412,9 +250,12 @@ const fetchConversations = async () => {
 const fetchMessages = async (otherUserId: number) => {
   isLoadingMessages.value = true
   try {
+    console.log(`Chargement des messages avec ${otherUserId}`)
     const response = await api.get(`/messages/conversation/${user.id}/${otherUserId}`)
+    console.log('Messages reçus brut:', response.data)
     
     if (response.data.messages && response.data.messages.length > 0) {
+      // Formater les messages pour avoir senderId
       const formattedMessages = response.data.messages.map((msg: any) => {
         return {
           id: msg.id,
@@ -430,17 +271,21 @@ const fetchMessages = async (otherUserId: number) => {
         }
       })
       
+      // Trier par date
       formattedMessages.sort((a: any, b: any) => {
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       })
       
       messages.value = formattedMessages
+      console.log(`${messages.value.length} messages chargés`)
+      console.log('Messages détaillés:', JSON.parse(JSON.stringify(messages.value)))
       
       await nextTick()
       scrollToBottom()
-      await markMessagesAsRead(otherUserId)
+      markMessagesAsRead(otherUserId)
     } else {
       messages.value = []
+      console.log('Aucun message trouvé')
     }
   } catch (error) {
     console.error('Erreur chargement messages:', error)
@@ -451,22 +296,9 @@ const fetchMessages = async (otherUserId: number) => {
 
 // Sélectionner une conversation
 const selectConversation = async (conv: any) => {
+  console.log('Conversation sélectionnée:', conv)
   selectedConversation.value = conv
-  // Marquer comme lue automatiquement quand on ouvre
-  if (conv.unreadCount > 0) {
-    conv.unreadCount = 0
-    await markMessagesAsRead(conv.otherUser.id)
-    // Mettre à jour dans la liste
-    const conversation = conversations.value.find(c => c.id === conv.id)
-    if (conversation) {
-      conversation.unreadCount = 0
-    }
-  }
   await fetchMessages(conv.otherUser.id)
-  // Fermer la sidebar sur mobile
-  if (window.innerWidth < 640) {
-    isSidebarOpen.value = false
-  }
 }
 
 // Démarrer une nouvelle conversation
@@ -501,9 +333,11 @@ const searchUsers = async () => {
   isSearching.value = true
   
   try {
+    console.log('Recherche utilisateurs:', searchQuery.value)
     const response = await api.get('/auth/users/search', {
       params: { query: searchQuery.value }
     })
+    console.log('Résultats recherche:', response.data)
     if (response.data.success) {
       searchResults.value = response.data.users.filter((u: any) => u.id !== user.id)
     }
@@ -527,6 +361,7 @@ const sendMessage = async () => {
     createdAt: new Date().toISOString()
   }
   
+  // Ajouter localement
   const localMessage = {
     id: Date.now(),
     contenu: newMessage.value,
@@ -539,6 +374,7 @@ const sendMessage = async () => {
   messages.value.push(localMessage)
   scrollToBottom()
   
+  // Envoyer via WebSocket
   if (stompClient && stompClient.connected) {
     stompClient.publish({
       destination: '/app/chat.send',
@@ -606,24 +442,15 @@ const sendFile = async (event: Event) => {
 }
 
 // Marquer les messages comme lus
-const markMessagesAsRead = async (otherUserId: number) => {
-  try {
-    await api.post('/messages/mark-read', {
-      userId: user.id,
-      otherUserId: otherUserId
-    })
-    
-    if (stompClient && stompClient.connected) {
-      stompClient.publish({
-        destination: '/app/chat.markRead',
-        body: JSON.stringify({
-          currentUserId: user.id,
-          otherUserId: otherUserId
-        })
+const markMessagesAsRead = (otherUserId: number) => {
+  if (stompClient && stompClient.connected) {
+    stompClient.publish({
+      destination: '/app/chat.markRead',
+      body: JSON.stringify({
+        currentUserId: user.id,
+        otherUserId: otherUserId
       })
-    }
-  } catch (error) {
-    console.error('Erreur mark read:', error)
+    })
   }
 }
 
@@ -700,15 +527,20 @@ const truncateText = (text: string, maxLength: number) => {
 
 // Connecter WebSocket
 const connectWebSocket = () => {
+  console.log('Connexion WebSocket...')
   stompClient = new Client({
     webSocketFactory: () => new SockJS(WS_URL),
     reconnectDelay: 5000,
+    debug: (str) => console.log('STOMP:', str),
     onConnect: () => {
       console.log('WebSocket connecté avec succès')
       
+      // S'abonner aux messages
       stompClient?.subscribe(`/user/${user.id}/queue/messages`, (message) => {
         const newMsg = JSON.parse(message.body)
+        console.log('Nouveau message reçu via WebSocket:', newMsg)
         
+        // Formater le message reçu
         const formattedMsg = {
           id: newMsg.id,
           contenu: newMsg.contenu,
@@ -727,20 +559,23 @@ const connectWebSocket = () => {
           scrollToBottom()
           markMessagesAsRead(selectedConversation.value.otherUser.id)
         } else {
+          // Nouveau message d'une autre conversation, rafraîchir la liste
           fetchConversations()
         }
       })
       
+      // S'abonner à l'indicateur de frappe
       stompClient?.subscribe(`/user/${user.id}/queue/typing`, (message) => {
         const data = JSON.parse(message.body)
         if (selectedConversation.value && data.senderId === selectedConversation.value.otherUser.id) {
           isTyping.value = data.typing
-          setTimeout(() => { isTyping.value = false }, 2000)
         }
       })
       
+      // S'abonner aux notifications de lecture
       stompClient?.subscribe(`/user/${user.id}/queue/read`, (message) => {
         fetchConversations()
+        // Marquer les messages comme lus localement
         messages.value.forEach(msg => {
           if (msg.senderId !== user.id) {
             msg.isRead = true
@@ -752,64 +587,35 @@ const connectWebSocket = () => {
     },
     onStompError: (frame) => {
       console.error('STOMP error:', frame)
+    },
+    onDisconnect: () => {
+      console.log('WebSocket déconnecté')
     }
   })
   
   stompClient.activate()
 }
 
-// Vérifier si un utilisateur a été sélectionné depuis le feed
-const checkSelectedUserFromFeed = () => {
-  const selectedUser = localStorage.getItem('selectedChatUser')
-  if (selectedUser) {
-    const userToChat = JSON.parse(selectedUser)
-    
-    if (userToChat.id !== user.id) {
-      const newConversation = {
-        id: Date.now(),
-        otherUser: userToChat,
-        lastMessage: '',
-        lastMessageTime: new Date().toISOString(),
-        unreadCount: 0
-      }
-      
-      selectedConversation.value = newConversation
-      messages.value = []
-      
-      const exists = conversations.value.some(c => c.otherUser.id === userToChat.id)
-      if (!exists) {
-        conversations.value.unshift(newConversation)
-      }
-    }
-    
-    localStorage.removeItem('selectedChatUser')
-  }
-}
-
-watch(messages, () => {
+// Debug: watcher pour les messages
+watch(messages, (newMessages) => {
+  console.log('Messages mis à jour:', newMessages.length)
   scrollToBottom()
 }, { deep: true })
 
-// Écouter les clics en dehors des menus
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
+  console.log('Composant monté, utilisateur:', user)
+  connectWebSocket()
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
   if (stompClient) {
     stompClient.deactivate()
   }
 })
-
-onMounted(async () => {
-  await fetchConversations()
-  checkSelectedUserFromFeed()
-  connectWebSocket()
-})
 </script>
 
 <style scoped>
+/* Vos styles existants... */
 .chat-container {
   display: flex;
   height: calc(100vh - 80px);
@@ -819,14 +625,12 @@ onMounted(async () => {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* Sidebar */
 .chat-sidebar {
   width: 320px;
   background: white;
   border-right: 1px solid #e9ecef;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
 }
 
 .sidebar-header {
@@ -840,18 +644,6 @@ onMounted(async () => {
 .sidebar-header h3 {
   margin: 0;
   font-size: 18px;
-  color: #3E2C1F;
-}
-
-.sidebar-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: #3E2C1F;
 }
 
@@ -881,11 +673,10 @@ onMounted(async () => {
 .conversation-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 15px 20px;
+  cursor: pointer;
   transition: all 0.2s;
   border-bottom: 1px solid #e9ecef;
-  position: relative;
 }
 
 .conversation-item:hover {
@@ -895,86 +686,6 @@ onMounted(async () => {
 .conversation-item.active {
   background: #fff3e0;
   border-left: 3px solid #D2B48C;
-}
-
-.conversation-main {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  cursor: pointer;
-}
-
-.conversation-menu {
-  position: relative;
-}
-
-.menu-trigger {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #adb5bd;
-  transition: all 0.2s;
-}
-
-.menu-trigger:hover {
-  background: #e9ecef;
-  color: #3E2C1F;
-}
-
-.menu-dropdown {
-  position: absolute;
-  right: 0;
-  top: 35px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  width: 200px;
-  z-index: 100;
-  overflow: hidden;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px 16px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  color: #3E2C1F;
-  transition: background 0.2s;
-  text-align: left;
-}
-
-.menu-item:hover {
-  background: #f8f9fa;
-}
-
-.menu-item.delete {
-  color: #e74c3c;
-}
-
-.menu-item.delete:hover {
-  background: #fee;
 }
 
 .avatar {
@@ -1034,7 +745,6 @@ onMounted(async () => {
   margin-left: 8px;
 }
 
-/* Zone de chat principale */
 .chat-main {
   flex: 1;
   display: flex;
@@ -1046,21 +756,6 @@ onMounted(async () => {
   padding: 20px;
   border-bottom: 1px solid #e9ecef;
   background: white;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.back-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #3E2C1F;
 }
 
 .user-info {
@@ -1090,7 +785,6 @@ onMounted(async () => {
   color: #51cf66;
 }
 
-/* Messages area */
 .messages-area {
   flex: 1;
   padding: 20px;
@@ -1152,17 +846,7 @@ onMounted(async () => {
 
 .message-content .time {
   font-size: 10px;
-  color: #000000;
-  font-weight: 500;
-  opacity: 0.8;
-}
-
-.message.sent .message-content .time {
-  color: #2c2c2c;
-}
-
-.message.received .message-content .time {
-  color: #000000;
+  opacity: 0.7;
 }
 
 .read-status {
@@ -1184,7 +868,6 @@ onMounted(async () => {
   text-decoration: none;
 }
 
-/* Typing indicator */
 .typing-indicator {
   padding: 8px 16px;
   background: white;
@@ -1194,7 +877,6 @@ onMounted(async () => {
   color: #868e96;
 }
 
-/* Input area */
 .chat-input-area {
   padding: 20px;
   border-top: 1px solid #e9ecef;
@@ -1259,20 +941,10 @@ onMounted(async () => {
   transform: scale(1.05);
 }
 
-.send-icon {
-  transform: rotate(-45deg);
-  transition: transform 0.3s ease;
-}
-
-.send-btn:hover .send-icon {
-  transform: rotate(0deg);
-}
-
 .hidden {
   display: none;
 }
 
-/* États vides */
 .no-conversation {
   flex: 1;
   display: flex;
@@ -1302,23 +974,9 @@ onMounted(async () => {
 }
 
 .loading-conv, .loading-messages {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
   padding: 40px;
   text-align: center;
   color: #adb5bd;
-}
-
-.spinner-small {
-  width: 24px;
-  height: 24px;
-  border: 2px solid #e9ecef;
-  border-top-color: #D2B48C;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
 }
 
 .no-messages {
@@ -1327,7 +985,6 @@ onMounted(async () => {
   color: #adb5bd;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -1448,104 +1105,6 @@ onMounted(async () => {
   color: #adb5bd;
 }
 
-/* Modal de suppression */
-.delete-modal {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  width: 90%;
-  max-width: 320px;
-  text-align: center;
-  animation: fadeIn 0.2s ease;
-}
-
-.delete-modal-icon {
-  margin-bottom: 16px;
-}
-
-.delete-modal h3 {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-  color: #3E2C1F;
-}
-
-.delete-modal p {
-  margin: 0 0 24px 0;
-  font-size: 14px;
-  color: #868e96;
-}
-
-.delete-modal-buttons {
-  display: flex;
-  gap: 12px;
-}
-
-.cancel-btn, .confirm-delete-btn {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.cancel-btn {
-  background: #f8f9fa;
-  color: #868e96;
-}
-
-.cancel-btn:hover {
-  background: #e9ecef;
-}
-
-.confirm-delete-btn {
-  background: #e74c3c;
-  color: white;
-}
-
-.confirm-delete-btn:hover {
-  background: #c0392b;
-}
-
-/* Toast notification */
-.toast-notification {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  border-radius: 50px;
-  color: white;
-  font-size: 14px;
-  z-index: 1000;
-  animation: slideUp 0.3s ease;
-}
-
-.toast-notification.success {
-  background: #27ae60;
-}
-
-.toast-notification.error {
-  background: #e74c3c;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-/* Scrollbar */
 .messages-area::-webkit-scrollbar,
 .conversations-list::-webkit-scrollbar,
 .users-list::-webkit-scrollbar {
@@ -1565,31 +1124,7 @@ onMounted(async () => {
   border-radius: 5px;
 }
 
-/* Responsive */
-.mobile-only {
-  display: none;
-}
-
 @media (max-width: 640px) {
-  .mobile-only {
-    display: flex;
-  }
-  
-  .chat-sidebar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 10;
-    transform: translateX(-100%);
-    width: 280px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .chat-sidebar.sidebar-open {
-    transform: translateX(0);
-  }
-  
   .chat-main {
     width: 100%;
   }
@@ -1614,18 +1149,6 @@ onMounted(async () => {
   
   .last-message {
     font-size: 11px;
-  }
-  
-  .chat-header {
-    padding: 12px 16px;
-  }
-  
-  .messages-area {
-    padding: 12px;
-  }
-  
-  .chat-input-area {
-    padding: 12px;
   }
 }
 </style>

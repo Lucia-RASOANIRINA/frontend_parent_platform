@@ -5,8 +5,11 @@ import Evenements from '../pages/Evenements.vue'
 import APropos from '../pages/APropos.vue'
 import HomeParent from '../pages/HomeParent.vue'
 import HomeTeacher from '../pages/HomeTeacher.vue'
+import DiscussionsTeacher from '../pages/DiscussionsTeacher.vue'
 import HomePsy from '../pages/HomePsy.vue'
+import DiscussionsPsy from '../pages/DiscussionsPsy.vue'
 import ParentPub from "../pages/ParentPub.vue";
+import DiscussionsParent from "../pages/DiscussionsParent.vue";
 
 const routes = [
   {
@@ -46,15 +49,33 @@ const routes = [
     meta: { layout: 'parent' }
   },
   {
+    path: '/parentdiscussions',
+    name: 'DiscussionsParent',
+    component: DiscussionsParent,
+    meta: { layout: 'parent' }
+  },
+  {
     path: '/hometeacher',  
     name: 'HomeTeacher',
     component: HomeTeacher,
     meta: { layout: 'educatrice' }
   },
   {
+    path: '/discussionsteacher',  
+    name: 'DiscussionsTeacher',
+    component: DiscussionsTeacher,
+    meta: { layout: 'educatrice' }
+  },
+  {
     path: '/homepsy',  
     name: 'HomePsy',
     component: HomePsy,
+    meta: { layout: 'psy' }
+  },
+  {
+    path: '/discussionspsy',  
+    name: 'DiscussionsPsy',
+    component: DiscussionsPsy,
     meta: { layout: 'psy' }
   }
 ]

@@ -10,6 +10,11 @@
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Patch pour SockJS - Doit être avant tout autre script -->
+    <script>
+        window.global = window;
+        window.process = { env: {} };
+    </script>
 
     <!-- Personnalisation du thème Tailwind avec couleurs café -->
     <script>
