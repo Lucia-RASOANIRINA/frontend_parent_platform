@@ -14,38 +14,25 @@
           
           <div class="message-box-inner">
             <div class="message-box-icon" :style="getMessageIconStyle()">
-              <!-- Icône Succès -->
               <svg v-if="messageBox.type === 'success'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              
-              <!-- Icône Erreur -->
               <svg v-else-if="messageBox.type === 'error'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              
-              <!-- Icône Info -->
               <svg v-else-if="messageBox.type === 'info'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              
-              <!-- Icône Parent - Famille -->
               <svg v-else-if="messageBox.type === 'welcome-parent' || messageBox.type.toLowerCase().includes('parent')" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              
-              <!-- Icône Éducatrice - CORRECTION : Gestion de la casse -->
               <svg v-else-if="messageBox.type === 'welcome-educatrice' || messageBox.type === 'welcome-EDUCATEUR' || messageBox.type.toLowerCase().includes('educateur') || messageBox.type.toLowerCase().includes('educatrice')" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14.5c-1.5 0-3-1-3-3s1.5-3 3-3 3 1 3 3-1.5 3-3 3zm0 0v4m-6-4h12M9 21h6" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v2m-4 2H6m12 0h-2" />
               </svg>
-              
-              <!-- Icône Psychologue - Cerveau -->
               <svg v-else-if="messageBox.type === 'welcome-psy' || messageBox.type.toLowerCase().includes('psy')" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              
-              <!-- Icône par défaut -->
               <svg v-else class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -102,7 +89,7 @@
             <form v-if="isLoginMode" key="login" @submit.prevent="handleLogin" class="flex flex-col h-full gap-5">
               <div class="space-y-4">
                 <div class="relative group">
-                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors">
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors z-10">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
                   </span>
                   <input 
@@ -110,13 +97,28 @@
                     type="email" 
                     placeholder="Adresse email" 
                     :disabled="isLoading || messageBox.show"
-                    @input="capitalizeInput('loginForm', 'email')"
+                    @input="validateLoginEmailInput"
+                    @blur="validateLoginEmailOnBlur"
+                    @focus="clearLoginEmailError"
                     required
-                    class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-gray-50 border border-[#EFE9E4] focus:border-[#D2B48C] focus:bg-white outline-none transition-all text-sm">
+                    class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-gray-50 border focus:outline-none transition-all text-sm"
+                    :class="loginEmailError ? 'border-red-500/50 focus:border-red-500' : 'border-[#EFE9E4] focus:border-[#D2B48C]'">
+                  <div v-if="loginEmailError" class="absolute right-4 top-1/2 -translate-y-1/2">
+                    <div class="relative group/tooltip">
+                      <svg class="w-5 h-5 text-red-400 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div class="absolute right-0 top-full mt-1 hidden group-hover/tooltip:block z-50">
+                        <div class="bg-red-500/90 backdrop-blur-sm text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
+                          {{ loginEmailError }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
                 <div class="relative group">
-                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors">
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors z-10">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                   </span>
                   <input 
@@ -124,12 +126,27 @@
                     :type="showPassword ? 'text' : 'password'" 
                     placeholder="Mot de passe" 
                     :disabled="isLoading || messageBox.show"
+                    @blur="validateLoginPasswordOnBlur"
+                    @focus="clearLoginPasswordError"
                     required
-                    class="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-gray-50 border border-[#EFE9E4] focus:border-[#D2B48C] focus:bg-white outline-none transition-all text-sm">
+                    class="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-gray-50 border focus:outline-none transition-all text-sm"
+                    :class="loginPasswordError ? 'border-red-500/50 focus:border-red-500' : 'border-[#EFE9E4] focus:border-[#D2B48C]'">
                   <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#D2B48C] transition-colors">
                     <svg v-if="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                     <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                   </button>
+                  <div v-if="loginPasswordError" class="absolute right-12 top-1/2 -translate-y-1/2">
+                    <div class="relative group/tooltip">
+                      <svg class="w-5 h-5 text-red-400 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div class="absolute right-0 top-full mt-1 hidden group-hover/tooltip:block z-50">
+                        <div class="bg-red-500/90 backdrop-blur-sm text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
+                          {{ loginPasswordError }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -149,7 +166,7 @@
 
             <form v-else key="register" @submit.prevent="handleRegister" class="flex flex-col h-full gap-3.5">
               <div class="relative group">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors z-10">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 </span>
                 <input 
@@ -157,13 +174,28 @@
                   type="text" 
                   placeholder="Nom complet" 
                   :disabled="isLoading || messageBox.show"
-                  @input="capitalizeInput('registerForm', 'nom')"
+                  @input="validateNameInput"
+                  @blur="validateNameOnBlur"
+                  @focus="clearNameError"
                   required
-                  class="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border border-[#EFE9E4] focus:border-[#D2B48C] outline-none text-sm">
+                  class="w-full pl-12 pr-12 py-3 rounded-2xl bg-gray-50 border focus:outline-none transition-all text-sm"
+                  :class="nameError ? 'border-red-500/50 focus:border-red-500' : 'border-[#EFE9E4] focus:border-[#D2B48C]'">
+                <div v-if="nameError" class="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div class="relative group/tooltip">
+                    <svg class="w-5 h-5 text-red-400 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="absolute right-0 top-full mt-1 hidden group-hover/tooltip:block z-50">
+                      <div class="bg-red-500/90 backdrop-blur-sm text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
+                        {{ nameError }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div class="relative group">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors z-10">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
                 </span>
                 <input 
@@ -171,45 +203,119 @@
                   type="email" 
                   placeholder="Email" 
                   :disabled="isLoading || messageBox.show"
-                  @input="capitalizeInput('registerForm', 'email')"
+                  @input="validateEmailInput"
+                  @blur="validateEmailOnBlur"
+                  @focus="clearEmailError"
                   required
-                  class="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border border-[#EFE9E4] focus:border-[#D2B48C] outline-none text-sm">
+                  class="w-full pl-12 pr-12 py-3 rounded-2xl bg-gray-50 border focus:outline-none transition-all text-sm"
+                  :class="emailError ? 'border-red-500/50 focus:border-red-500' : 'border-[#EFE9E4] focus:border-[#D2B48C]'">
+                <div v-if="emailError" class="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div class="relative group/tooltip">
+                    <svg class="w-5 h-5 text-red-400 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="absolute right-0 top-full mt-1 hidden group-hover/tooltip:block z-50">
+                      <div class="bg-red-500/90 backdrop-blur-sm text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
+                        {{ emailError }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div class="flex flex-col gap-2">
                 <div class="grid grid-cols-2 gap-2">
-                  <input 
-                    v-model="registerForm.password" 
-                    :type="showPassword ? 'text' : 'password'" 
-                    placeholder="Mot de passe" 
-                    :disabled="isLoading || messageBox.show"
-                    required
-                    class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-[#EFE9E4] focus:border-[#D2B48C] outline-none text-sm">
-                  <input 
-                    v-model="registerForm.confirmPassword" 
-                    :type="showPassword ? 'text' : 'password'" 
-                    placeholder="Confirmer" 
-                    :disabled="isLoading || messageBox.show"
-                    required
-                    class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-[#EFE9E4] focus:border-[#D2B48C] outline-none text-sm">
+                  <div class="relative">
+                    <input 
+                      v-model="registerForm.password" 
+                      :type="showPassword ? 'text' : 'password'" 
+                      placeholder="Mot de passe" 
+                      :disabled="isLoading || messageBox.show"
+                      @blur="validatePasswordOnBlur"
+                      @focus="clearPasswordError"
+                      class="w-full px-4 py-3 rounded-2xl bg-gray-50 border focus:outline-none transition-all text-sm pr-8"
+                      :class="passwordError ? 'border-red-500/50 focus:border-red-500' : 'border-[#EFE9E4] focus:border-[#D2B48C]'">
+                    <div v-if="passwordError" class="absolute right-2 top-1/2 -translate-y-1/2">
+                      <div class="relative group/tooltip">
+                        <svg class="w-4 h-4 text-red-400 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div class="absolute right-0 top-full mt-1 hidden group-hover/tooltip:block z-50">
+                          <div class="bg-red-500/90 backdrop-blur-sm text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
+                            {{ passwordError }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="relative">
+                    <input 
+                      v-model="registerForm.confirmPassword" 
+                      :type="showPassword ? 'text' : 'password'" 
+                      placeholder="Confirmer" 
+                      :disabled="isLoading || messageBox.show"
+                      @blur="validateConfirmPasswordOnBlur"
+                      @focus="clearConfirmPasswordError"
+                      class="w-full px-4 py-3 rounded-2xl bg-gray-50 border focus:outline-none transition-all text-sm pr-8"
+                      :class="confirmPasswordError ? 'border-red-500/50 focus:border-red-500' : 'border-[#EFE9E4] focus:border-[#D2B48C]'">
+                    <div v-if="confirmPasswordError" class="absolute right-2 top-1/2 -translate-y-1/2">
+                      <div class="relative group/tooltip">
+                        <svg class="w-4 h-4 text-red-400 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div class="absolute right-0 top-full mt-1 hidden group-hover/tooltip:block z-50">
+                          <div class="bg-red-500/90 backdrop-blur-sm text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
+                            {{ confirmPasswordError }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <button type="button" @click="showPassword = !showPassword" class="text-right text-[10px] text-gray-400 hover:text-[#D2B48C] uppercase tracking-wider pr-2">
                   {{ showPassword ? 'Masquer' : 'Afficher' }}
                 </button>
               </div>
 
-              <div class="relative group">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#D2B48C] transition-colors z-10">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                </span>
-                <select v-model="registerForm.role" :disabled="isLoading || messageBox.show" required class="w-full pl-12 pr-8 py-3 rounded-2xl bg-gray-50 border border-[#EFE9E4] focus:border-[#D2B48C] outline-none text-sm text-gray-500 appearance-none">
-                  <option value="PARENT">Parent</option>
-                  <option value="EDUCATEUR">Éducatrice</option>
-                  <option value="PSY">Psychologue</option>
-                </select>
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                </span>
+              <div class="relative">
+                <div class="flex gap-2 p-1 bg-[#EFE9E4]/30 rounded-2xl border border-[#D2B48C]/20">
+                  <button
+                    type="button"
+                    @click="registerForm.role = 'PARENT'"
+                    class="flex-1 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden group"
+                    :class="registerForm.role === 'PARENT' ? 'bg-gradient-to-r from-[#A78B7A] to-[#8B7355] text-white shadow-lg' : 'text-white/70 hover:bg-white/10'">
+                    <div class="flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span class="text-xs font-semibold">Parent</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    @click="registerForm.role = 'EDUCATEUR'"
+                    class="flex-1 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden group"
+                    :class="registerForm.role === 'EDUCATEUR' ? 'bg-gradient-to-r from-[#D2B48C] to-[#B8A070] text-white shadow-lg' : 'text-white/70 hover:bg-white/10'">
+                    <div class="flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14.5c-1.5 0-3-1-3-3s1.5-3 3-3 3 1 3 3-1.5 3-3 3zm0 0v4m-6-4h12M9 21h6" />
+                      </svg>
+                      <span class="text-xs font-semibold">Éducatrice</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    @click="registerForm.role = 'PSY'"
+                    class="flex-1 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden group"
+                    :class="registerForm.role === 'PSY' ? 'bg-gradient-to-r from-[#8B7355] to-[#6B5335] text-white shadow-lg' : 'text-white/70 hover:bg-white/10'">
+                    <div class="flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      <span class="text-xs font-semibold">Psychologue</span>
+                    </div>
+                  </button>
+                </div>
               </div>
               
               <div class="mt-auto pt-4">
@@ -235,13 +341,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'      // ✅ onMounted depuis 'vue'
+import { useRoute } from 'vue-router'             // ✅ useRoute depuis 'vue-router'
 import axios from 'axios'
 
 // État du formulaire
 const isLoginMode = ref(true)
 const showPassword = ref(false)
 const isLoading = ref(false)
+
+// Récupération de la route pour lire les paramètres
+const route = useRoute()
+
+// États pour les erreurs de validation inscription
+const nameError = ref('')
+const emailError = ref('')
+const passwordError = ref('')
+const confirmPasswordError = ref('')
+
+// États pour les erreurs de validation connexion
+const loginEmailError = ref('')
+const loginPasswordError = ref('')
 
 // Message Box state
 const messageBox = reactive({
@@ -258,56 +378,231 @@ const registerForm = reactive({
   email: '', 
   password: '', 
   confirmPassword: '', 
-  role: 'PARENT'
+  role: 'EDUCATEUR'
 })
 
 // Constantes
 const API_BASE_URL = 'http://localhost:8082/api'
 
-// Couleurs par rôle avec les couleurs du site
-const roleColors = {
-  PARENT: { primary: '#8B5CF6', secondary: '#A78BFA', gradient: 'linear-gradient(135deg, #8B5CF6, #A78BFA)' },
-  EDUCATEUR: { primary: '#D2B48C', secondary: '#3E2C1F', gradient: 'linear-gradient(135deg, #D2B48C, #3E2C1F)' },
-  PSY: { primary: '#06B6D4', secondary: '#22D3EE', gradient: 'linear-gradient(135deg, #06B6D4, #22D3EE)' }
+// Variables pour stocker la dernière valeur valide
+let lastValidName = ''
+let lastValidEmail = ''
+
+// Initialisation du mode (connexion ou inscription) via paramètre URL
+const initMode = () => {
+  const mode = route.query.mode
+  if (mode === 'register') {
+    isLoginMode.value = false   // Affiche l'onglet Inscription
+  } else if (mode === 'login') {
+    isLoginMode.value = true    // Affiche l'onglet Connexion
+  }
 }
 
-// Computed pour le rôle actuel
-const currentRole = computed(() => registerForm.role as keyof typeof roleColors)
-const currentColors = computed(() => roleColors[currentRole.value] || roleColors.PARENT)
+// Appel au montage du composant
+onMounted(() => {
+  initMode()
+})
 
-// Styles du message box
+// Validation connexion email
+const validateLoginEmailInput = () => {
+  const email = loginForm.email
+  loginForm.email = email.toLowerCase()
+}
+
+const validateLoginEmailOnBlur = () => {
+  const email = loginForm.email
+  if (!email || email.trim() === '') {
+    loginEmailError.value = 'L\'email est requis'
+  } else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      loginEmailError.value = 'Email invalide'
+    } else {
+      loginEmailError.value = ''
+    }
+  }
+}
+
+const clearLoginEmailError = () => {
+  loginEmailError.value = ''
+}
+
+// Validation connexion mot de passe
+const validateLoginPasswordOnBlur = () => {
+  const password = loginForm.password
+  if (!password) {
+    loginPasswordError.value = 'Le mot de passe est requis'
+  } else {
+    loginPasswordError.value = ''
+  }
+}
+
+const clearLoginPasswordError = () => {
+  loginPasswordError.value = ''
+}
+
+// Fonction pour valider le nom en temps réel (bloque les caractères non autorisés)
+const validateNameInput = () => {
+  let name = registerForm.nom
+  
+  // Bloquer les chiffres
+  if (/\d/.test(name)) {
+    name = name.replace(/\d/g, '')
+    registerForm.nom = name
+  }
+  
+  // Bloquer les caractères spéciaux (sauf espaces, tirets, apostrophes)
+  if (/[^a-zA-ZÀ-ÿ\s\-']/.test(name)) {
+    name = name.replace(/[^a-zA-ZÀ-ÿ\s\-']/g, '')
+    registerForm.nom = name
+  }
+  
+  // Mettre à jour la dernière valeur valide
+  if (name && !nameError.value) {
+    lastValidName = name
+  }
+}
+
+// Valider le nom quand le curseur quitte le champ
+const validateNameOnBlur = () => {
+  const name = registerForm.nom
+  if (!name || name.trim() === '') {
+    nameError.value = 'Le nom est requis'
+  } else if (name.length < 2) {
+    nameError.value = 'Le nom doit contenir au moins 2 caractères'
+  } else {
+    nameError.value = ''
+    // Formater le nom
+    registerForm.nom = name.split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+    lastValidName = registerForm.nom
+  }
+}
+
+// Effacer l'erreur quand le curseur revient
+const clearNameError = () => {
+  nameError.value = ''
+  if (!registerForm.nom && lastValidName) {
+    registerForm.nom = lastValidName
+  }
+}
+
+// Valider l'email en temps réel
+const validateEmailInput = () => {
+  const email = registerForm.email
+  registerForm.email = email.toLowerCase()
+  
+  if (email && !emailError.value) {
+    lastValidEmail = email
+  }
+}
+
+// Valider l'email quand le curseur quitte le champ
+const validateEmailOnBlur = () => {
+  const email = registerForm.email
+  if (!email || email.trim() === '') {
+    emailError.value = 'L\'email est requis'
+  } else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      emailError.value = 'Email invalide'
+    } else {
+      emailError.value = ''
+      lastValidEmail = email
+    }
+  }
+}
+
+// Effacer l'erreur email quand le curseur revient
+const clearEmailError = () => {
+  emailError.value = ''
+  if (!registerForm.email && lastValidEmail) {
+    registerForm.email = lastValidEmail
+  }
+}
+
+// Valider le mot de passe quand le curseur quitte le champ
+const validatePasswordOnBlur = () => {
+  const password = registerForm.password
+  if (!password) {
+    passwordError.value = 'Le mot de passe est requis'
+  } else if (password.length < 6) {
+    passwordError.value = '6 caractères minimum'
+  } else {
+    passwordError.value = ''
+  }
+}
+
+// Effacer l'erreur mot de passe
+const clearPasswordError = () => {
+  passwordError.value = ''
+}
+
+// Valider la confirmation du mot de passe
+const validateConfirmPasswordOnBlur = () => {
+  const password = registerForm.password
+  const confirmPassword = registerForm.confirmPassword
+  
+  if (!confirmPassword) {
+    confirmPasswordError.value = 'Confirmation requise'
+  } else if (password !== confirmPassword) {
+    confirmPasswordError.value = 'Mots de passe différents'
+  } else {
+    confirmPasswordError.value = ''
+  }
+}
+
+// Effacer l'erreur de confirmation
+const clearConfirmPasswordError = () => {
+  confirmPasswordError.value = ''
+}
+
+// Styles du message box transparents
 const getMessageBoxStyle = () => {
   const type = messageBox.type
-  const colors = currentColors.value
   
   if (type === 'success') {
-    return { background: 'linear-gradient(135deg, #ffffff, #f0fdf4)', borderTop: '4px solid #10b981', borderBottom: '4px solid #34d399' }
+    return { 
+      background: 'rgba(210, 180, 140, 0.15)',
+      backdropFilter: 'blur(20px)',
+      borderTop: '4px solid rgba(210, 180, 140, 0.8)', 
+      borderBottom: '4px solid rgba(210, 180, 140, 0.6)',
+      boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.2)'
+    }
   }
   if (type === 'error') {
-    return { background: 'linear-gradient(135deg, #ffffff, #fef2f2)', borderTop: '4px solid #f44336', borderBottom: '4px solid #ff9800' }
+    return { 
+      background: 'rgba(239, 68, 68, 0.15)',
+      backdropFilter: 'blur(20px)',
+      borderTop: '4px solid rgba(239, 68, 68, 0.8)', 
+      borderBottom: '4px solid rgba(239, 68, 68, 0.6)',
+      boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.2)'
+    }
   }
-  if (type === `welcome-${currentRole.value.toLowerCase()}`) {
-    return { background: `linear-gradient(135deg, #ffffff, ${colors.primary}08)`, borderTop: `4px solid ${colors.primary}`, borderBottom: `4px solid ${colors.secondary}` }
+  return { 
+    background: 'rgba(210, 180, 140, 0.15)',
+    backdropFilter: 'blur(20px)',
+    borderTop: '4px solid rgba(210, 180, 140, 0.8)', 
+    borderBottom: '4px solid rgba(210, 180, 140, 0.6)',
+    boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.2)'
   }
-  return { background: 'linear-gradient(135deg, #ffffff, #fef9f2)', borderTop: '4px solid #D2B48C', borderBottom: '4px solid #3E2C1F' }
 }
 
 const getMessageIconStyle = () => {
   const type = messageBox.type
-  
-  if (type === 'success') return { background: 'linear-gradient(135deg, #10b981, #34d399)' }
-  if (type === 'error') return { background: 'linear-gradient(135deg, #f44336, #ff9800)' }
-  if (type === `welcome-${currentRole.value.toLowerCase()}`) return { background: currentColors.value.gradient }
-  return { background: 'linear-gradient(135deg, #D2B48C, #C1A37B)' }
+  if (type === 'error') {
+    return { background: 'rgba(239, 68, 68, 0.3)', backdropFilter: 'blur(5px)' }
+  }
+  return { background: 'rgba(210, 180, 140, 0.3)', backdropFilter: 'blur(5px)' }
 }
 
 const getButtonStyle = () => {
   const type = messageBox.type
-  
-  if (type === 'success') return { background: 'linear-gradient(135deg, #10b981, #34d399)' }
-  if (type === 'error') return { background: 'linear-gradient(135deg, #f44336, #ff9800)' }
-  if (type === `welcome-${currentRole.value.toLowerCase()}`) return { background: currentColors.value.gradient }
-  return { background: 'linear-gradient(135deg, #D2B48C, #C1A37B)' }
+  if (type === 'error') {
+    return { background: 'rgba(239, 68, 68, 0.9)', color: 'white' }
+  }
+  return { background: 'rgba(210, 180, 140, 0.9)', color: 'white' }
 }
 
 // Gestion du message box
@@ -351,22 +646,6 @@ const onAfterEnter = (el: Element) => {
   }
 }
 
-// Formatage des champs
-const capitalizeInput = (formName: string, fieldName: string) => {
-  const form = formName === 'loginForm' ? loginForm : registerForm
-  const value = form[fieldName as keyof typeof form] as string
-  
-  if (!value || typeof value !== 'string') return
-  
-  if (fieldName === 'nom') {
-    form[fieldName as keyof typeof form] = value.split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ') as any
-  } else if (fieldName === 'email') {
-    form[fieldName as keyof typeof form] = value.toLowerCase() as any
-  }
-}
-
 // Messages par rôle avec gestion de la casse
 const getRoleSpecificMessage = (role: string, userName: string) => {
   const roleUpper = role.toUpperCase()
@@ -380,38 +659,56 @@ const getRoleSpecificMessage = (role: string, userName: string) => {
 
 // Validation des formulaires
 const validateLogin = () => {
-  if (!loginForm.email || !loginForm.password) {
-    showMessageBox('error', 'Champs requis', 'Veuillez remplir tous les champs')
-    return false
+  let isValid = true
+  
+  if (!loginForm.email) {
+    loginEmailError.value = 'L\'email est requis'
+    isValid = false
+  } else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(loginForm.email)) {
+      loginEmailError.value = 'Email invalide'
+      isValid = false
+    } else {
+      loginEmailError.value = ''
+    }
   }
-  return true
+  
+  if (!loginForm.password) {
+    loginPasswordError.value = 'Le mot de passe est requis'
+    isValid = false
+  } else {
+    loginPasswordError.value = ''
+  }
+  
+  return isValid
 }
 
 const validateRegister = () => {
   if (!registerForm.nom.trim()) {
-    showMessageBox('error', 'Champ requis', 'Veuillez entrer votre nom complet')
+    nameError.value = 'Le nom est requis'
     return false
   }
+  if (nameError.value) return false
+  
   if (!registerForm.email.trim()) {
-    showMessageBox('error', 'Champ requis', 'Veuillez entrer votre email')
+    emailError.value = 'L\'email est requis'
     return false
   }
+  if (emailError.value) return false
+  
   if (!registerForm.password) {
-    showMessageBox('error', 'Champ requis', 'Veuillez créer un mot de passe')
+    passwordError.value = 'Le mot de passe est requis'
     return false
   }
+  if (passwordError.value) return false
+  
   if (!registerForm.confirmPassword) {
-    showMessageBox('error', 'Champ requis', 'Veuillez confirmer votre mot de passe')
+    confirmPasswordError.value = 'Confirmation requise'
     return false
   }
-  if (registerForm.password !== registerForm.confirmPassword) {
-    showMessageBox('error', 'Mots de passe', 'Les mots de passe ne correspondent pas')
-    return false
-  }
-  if (registerForm.password.length < 6) {
-    showMessageBox('error', 'Mot de passe trop court', 'Minimum 6 caractères')
-    return false
-  }
+  if (confirmPasswordError.value) return false
+  
   return true
 }
 
@@ -465,7 +762,7 @@ const handleRegister = async () => {
     showMessageBox('success', 'Inscription réussie', roleMessages[registerForm.role as keyof typeof roleMessages])
     
     // Reset form
-    Object.assign(registerForm, { nom: '', email: '', password: '', confirmPassword: '', role: 'PARENT' })
+    Object.assign(registerForm, { nom: '', email: '', password: '', confirmPassword: '', role: 'EDUCATEUR' })
     
     setTimeout(() => {
       closeMessageBox()
@@ -498,8 +795,8 @@ const handleRegister = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -513,15 +810,25 @@ const handleRegister = async () => {
   margin: 20px;
 }
 
-/* Message Box Stylé */
+/* Message Box transparent stylé */
 .message-box {
-  background: white;
+  background: rgba(210, 180, 140, 0.15);
+  backdrop-filter: blur(20px);
   border-radius: 32px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.message-box.success {
+  background: rgba(210, 180, 140, 0.15);
+}
+
+.message-box.error {
+  background: rgba(239, 68, 68, 0.15);
 }
 
 @keyframes slideUp {
@@ -536,7 +843,7 @@ const handleRegister = async () => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
   animation: shine 3s infinite;
   pointer-events: none;
 }
@@ -551,7 +858,7 @@ const handleRegister = async () => {
   position: absolute;
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(210, 180, 140, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   pointer-events: none;
 }
 
@@ -580,8 +887,14 @@ const handleRegister = async () => {
   height: 100px;
   border-radius: 50%;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
   animation: pulse 2s infinite;
+  background: rgba(210, 180, 140, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.message-box.error .message-box-icon {
+  background: rgba(239, 68, 68, 0.3);
 }
 
 @keyframes pulse {
@@ -600,16 +913,18 @@ const handleRegister = async () => {
   font-weight: 800;
   font-size: 1.75rem;
   margin-bottom: 12px;
-  color: #3E2C1F;
+  color: white;
   letter-spacing: -0.01em;
   line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .message-box-text {
   font-size: 1rem;
-  color: #5a3e2a;
+  color: rgba(255, 255, 255, 0.95);
   line-height: 1.6;
   margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .message-box-footer {
@@ -623,20 +938,30 @@ const handleRegister = async () => {
   border-radius: 60px;
   font-weight: 700;
   font-size: 1rem;
-  color: white;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   letter-spacing: 0.5px;
+  background: rgba(210, 180, 140, 0.9);
+  color: white;
+}
+
+.message-box.error .message-box-button {
+  background: rgba(239, 68, 68, 0.9);
 }
 
 .message-box-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  background: rgba(210, 180, 140, 1);
+}
+
+.message-box.error .message-box-button:hover {
+  background: rgba(239, 68, 68, 1);
 }
 
 .message-box-button:active { transform: translateY(0); }
@@ -701,8 +1026,6 @@ const handleRegister = async () => {
 /* Design des inputs */
 input::placeholder { color: #a3a3a3; transition: color 0.3s; }
 input:focus::placeholder { color: #d1d5db; }
-
-select { appearance: none; }
 
 .animate-spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

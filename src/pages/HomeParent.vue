@@ -28,7 +28,10 @@
       <div class="flex items-start gap-4">
         
         <div class="flex-shrink-0">
-          <div class="w-12 h-12 rounded-2xl bg-[#FDFBF9] border border-[#EFE9E4] flex items-center justify-center text-[#3E2C1F] font-black text-sm shadow-sm transition-all duration-500 hover:border-[#D2B48C] hover:scale-105">
+          <div 
+            @click.stop="toggleUserInfoBox(user, $event)"
+            class="w-12 h-12 rounded-2xl bg-[#FDFBF9] border border-[#EFE9E4] flex items-center justify-center text-[#3E2C1F] font-black text-sm shadow-sm transition-all duration-500 hover:border-[#D2B48C] hover:scale-105 cursor-pointer"
+          >
             {{ userInitials }}
           </div>
         </div>
@@ -126,7 +129,10 @@
           <!-- En-tête du post -->
           <div class="p-4 flex justify-between items-start">
             <div class="flex gap-3">
-              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#D2B48C] to-[#3E2C1F] flex items-center justify-center text-white font-bold">
+              <div 
+                @click.stop="toggleUserInfoBox(post.user, $event)"
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-[#D2B48C] to-[#3E2C1F] flex items-center justify-center text-white font-bold cursor-pointer hover:scale-105 transition-transform"
+              >
                 {{ post.user?.nom?.charAt(0).toUpperCase() || 'U' }}
               </div>
               <div>
@@ -207,19 +213,76 @@
       </div>
     </div>
 
+    <!-- Boîte d'information utilisateur (message box stylé) -->
+    <Teleport to="body">
+      <transition name="user-info">
+        <div 
+          v-if="selectedUser" 
+          class="fixed z-[200]"
+          :style="{ top: infoBoxPosition.top + 'px', left: infoBoxPosition.left + 'px' }"
+          @click.stop
+        >
+          <div class="user-info-card">
+            <!-- Entête avec couleur de rôle -->
+            <div class="user-info-header" :class="getRoleColorClass(selectedUser.role)">
+              <div class="flex items-center gap-3">
+                <div class="user-info-avatar">
+                  {{ selectedUser.nom?.charAt(0).toUpperCase() || 'U' }}
+                </div>
+                <span class="user-info-name">{{ selectedUser.nom }}</span>
+              </div>
+              <button @click="closeUserInfoBox" class="user-info-close">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Corps avec infos -->
+            <div class="user-info-body">
+              <!-- Email -->
+              <div class="user-info-row">
+                <svg class="user-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+                <div class="flex-1">
+                  <p class="user-info-label">Email</p>
+                  <p class="user-info-value">{{ selectedUser.email || 'Non renseigné' }}</p>
+                </div>
+              </div>
+
+              <!-- Rôle -->
+              <div class="user-info-row">
+                <svg class="user-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="flex-1">
+                  <p class="user-info-label">Rôle</p>
+                  <p class="user-info-value capitalize">{{ selectedUser.role || 'Non défini' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Petit triangle pointeur -->
+            <div class="user-info-arrow"></div>
+          </div>
+        </div>
+      </transition>
+    </Teleport>
+
     <input type="file" ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload">
     <input type="file" ref="fileInput" accept=".pdf" class="hidden" @change="handleFileUpload">
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
 const API_BASE_URL = 'http://localhost:8082/api'
-const user = JSON.parse(localStorage.getItem('user') || '{"nom": "Marie Educ", "role": "educatrice", "id": 1}')
+const user = JSON.parse(localStorage.getItem('user') || '{"nom": "Marie Educ", "role": "educatrice", "id": 1, "email": "marie@example.com"}')
 
 // Computed
 const userInitials = computed(() => {
@@ -249,6 +312,10 @@ const posts = ref<any[]>([])
 const isLoadingPosts = ref(false)
 const activeComments = ref<number | null>(null)
 const newComment = ref<{ [key: number]: string }>({})
+
+// États pour la boîte d'info utilisateur
+const selectedUser = ref<any>(null)
+const infoBoxPosition = ref({ top: 0, left: 0 })
 
 // Fonctions utilitaires
 const showAlert = (msg: string) => {
@@ -310,7 +377,7 @@ const handleSubmit = async () => {
     if (response.data.success) {
       showAlert("Post publié avec succès !")
       resetForm()
-      fetchPosts() // Recharger les posts
+      fetchPosts()
     }
   } catch (error) {
     showAlert("Erreur lors de l'envoi")
@@ -388,14 +455,11 @@ const addComment = async (postId: number) => {
   }
 }
 
-// Démarrer une conversation ou ouvrir la messagerie
+// Démarrer une conversation
 const startConversation = (postUser: any) => {
-  // Vérifier si l'utilisateur du post est le même que l'utilisateur connecté
   if (postUser.id === user.id) {
-    // Si c'est le même utilisateur, juste ouvrir la messagerie sans sélection
     router.push('/parentdiscussions')
   } else {
-    // Sinon, sélectionner l'utilisateur pour démarrer une conversation
     localStorage.setItem('selectedChatUser', JSON.stringify(postUser))
     router.push('/parentdiscussions')
   }
@@ -417,8 +481,84 @@ const formatDate = (dateString: string) => {
   }
 }
 
+// Afficher ou fermer la boîte d'information utilisateur (toggle)
+const toggleUserInfoBox = (userData: any, event: MouseEvent) => {
+  if (!userData) return
+  
+  // Si la boîte est déjà ouverte pour le même utilisateur, on la ferme
+  if (selectedUser.value && selectedUser.value.id === userData.id) {
+    closeUserInfoBox()
+    return
+  }
+  
+  // Sinon, on affiche la boîte pour le nouvel utilisateur
+  selectedUser.value = userData
+  
+  const target = event.currentTarget as HTMLElement
+  const rect = target.getBoundingClientRect()
+  
+  let top = rect.bottom + 8
+  let left = rect.left
+  
+  const boxWidth = 280
+  if (left + boxWidth > window.innerWidth - 16) {
+    left = window.innerWidth - boxWidth - 16
+  }
+  if (left < 16) left = 16
+  
+  const boxHeight = 220
+  if (top + boxHeight > window.innerHeight - 16) {
+    top = rect.top - boxHeight - 8
+  }
+  
+  infoBoxPosition.value = { top, left }
+}
+
+// Fermer la boîte d'information
+const closeUserInfoBox = () => {
+  selectedUser.value = null
+}
+
+// Couleurs "café au lait, terre" pour chaque rôle
+const getRoleColorClass = (role: string) => {
+  switch (role?.toLowerCase()) {
+    case 'admin':
+      return 'role-admin'      // terre cuite / brique
+    case 'educatrice':
+      return 'role-educatrice' // café au lait / caramel
+    case 'parent':
+      return 'role-parent'     // beige / sable
+    default:
+      return 'role-default'    // marron foncé
+  }
+}
+
+// Gestionnaire de clic global pour fermer la boîte
+const handleGlobalClick = (event: MouseEvent) => {
+  if (selectedUser.value) {
+    const box = document.querySelector('.user-info-card')
+    if (box && !box.contains(event.target as Node)) {
+      closeUserInfoBox()
+    }
+  }
+}
+
+// Gestionnaire de touche Échap
+const handleEscapeKey = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && selectedUser.value) {
+    closeUserInfoBox()
+  }
+}
+
 onMounted(() => {
   fetchPosts()
+  document.addEventListener('click', handleGlobalClick)
+  document.addEventListener('keydown', handleEscapeKey)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleGlobalClick)
+  document.removeEventListener('keydown', handleEscapeKey)
 })
 </script>
 
@@ -465,5 +605,142 @@ textarea { scrollbar-width: none; }
 }
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Animation de la boîte utilisateur */
+.user-info-enter-active {
+  transition: all 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+.user-info-leave-active {
+  transition: all 0.2s ease-in;
+}
+.user-info-enter-from,
+.user-info-leave-to {
+  opacity: 0;
+  transform: scale(0.92) translateY(-8px);
+}
+
+/* Carte utilisateur */
+.user-info-card {
+  position: relative;
+  width: 280px;
+  background: white;
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(239, 233, 228, 0.5);
+  overflow: hidden;
+}
+
+/* Couleurs "café au lait, terre" pour les rôles */
+.user-info-header {
+  padding: 0.875rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+/* Admin - terre cuite / brique */
+.user-info-header.role-admin {
+  background: linear-gradient(135deg, #a0522d, #8b4513);
+}
+/* Éducatrice - café au lait / caramel */
+.user-info-header.role-educatrice {
+  background: linear-gradient(135deg, #c19a6b, #a67c52);
+}
+/* Parent - beige / sable clair */
+.user-info-header.role-parent {
+  background: linear-gradient(135deg, #d2b48c, #c4a27a);
+  color: #3e2c1f;
+}
+/* Défaut - marron foncé (terre) */
+.user-info-header.role-default {
+  background: linear-gradient(135deg, #5c3d2e, #3e2c1f);
+}
+
+.user-info-avatar {
+  width: 2rem;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.875rem;
+  backdrop-filter: blur(2px);
+}
+
+.user-info-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: -0.2px;
+}
+
+.user-info-close {
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-info-close:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+/* Corps */
+.user-info-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.user-info-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #9ca3af;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.user-info-label {
+  font-size: 0.625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #b9a99a;
+  margin-bottom: 0.25rem;
+}
+
+.user-info-value {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #3E2C1F;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+/* Triangle pointeur */
+.user-info-arrow {
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-left: 1px solid rgba(239, 233, 228, 0.8);
+  border-top: 1px solid rgba(239, 233, 228, 0.8);
+  transform: rotate(45deg);
+  z-index: -1;
+  border-radius: 3px 0 0 0;
 }
 </style>

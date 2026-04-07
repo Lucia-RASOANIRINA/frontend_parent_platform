@@ -16,7 +16,7 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
-    meta: { layout: 'default' }
+    meta: { layout: 'default', showFooter: true }  // ← ajout showFooter
   },
   {
     path: '/connexion',
@@ -28,13 +28,13 @@ const routes = [
     path: '/evenements',
     name: 'Evenements',
     component: Evenements,
-    meta: { layout: 'default' }
+    meta: { layout: 'default', showFooter: true }  // ← ajout showFooter
   },
   {
     path: '/apropos',
     name: 'APropos',
     component: APropos,
-    meta: { layout: 'default' }
+    meta: { layout: 'default', showFooter: true }  // ← ajout showFooter
   },
   {
     path: '/homeparent',

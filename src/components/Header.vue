@@ -37,56 +37,70 @@
           </div>
         </router-link>
         
-<!-- Navigation Desktop - STYLE MÉLANGÉ MODÉRÉ -->
-<nav class="hidden md:flex items-center space-x-2 bg-cream/50 p-1.5 rounded-full border border-coffee-100/40 backdrop-blur-sm">
-  <router-link 
-    v-for="item in navItems" 
-    :key="item.name"
-    :to="item.path"
-    class="relative px-5 py-2 text-sm font-semibold transition-all duration-300 rounded-full group/nav"
-    :class="$route.path === item.path ? 'text-coffee-700 bg-white/50 shadow-sm' : 'text-coffee-500 hover:text-coffee-700 hover:bg-white/30'"
-  >
-    <span class="relative z-10 flex items-center space-x-2">
-      <!-- Icône + texte -->
-      <svg class="w-4 h-4 flex-shrink-0 transition-transform duration-300 group-hover/nav:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" :d="item.icon" />
-      </svg>
-      {{ item.name }}
-    </span>
-
-    <!-- ÉTOILE + LIGNE alignée et élégante -->
-    <div 
-      class="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center transition-all duration-500"
-      :class="$route.path === item.path ? 'opacity-100 translate-y-0 scale-105' : 'opacity-0 translate-y-1 group-hover/nav:opacity-100 group-hover/nav:translate-y-0'"
-    >
-      <svg class="w-3 h-3 text-coffee-400 fill-current animate-spin-slow flex-shrink-0" viewBox="0 0 24 24">
-        <path d="M12 .587l3.668 7.431 8.332 1.21-6.042 5.89 1.425 8.302L12 18.897l-7.383 3.883 1.425-8.302-6.042-5.89 8.332-1.21z"/>
-      </svg>
-      <div class="h-[1.5px] w-12 bg-gradient-to-r from-coffee-400 to-transparent rounded-full ml-1"></div>
-    </div>
-  </router-link>
-</nav>
-
-        <!-- Bouton Connexion Chic -->
-        <div class="hidden md:block">
+        <!-- Navigation Desktop -->
+        <nav class="hidden md:flex items-center space-x-2 bg-cream/50 p-1.5 rounded-full border border-coffee-100/40 backdrop-blur-sm">
           <router-link 
-            to="/connexion"
-            class="group relative px-8 py-2.5 rounded-full overflow-hidden transition-all duration-500 transform hover:-translate-y-0.5 inline-block shadow-md hover:shadow-coffee-200/30"
+            v-for="item in navItems" 
+            :key="item.name"
+            :to="item.path"
+            class="relative px-5 py-2 text-sm font-semibold transition-all duration-300 rounded-full group/nav"
+            :class="$route.path === item.path ? 'text-coffee-700 bg-white/50 shadow-sm' : 'text-coffee-500 hover:text-coffee-700 hover:bg-white/30'"
           >
-            <div class="absolute inset-0 bg-gradient-to-r from-coffee-600 via-coffee-700 to-coffee-600 bg-[length:200%_100%] animate-gradient opacity-100 group-hover:opacity-95 transition-opacity duration-500"></div>
-            
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-            
-            <span class="relative text-cream font-bold flex items-center space-x-2 text-sm tracking-wide">
-              <svg class="w-4 h-4 transition-transform duration-500 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <span class="relative z-10 flex items-center space-x-2.5">
+              <svg class="w-4 h-4 flex-shrink-0 transition-transform duration-300 group-hover/nav:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" :d="item.icon" />
               </svg>
-              <span>Connexion</span>
+              <span>{{ item.name }}</span>
             </span>
+
+            <div 
+              class="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center transition-all duration-500"
+              :class="$route.path === item.path ? 'opacity-100 translate-y-0 scale-105' : 'opacity-0 translate-y-1 group-hover/nav:opacity-100 group-hover/nav:translate-y-0'"
+            >
+              <svg class="w-3 h-3 text-coffee-400 fill-current animate-spin-slow flex-shrink-0" viewBox="0 0 24 24">
+                <path d="M12 .587l3.668 7.431 8.332 1.21-6.042 5.89 1.425 8.302L12 18.897l-7.383 3.883 1.425-8.302-6.042-5.89 8.332-1.21z"/>
+              </svg>
+              <div class="h-[1.5px] w-12 bg-gradient-to-r from-coffee-400 to-transparent rounded-full ml-1"></div>
+            </div>
           </router-link>
+        </nav>
+
+        <!-- Bouton Connexion/Inscription - Même design mais même page -->
+        <div class="hidden md:block">
+          <div class="group relative flex items-center bg-gradient-to-r from-coffee-600 via-coffee-700 to-coffee-600 bg-[length:200%_100%] animate-gradient rounded-full shadow-md hover:shadow-coffee-200/30 transition-all duration-500 transform hover:-translate-y-0.5">
+            <div class="absolute inset-0 rounded-full overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            </div>
+            
+            <router-link 
+              to="/connexion"
+              class="relative px-4 py-2.5 text-cream font-bold text-sm tracking-wide transition-all duration-300 hover:scale-105 rounded-l-full"
+            >
+              <span class="flex items-center space-x-1.5">
+                <svg class="w-3.5 h-3.5 transition-transform duration-500 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span>Connexion</span>
+              </span>
+            </router-link>
+            
+            <span class="relative text-cream/50 font-light text-xs">|</span>
+            
+            <router-link 
+              to="/connexion"
+              class="relative px-4 py-2.5 text-cream font-bold text-sm tracking-wide transition-all duration-300 hover:scale-105 rounded-r-full"
+            >
+              <span class="flex items-center space-x-1.5">
+                <svg class="w-3.5 h-3.5 transition-transform duration-500 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                <span>Inscription</span>
+              </span>
+            </router-link>
+          </div>
         </div>
 
-        <!-- Bouton Menu Mobile Élégant -->
+        <!-- Bouton Menu Mobile -->
         <button 
           @click="mobileMenuOpen = !mobileMenuOpen"
           class="md:hidden w-12 h-12 rounded-2xl bg-cream text-coffee-600 flex items-center justify-center shadow-sm hover:shadow-md hover:bg-coffee-50 transition-all duration-300 active:scale-95"
@@ -100,91 +114,103 @@
       </div>
     </div>
 
-    <!-- Menu Mobile - LONGUEURS DIFFÉRENTES + HOVER PLUS STYLÉ -->
-<Transition name="menu-slide">
-  <div v-show="mobileMenuOpen" class="md:hidden absolute top-full left-4 right-4 mt-4 bg-cream/98 backdrop-blur-xl rounded-3xl shadow-2xl border border-coffee-100/60 p-5 space-y-3 overflow-hidden">
-    <!-- Ligne décorative supérieure -->
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-coffee-400 to-transparent"></div>
-    
-    <!-- Étoile décorative flottante -->
-    <div class="absolute -top-4 -right-4 w-20 h-20 text-coffee-200/30 animate-spin-slow">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 .587l3.668 7.431 8.332 1.21-6.042 5.89 1.425 8.302L12 18.897l-7.383 3.883 1.425-8.302-6.042-5.89 8.332-1.21z"/>
-      </svg>
-    </div>
-    
-    <router-link 
-      v-for="item in navItems" 
-      :key="item.name"
-      :to="item.path"
-      @click="mobileMenuOpen = false"
-      class="flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group relative overflow-hidden"
-      :class="$route.path === item.path ? 'bg-gradient-to-r from-coffee-50 to-coffee-100/50 shadow-sm' : 'hover:bg-gradient-to-r hover:from-coffee-50/60 hover:to-white/40 hover:shadow-md hover:scale-[1.02] hover:rotate-[0.5deg]'"
-    >
-      <!-- Effet brillant au hover -->
-      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-      
-      <div class="flex items-center space-x-3 relative z-10">
-        <!-- Icône avec hover amélioré -->
-        <div class="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 group-hover:shadow-coffee-200/50 group-hover:rotate-6deg transition-all duration-400">
-          <svg class="w-4 h-4 text-coffee-500 group-hover:text-coffee-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" :d="item.icon" />
+    <!-- Menu Mobile -->
+    <Transition name="menu-slide">
+      <div v-show="mobileMenuOpen" class="md:hidden absolute top-full left-4 right-4 mt-4 bg-cream/98 backdrop-blur-xl rounded-3xl shadow-2xl border border-coffee-100/60 p-5 space-y-3 overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-coffee-400 to-transparent"></div>
+        
+        <div class="absolute -top-4 -right-4 w-20 h-20 text-coffee-200/30 animate-spin-slow">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 .587l3.668 7.431 8.332 1.21-6.042 5.89 1.425 8.302L12 18.897l-7.383 3.883 1.425-8.302-6.042-5.89 8.332-1.21z"/>
           </svg>
         </div>
-        <span class="font-bold text-coffee-700 group-hover:text-coffee-800 tracking-wide">{{ item.name }}</span>
-      </div>
-      
-      <!-- Étoile active ET hover améliorée -->
-      <div class="relative flex items-center space-x-1">
-        <svg 
-          :class="[
-            'w-5 h-5 fill-current transition-all duration-400',
-            $route.path === item.path 
-              ? 'text-coffee-400 bg-coffee-300/50 backdrop-blur-sm rounded-full p-1 shadow-lg animate-star-pulse scale-110' 
-              : 'text-coffee-300/70 group-hover:text-coffee-400 group-hover:scale-125 group-hover:rotate-12deg'
-          ]" 
-          viewBox="0 0 24 24"
+        
+        <router-link 
+          v-for="item in navItems" 
+          :key="item.name"
+          :to="item.path"
+          @click="mobileMenuOpen = false"
+          class="flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group relative overflow-hidden"
+          :class="$route.path === item.path ? 'bg-gradient-to-r from-coffee-50 to-coffee-100/50 shadow-sm' : 'hover:bg-gradient-to-r hover:from-coffee-50/60 hover:to-white/40 hover:shadow-md hover:scale-[1.02] hover:rotate-[0.5deg]'"
         >
-          <path d="M12 .587l3.668 7.431 8.332 1.21-6.042 5.89 1.425 8.302L12 18.897l-7.383 3.883 1.425-8.302-6.042-5.89 8.332-1.21z"/>
-        </svg>
-        <!-- Ligne active ET hover -->
-        <div 
-          :class="[
-            'h-[2px] rounded-full transition-all duration-500',
-            $route.path === item.path 
-              ? 'w-8 bg-gradient-to-r from-coffee-300 via-coffee-400 to-coffee-300 absolute -bottom-2 left-1/2 -translate-x-1/2 animate-pulse-line scale-100'
-              : 'w-0 bg-gradient-to-r from-transparent via-coffee-300 to-transparent group-hover:w-6 group-hover:scale-x-100'
-          ]"
-        ></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+          
+          <div class="flex items-center space-x-3 relative z-10">
+            <div class="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 group-hover:shadow-coffee-200/50 group-hover:rotate-6deg transition-all duration-400">
+              <svg class="w-4 h-4 text-coffee-500 group-hover:text-coffee-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" :d="item.icon" />
+              </svg>
+            </div>
+            <span class="font-bold text-coffee-700 group-hover:text-coffee-800 tracking-wide">{{ item.name }}</span>
+          </div>
+          
+          <div class="relative flex items-center space-x-1">
+            <svg 
+              :class="[
+                'w-5 h-5 fill-current transition-all duration-400',
+                $route.path === item.path 
+                  ? 'text-coffee-400 bg-coffee-300/50 backdrop-blur-sm rounded-full p-1 shadow-lg animate-star-pulse scale-110' 
+                  : 'text-coffee-300/70 group-hover:text-coffee-400 group-hover:scale-125 group-hover:rotate-12deg'
+              ]" 
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 .587l3.668 7.431 8.332 1.21-6.042 5.89 1.425 8.302L12 18.897l-7.383 3.883 1.425-8.302-6.042-5.89 8.332-1.21z"/>
+            </svg>
+            <div 
+              :class="[
+                'h-[2px] rounded-full transition-all duration-500',
+                $route.path === item.path 
+                  ? 'w-8 bg-gradient-to-r from-coffee-300 via-coffee-400 to-coffee-300 absolute -bottom-2 left-1/2 -translate-x-1/2 animate-pulse-line scale-100'
+                  : 'w-0 bg-gradient-to-r from-transparent via-coffee-300 to-transparent group-hover:w-6 group-hover:scale-x-100'
+              ]"
+            ></div>
+          </div>
+        </router-link>
+        
+        <div class="pt-3 mt-2 border-t border-coffee-100">
+          <!-- Menu Mobile : Connexion et Inscription vers la même page -->
+          <div class="flex items-center justify-center">
+            <router-link 
+              to="/connexion" 
+              class="group relative flex-1 flex items-center justify-center py-3.5 rounded-l-2xl overflow-hidden shadow-md hover:shadow-coffee-200/30 transition-all duration-300"
+              @click="mobileMenuOpen = false"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-coffee-600 to-coffee-700 group-hover:from-coffee-700 group-hover:to-coffee-800 transition-colors duration-300"></div>
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              <span class="relative text-white font-bold flex items-center space-x-1.5 text-sm">
+                <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span>Connexion</span>
+              </span>
+            </router-link>
+            
+            <div class="w-px h-8 bg-coffee-300/50"></div>
+            
+            <router-link 
+              to="/connexion" 
+              class="group relative flex-1 flex items-center justify-center py-3.5 rounded-r-2xl overflow-hidden shadow-md hover:shadow-coffee-200/30 transition-all duration-300"
+              @click="mobileMenuOpen = false"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-coffee-500 to-coffee-600 group-hover:from-coffee-600 group-hover:to-coffee-700 transition-colors duration-300"></div>
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              <span class="relative text-white font-bold flex items-center space-x-1.5 text-sm">
+                <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                <span>Inscription</span>
+              </span>
+            </router-link>
+          </div>
+        </div>
       </div>
-    </router-link>
-    
-    <div class="pt-3 mt-2 border-t border-coffee-100">
-      <router-link 
-        to="/connexion" 
-        class="group relative flex items-center justify-center w-full py-3.5 rounded-2xl overflow-hidden shadow-md hover:shadow-coffee-200/30 transition-all duration-300"
-        @click="mobileMenuOpen = false"
-      >
-        <div class="absolute inset-0 bg-gradient-to-r from-coffee-600 to-coffee-700 group-hover:from-coffee-700 group-hover:to-coffee-800 transition-colors duration-300"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-        <span class="relative text-white font-bold flex items-center space-x-2">
-          <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          <span>Connexion</span>
-        </span>
-      </router-link>
-    </div>
-  </div>
-</Transition>
+    </Transition>
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted, onUnmounted } from 'vue'
 
-const route = useRoute()
 const scrolled = ref(false)
 const mobileMenuOpen = ref(false)
 
@@ -205,14 +231,6 @@ const navItems = [
     icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' 
   }
 ]
-
-const activeStar = computed(() => {
-  return navItems.some(item => item.path === route.path)
-})
-
-const setActiveLink = () => {
-  mobileMenuOpen.value = false
-}
 
 const handleScroll = () => { 
   scrolled.value = window.scrollY > 20 
@@ -252,15 +270,6 @@ onUnmounted(() => {
 .animate-gradient {
   background-size: 200% 100%;
   animation: gradient 3s ease infinite;
-}
-
-@keyframes shine {
-  0% { transform: translateX(-150%) skewX(-20deg); }
-  100% { transform: translateX(150%) skewX(-20deg); }
-}
-
-.animate-shine {
-  animation: shine 1.2s ease-out infinite;
 }
 
 @keyframes blob {
@@ -306,24 +315,6 @@ onUnmounted(() => {
 
 .animate-pulse-line {
   animation: pulse-line 2s ease-in-out infinite;
-}
-
-@keyframes star-appear {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.animate-star-appear {
-  animation: star-appear 0.5s ease-out;
-}
-
-@keyframes star-hover {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-3px) scale(1.1); }
-}
-
-.animate-star-hover {
-  animation: star-hover 3s ease-in-out infinite;
 }
 
 /* Transition Menu Mobile */
