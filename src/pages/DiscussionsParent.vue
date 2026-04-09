@@ -3,22 +3,49 @@
     <!-- Sidebar gauche -->
     <div class="chat-sidebar" :class="{ 'sidebar-open': isSidebarOpen }">
       <div class="sidebar-header">
-        <button @click="toggleSidebar" class="sidebar-toggle mobile-only">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        <h3>Messages</h3>
+        <div class="header-left">
+          <div class="filter-menu" @click.stop>
+            <button @click="toggleFilterMenu" class="menu-icon-btn">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <div v-if="showFilterMenu" class="filter-dropdown">
+              <!-- Options du filtre avec icône "✓" devant l'option active -->
+              <button @click="setFilter('all')" :class="{ active: currentFilter === 'all' }">
+                <span v-if="currentFilter === 'all'" class="check-icon">✓</span>
+                Toutes
+              </button>
+              <button @click="setFilter('unread')" :class="{ active: currentFilter === 'unread' }">
+                <span v-if="currentFilter === 'unread'" class="check-icon">✓</span>
+                Non lus
+              </button>
+              <button @click="setFilter('read')" :class="{ active: currentFilter === 'read' }">
+                <span v-if="currentFilter === 'read'" class="check-icon">✓</span>
+                Lus
+              </button>
+              <button @click="setFilter('read_no_reply')" :class="{ active: currentFilter === 'read_no_reply' }">
+                <span v-if="currentFilter === 'read_no_reply'" class="check-icon">✓</span>
+                Lus sans réponse
+              </button>
+              <button @click="setFilter('read_with_reply')" :class="{ active: currentFilter === 'read_with_reply' }">
+                <span v-if="currentFilter === 'read_with_reply'" class="check-icon">✓</span>
+                Lus avec réponse
+              </button>
+            </div>
+          </div>
+          <h3>Messages</h3>
+        </div>
         <button @click="showNewMessageModal = true" class="new-message-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
         </button>
       </div>
-      
+
       <div class="conversations-list">
-        <div 
-          v-for="conv in conversations" 
+        <div
+          v-for="conv in conversations"
           :key="conv.id"
           :class="['conversation-item', { active: selectedConversation?.id === conv.id }]"
         >
@@ -27,45 +54,29 @@
               <span>{{ conv.otherUser.nom.charAt(0).toUpperCase() }}</span>
               <span v-if="conv.unreadCount > 0" class="unread-badge">{{ conv.unreadCount }}</span>
             </div>
-            <div class="conversation-info">
+            <div class="conversation-info desktop-only">
               <div class="name">{{ conv.otherUser.nom }}</div>
               <div class="last-message">{{ truncateText(conv.lastMessage, 30) }}</div>
             </div>
-            <div class="time">{{ formatTime(conv.lastMessageTime) }}</div>
+            <div class="time desktop-only">{{ formatTime(conv.lastMessageTime) }}</div>
           </div>
-          
-          <!-- Menu 3 points Instagram style -->
+
           <div class="conversation-menu">
             <button @click.stop="toggleMenu(conv.id)" class="menu-trigger">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
               </svg>
             </button>
-            
-            <!-- Menu dropdown -->
             <div v-if="activeMenu === conv.id" class="menu-dropdown" @click.stop>
-              <button @click="markAsRead(conv)" class="menu-item">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                Marquer comme lu
-              </button>
-              <button @click="confirmDeleteConversation(conv)" class="menu-item delete">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Supprimer la conversation
-              </button>
+              <button @click="markAsRead(conv)" class="menu-item">Marquer comme lu</button>
+              <button @click="markAsUnread(conv)" class="menu-item">Marquer comme non lu</button>
+              <button @click="confirmDeleteConversation(conv)" class="menu-item delete">Supprimer</button>
             </div>
           </div>
         </div>
-        
+
         <div v-if="conversations.length === 0 && !isLoadingConv" class="no-conversations">
           <p>Aucune conversation</p>
-          <button @click="showNewMessageModal = true" class="start-chat-btn">
-            Commencer une discussion
-          </button>
         </div>
         <div v-if="isLoadingConv" class="loading-conv">
           <div class="spinner-small"></div>
@@ -77,37 +88,27 @@
     <!-- Zone de chat principale -->
     <div class="chat-main" v-if="selectedConversation">
       <div class="chat-header">
-        <button @click="toggleSidebar" class="back-btn mobile-only">
+        <button @click="goBack" class="back-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
         <div class="user-info">
-          <div class="avatar">
-            {{ selectedConversation.otherUser.nom.charAt(0).toUpperCase() }}
-          </div>
-          <div>
+          <div class="avatar">{{ selectedConversation.otherUser.nom.charAt(0).toUpperCase() }}</div>
+          <div class="desktop-only">
             <h4>{{ selectedConversation.otherUser.nom }}</h4>
-            <span class="status" :class="{ online: isUserOnline }">
-              {{ isUserOnline ? 'En ligne' : 'Hors ligne' }}
-            </span>
+            <span class="status" :class="{ online: isUserOnline }">{{ isUserOnline ? 'En ligne' : 'Hors ligne' }}</span>
           </div>
         </div>
       </div>
 
       <div class="messages-area" ref="messagesArea">
-        <div v-if="isLoadingMessages" class="loading-messages">
-          <div class="spinner-small"></div>
-          <span>Chargement des messages...</span>
-        </div>
+        <div v-if="isLoadingMessages" class="loading-messages"><div class="spinner-small"></div><span>Chargement...</span></div>
         <div v-else-if="messages.length === 0" class="no-messages">
-          <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
           <p>Aucun message. Commencez la conversation !</p>
         </div>
-        <div 
-          v-for="message in messages" 
+        <div
+          v-for="message in messages"
           :key="message.id"
           :class="['message', message.senderId === user.id ? 'sent' : 'received']"
         >
@@ -118,7 +119,7 @@
             <div v-else-if="message.messageType === 'FILE'" class="message-file">
               <a :href="`data:${message.fileType || 'application/pdf'};base64,${message.fileData}`" :download="message.fileName" class="file-link">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                 </svg>
                 {{ message.fileName }}
               </a>
@@ -126,39 +127,21 @@
             <p v-else>{{ message.contenu }}</p>
             <div class="message-footer">
               <span class="time">{{ formatMessageTime(message.createdAt) }}</span>
-              <span v-if="message.senderId === user.id && message.isRead" class="read-status">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
+              <span v-if="message.senderId === user.id && message.isRead" class="read-status">✓</span>
             </div>
           </div>
         </div>
-        
-        <div v-if="isTyping" class="typing-indicator">
-          <span>{{ selectedConversation.otherUser.nom }} écrit...</span>
-        </div>
+        <div v-if="isTyping" class="typing-indicator">{{ selectedConversation.otherUser.nom }} écrit...</div>
       </div>
 
       <div class="chat-input-area">
-        <div class="input-actions">
-          <button @click="triggerFileUpload" class="action-btn">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-            </svg>
-          </button>
-          <input type="file" ref="fileInput" class="hidden" @change="sendFile" accept="image/*,application/pdf">
-        </div>
-        
-        <input 
-          v-model="newMessage" 
-          @keyup.enter="sendMessage"
-          @keyup="onTyping"
-          type="text" 
-          placeholder="Écrire un message..."
-          class="message-input"
-        >
-        
+        <button @click="triggerFileUpload" class="action-btn">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+          </svg>
+        </button>
+        <input type="file" ref="fileInput" class="hidden" @change="sendFile" accept="image/*,application/pdf">
+        <input v-model="newMessage" @keyup.enter="sendMessage" @keyup="onTyping" type="text" placeholder="Écrire un message..." class="message-input">
         <button @click="sendMessage" class="send-btn">
           <svg class="w-6 h-6 send-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -166,78 +149,46 @@
         </button>
       </div>
     </div>
-    
-    <!-- Aucune conversation sélectionnée -->
-    <div v-else class="no-conversation">
-      <svg class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-      </svg>
-      <p>Sélectionnez une conversation</p>
-      <button @click="showNewMessageModal = true" class="start-chat-btn-primary">
-        Nouveau message
+
+    <!-- Écran "Aucune conversation" (desktop) -->
+    <div v-else class="no-conversation desktop-only">
+      <button @click="showNewMessageModal = true" class="new-message-icon-btn">
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <span>Nouveau message</span>
       </button>
+      <p>Sélectionnez une conversation ou commencez-en une nouvelle</p>
     </div>
 
     <!-- Modal Nouveau message -->
     <div v-if="showNewMessageModal" class="modal-overlay" @click.self="showNewMessageModal = false">
       <div class="modal-content">
-        <div class="modal-header">
-          <h3>Nouveau message</h3>
-          <button @click="showNewMessageModal = false" class="close-btn">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        
-        <div class="search-bar">
-          <input 
-            v-model="searchQuery" 
-            @input="searchUsers"
-            type="text" 
-            placeholder="Rechercher un utilisateur..."
-            class="search-input"
-          >
-        </div>
-        
+        <div class="modal-header"><h3>Nouveau message</h3><button @click="showNewMessageModal = false">✕</button></div>
+        <div class="search-bar"><input v-model="searchQuery" @input="searchUsers" placeholder="Rechercher..." class="search-input"></div>
         <div class="users-list">
-          <div v-if="isSearching" class="searching">
-            <div class="spinner"></div>
-            Recherche en cours...
+          <div v-if="isSearching" class="searching">Recherche...</div>
+          <div v-for="u in searchResults" :key="u.id" @click="startConversation(u)" class="user-item">
+            <div class="avatar">{{ u.nom.charAt(0).toUpperCase() }}</div>
+            <div><div class="name">{{ u.nom }}</div><div class="email">{{ u.email }}</div></div>
           </div>
-          <div 
-            v-for="userItem in searchResults" 
-            :key="userItem.id"
-            @click="startConversation(userItem)"
-            class="user-item"
-          >
-            <div class="avatar">
-              {{ userItem.nom.charAt(0).toUpperCase() }}
-            </div>
-            <div class="user-info">
-              <div class="name">{{ userItem.nom }}</div>
-              <div class="email">{{ userItem.email }}</div>
-              <div class="role">{{ userItem.role }}</div>
-            </div>
-          </div>
-          
-          <div v-if="searchResults.length === 0 && searchQuery && !isSearching" class="no-results">
-            Aucun utilisateur trouvé
-          </div>
+          <div v-if="searchResults.length === 0 && searchQuery && !isSearching">Aucun utilisateur</div>
         </div>
       </div>
     </div>
 
-    <!-- Modal de confirmation suppression -->
-    <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
-      <div class="delete-modal">
-        <div class="delete-modal-icon">
-          <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    <!-- MODALE DE SUPPRESSION (icône centrée) -->
+    <div v-if="showDeleteModal" class="modal-overlay delete-overlay" @click.self="closeDeleteModal">
+      <div class="delete-modal-custom">
+        <div class="delete-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            <line x1="10" y1="11" x2="10" y2="17" />
+            <line x1="14" y1="11" x2="14" y2="17" />
           </svg>
         </div>
         <h3>Supprimer la conversation ?</h3>
-        <p>Cette action est irréversible. Tous les messages seront supprimés définitivement.</p>
+        <p>Cette action est irréversible.</p>
         <div class="delete-modal-buttons">
           <button @click="closeDeleteModal" class="cancel-btn">Annuler</button>
           <button @click="deleteConversation" class="confirm-delete-btn">Supprimer</button>
@@ -245,280 +196,195 @@
       </div>
     </div>
 
-    <!-- Toast notification -->
-    <div v-if="toast.show" :class="['toast-notification', toast.type]">
-      <svg v-if="toast.type === 'success'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-      </svg>
-      <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
+    <!-- Toast simple (style d'origine) -->
+    <div v-if="toast.show" class="toast-notification" :class="toast.type">
       <span>{{ toast.message }}</span>
+      <button @click="closeToast">✕</button>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { Client } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 import axios from 'axios'
 
-// Configuration axios
-const api = axios.create({
-  baseURL: 'http://localhost:8082/api',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
-})
-
+const api = axios.create({ baseURL: 'http://localhost:8082/api', headers: { 'Content-Type': 'application/json' } })
 const user = JSON.parse(localStorage.getItem('user') || '{"id": 6, "nom": "Lora", "role": "PSY"}')
-const API_BASE_URL = 'http://localhost:8082/api'
 const WS_URL = 'http://localhost:8082/ws'
 
 // États
-const conversations = ref<any[]>([])
-const selectedConversation = ref<any>(null)
-const messages = ref<any[]>([])
+const conversations = ref([])
+const selectedConversation = ref(null)
+const messages = ref([])
 const newMessage = ref('')
 const isTyping = ref(false)
 const isUserOnline = ref(false)
 const showNewMessageModal = ref(false)
 const searchQuery = ref('')
-const searchResults = ref<any[]>([])
+const searchResults = ref([])
 const isSearching = ref(false)
 const isLoadingConv = ref(false)
 const isLoadingMessages = ref(false)
-const activeMenu = ref<number | null>(null)
-const isSidebarOpen = ref(false)
+const activeMenu = ref(null)
+const isSidebarOpen = ref(true)
 const showDeleteModal = ref(false)
-const conversationToDelete = ref<any>(null)
-const toast = ref({ show: false, message: '', type: 'success' })
-let typingTimeout: any = null
+const conversationToDelete = ref(null)
+const toast = ref({ show: false, message: '', type: 'success', timeoutId: null })
+const currentFilter = ref('all')
+const showFilterMenu = ref(false)
 
-// WebSocket
-let stompClient: Client | null = null
+let stompClient = null
+let typingTimeout = null
+const isMobileView = ref(window.innerWidth < 640)
+const messagesArea = ref(null)
+const fileInput = ref(null)
 
-// Refs
-const messagesArea = ref<HTMLElement | null>(null)
-const fileInput = ref<HTMLInputElement | null>(null)
-
-// Afficher une notification toast
-const showToast = (message: string, type: 'success' | 'error') => {
-  toast.value = { show: true, message, type }
-  setTimeout(() => {
-    toast.value.show = false
-  }, 3000)
+// Toast simple
+const showToast = (msg, type) => {
+  if (toast.value.timeoutId) clearTimeout(toast.value.timeoutId)
+  toast.value = { show: true, message: msg, type, timeoutId: null }
+  toast.value.timeoutId = setTimeout(() => { toast.value.show = false }, 20000)
+}
+const closeToast = () => {
+  if (toast.value.timeoutId) clearTimeout(toast.value.timeoutId)
+  toast.value.show = false
 }
 
-// Toggle sidebar mobile
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
+// Filtres
+const toggleFilterMenu = () => { showFilterMenu.value = !showFilterMenu.value }
+const setFilter = (filter) => {
+  currentFilter.value = filter
+  showFilterMenu.value = false
+  fetchConversations()
 }
 
-// Fermer le menu au clic ailleurs
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as HTMLElement
-  if (!target.closest('.conversation-menu')) {
-    activeMenu.value = null
-  }
-}
-
-// Toggle menu
-const toggleMenu = (convId: number) => {
-  activeMenu.value = activeMenu.value === convId ? null : convId
-}
-
-// Marquer comme lu sans ouvrir
-const markAsRead = async (conv: any) => {
+// Récupération des conversations (backend filtré)
+const fetchConversations = async () => {
+  isLoadingConv.value = true
   try {
-    await api.post('/messages/mark-read', {
-      userId: user.id,
-      otherUserId: conv.otherUser.id
-    })
-    
-    // Mettre à jour localement
-    conv.unreadCount = 0
-    const conversation = conversations.value.find(c => c.id === conv.id)
-    if (conversation) {
-      conversation.unreadCount = 0
-    }
-    
-    activeMenu.value = null
-    showToast(`Conversation avec ${conv.otherUser.nom} marquée comme lue`, 'success')
-  } catch (error) {
-    console.error('Erreur lors du marquage:', error)
-    showToast('Erreur lors du marquage', 'error')
-  }
+    const res = await api.get(`/messages/conversations/${user.id}?filter=${currentFilter.value}`)
+    if (res.data.success) conversations.value = res.data.conversations
+  } catch (err) { console.error(err); showToast('Erreur chargement', 'error') }
+  finally { isLoadingConv.value = false }
 }
 
-// Confirmer la suppression
-const confirmDeleteConversation = (conv: any) => {
+// Messages
+const fetchMessages = async (otherUserId) => {
+  isLoadingMessages.value = true
+  try {
+    const res = await api.get(`/messages/conversation/${user.id}/${otherUserId}`)
+    if (res.data.success) {
+      const formatted = res.data.messages.map(m => ({ ...m, senderId: m.sender?.id }))
+      formatted.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt))
+      messages.value = formatted
+      await nextTick(); scrollToBottom()
+      // On marque comme lu via la même logique que le bouton
+      await markMessagesAsRead(otherUserId)
+    }
+  } catch (err) { console.error(err) }
+  finally { isLoadingMessages.value = false }
+}
+
+const selectConversation = async (conv) => {
+  selectedConversation.value = conv
+  if (conv.unreadCount > 0) {
+    // Appel identique à markAsRead (mais sans recharger toute la liste)
+    await markMessagesAsRead(conv.otherUser.id)
+    conv.unreadCount = 0
+  }
+  await fetchMessages(conv.otherUser.id)
+  if (isMobileView.value) isSidebarOpen.value = false
+}
+
+const markMessagesAsRead = async (otherUserId) => {
+  try {
+    await api.post('/messages/mark-read', { userId: user.id, otherUserId })
+    // Mise à jour locale du compteur
+    const conv = conversations.value.find(c => c.otherUser.id === otherUserId)
+    if (conv) conv.unreadCount = 0
+  } catch (err) { console.error(err) }
+}
+
+const markAsRead = async (conv) => {
+  try {
+    await api.post('/messages/mark-read', { userId: user.id, otherUserId: conv.otherUser.id })
+    conv.unreadCount = 0
+    activeMenu.value = null
+    showToast('Conversation marquée comme lue', 'success')
+    await fetchConversations() // recharge pour mettre à jour les filtres
+  } catch (err) { showToast('Erreur', 'error') }
+}
+
+const markAsUnread = async (conv) => {
+  if (conv.lastMessageSenderId === user.id) {
+    showToast('Vous avez déjà répondu', 'error')
+    activeMenu.value = null
+    return
+  }
+  try {
+    await api.post('/messages/mark-unread', { userId: user.id, otherUserId: conv.otherUser.id })
+    conv.unreadCount = 1
+    activeMenu.value = null
+    showToast('Conversation marquée comme non lue', 'success')
+    await fetchConversations()
+  } catch (err) { showToast('Erreur', 'error') }
+}
+
+const confirmDeleteConversation = (conv) => {
   conversationToDelete.value = conv
   showDeleteModal.value = true
   activeMenu.value = null
 }
-
-// Fermer le modal de suppression
-const closeDeleteModal = () => {
-  showDeleteModal.value = false
-  conversationToDelete.value = null
-}
-
-// Supprimer la conversation
+const closeDeleteModal = () => { showDeleteModal.value = false; conversationToDelete.value = null }
 const deleteConversation = async () => {
   if (!conversationToDelete.value) return
-  
   try {
     await api.delete(`/messages/conversation/${conversationToDelete.value.id}`)
-    
-    // Supprimer de la liste locale
     const index = conversations.value.findIndex(c => c.id === conversationToDelete.value.id)
-    if (index !== -1) {
-      conversations.value.splice(index, 1)
-    }
-    
-    // Si la conversation supprimée était sélectionnée
+    if (index !== -1) conversations.value.splice(index, 1)
     if (selectedConversation.value?.id === conversationToDelete.value.id) {
       selectedConversation.value = null
       messages.value = []
     }
-    
-    showToast(`Conversation avec ${conversationToDelete.value.otherUser.nom} supprimée`, 'success')
+    showToast('Conversation supprimée', 'success')
     closeDeleteModal()
-  } catch (error) {
-    console.error('Erreur lors de la suppression:', error)
-    showToast('Erreur lors de la suppression', 'error')
-  }
+  } catch (err) { showToast('Erreur suppression', 'error') }
 }
 
-// Récupérer les conversations
-const fetchConversations = async () => {
-  isLoadingConv.value = true
-  try {
-    const response = await api.get(`/messages/conversations/${user.id}`)
-    if (response.data.conversations) {
-      conversations.value = response.data.conversations
+const startConversation = async (otherUser) => {
+  const existing = conversations.value.find(c => c.otherUser.id === otherUser.id)
+  if (existing) await selectConversation(existing)
+  else {
+    const newConv = {
+      id: Date.now(),
+      otherUser,
+      lastMessage: '',
+      lastMessageTime: new Date().toISOString(),
+      unreadCount: 0,
+      lastMessageSenderId: null
     }
-  } catch (error: any) {
-    console.error('Erreur chargement conversations:', error.response?.data || error.message)
-  } finally {
-    isLoadingConv.value = false
+    conversations.value.unshift(newConv)
+    await selectConversation(newConv)
   }
-}
-
-// Récupérer les messages d'une conversation
-const fetchMessages = async (otherUserId: number) => {
-  isLoadingMessages.value = true
-  try {
-    const response = await api.get(`/messages/conversation/${user.id}/${otherUserId}`)
-    
-    if (response.data.messages && response.data.messages.length > 0) {
-      const formattedMessages = response.data.messages.map((msg: any) => {
-        return {
-          id: msg.id,
-          contenu: msg.contenu,
-          createdAt: msg.createdAt,
-          messageType: msg.messageType,
-          fileData: msg.fileData,
-          fileType: msg.fileType,
-          fileName: msg.fileName,
-          isRead: msg.isRead || false,
-          senderId: msg.sender?.id || msg.senderId,
-          receiverId: msg.receiver?.id || msg.receiverId
-        }
-      })
-      
-      formattedMessages.sort((a: any, b: any) => {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      })
-      
-      messages.value = formattedMessages
-      
-      await nextTick()
-      scrollToBottom()
-      await markMessagesAsRead(otherUserId)
-    } else {
-      messages.value = []
-    }
-  } catch (error) {
-    console.error('Erreur chargement messages:', error)
-  } finally {
-    isLoadingMessages.value = false
-  }
-}
-
-// Sélectionner une conversation
-const selectConversation = async (conv: any) => {
-  selectedConversation.value = conv
-  // Marquer comme lue automatiquement quand on ouvre
-  if (conv.unreadCount > 0) {
-    conv.unreadCount = 0
-    await markMessagesAsRead(conv.otherUser.id)
-    // Mettre à jour dans la liste
-    const conversation = conversations.value.find(c => c.id === conv.id)
-    if (conversation) {
-      conversation.unreadCount = 0
-    }
-  }
-  await fetchMessages(conv.otherUser.id)
-  // Fermer la sidebar sur mobile
-  if (window.innerWidth < 640) {
-    isSidebarOpen.value = false
-  }
-}
-
-// Démarrer une nouvelle conversation
-const startConversation = async (otherUser: any) => {
-  const newConversation = {
-    id: Date.now(),
-    otherUser: otherUser,
-    lastMessage: '',
-    lastMessageTime: new Date().toISOString(),
-    unreadCount: 0
-  }
-  
-  selectedConversation.value = newConversation
-  messages.value = []
   showNewMessageModal.value = false
   searchQuery.value = ''
   searchResults.value = []
-  
-  const exists = conversations.value.some(c => c.otherUser.id === otherUser.id)
-  if (!exists) {
-    conversations.value.unshift(newConversation)
-  }
 }
 
-// Rechercher des utilisateurs
 const searchUsers = async () => {
-  if (!searchQuery.value.trim()) {
-    searchResults.value = []
-    return
-  }
-  
+  if (!searchQuery.value.trim()) { searchResults.value = []; return }
   isSearching.value = true
-  
   try {
-    const response = await api.get('/auth/users/search', {
-      params: { query: searchQuery.value }
-    })
-    if (response.data.success) {
-      searchResults.value = response.data.users.filter((u: any) => u.id !== user.id)
-    }
-  } catch (error: any) {
-    console.error('Erreur recherche:', error.response?.data || error.message)
-    searchResults.value = []
-  } finally {
-    isSearching.value = false
-  }
+    const res = await api.get('/auth/users/search', { params: { query: searchQuery.value } })
+    if (res.data.success) searchResults.value = res.data.users.filter(u => u.id !== user.id)
+  } catch (err) { searchResults.value = [] }
+  finally { isSearching.value = false }
 }
 
-// Envoyer un message
 const sendMessage = async () => {
   if (!newMessage.value.trim() || !selectedConversation.value) return
-  
   const messageData = {
     contenu: newMessage.value,
     sender: { id: user.id },
@@ -526,8 +392,7 @@ const sendMessage = async () => {
     messageType: 'TEXT',
     createdAt: new Date().toISOString()
   }
-  
-  const localMessage = {
+  const localMsg = {
     id: Date.now(),
     contenu: newMessage.value,
     createdAt: new Date().toISOString(),
@@ -536,37 +401,21 @@ const sendMessage = async () => {
     senderId: user.id,
     receiverId: selectedConversation.value.otherUser.id
   }
-  messages.value.push(localMessage)
+  messages.value.push(localMsg)
   scrollToBottom()
-  
-  if (stompClient && stompClient.connected) {
-    stompClient.publish({
-      destination: '/app/chat.send',
-      body: JSON.stringify(messageData)
-    })
-  } else {
-    console.warn('WebSocket non connecté, tentative de reconnexion...')
-    connectWebSocket()
-  }
-  
+  if (stompClient?.connected) stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
+  else connectWebSocket()
   newMessage.value = ''
 }
 
-// Envoyer un fichier
-const triggerFileUpload = () => {
-  fileInput.value?.click()
-}
-
-const sendFile = async (event: Event) => {
-  const target = event.target as HTMLInputElement
+const triggerFileUpload = () => fileInput.value?.click()
+const sendFile = async (event) => {
+  const target = event.target
   if (!target.files?.length || !selectedConversation.value) return
-  
   const file = target.files[0]
   const reader = new FileReader()
-  
   reader.onload = async () => {
-    const base64 = (reader.result as string).split(',')[1]
-    
+    const base64 = reader.result.split(',')[1]
     const messageData = {
       contenu: file.name,
       sender: { id: user.id },
@@ -577,675 +426,344 @@ const sendFile = async (event: Event) => {
       fileName: file.name,
       createdAt: new Date().toISOString()
     }
-    
-    const localMessage = {
-      id: Date.now(),
-      contenu: file.name,
-      createdAt: new Date().toISOString(),
-      messageType: file.type.startsWith('image/') ? 'IMAGE' : 'FILE',
-      fileData: base64,
-      fileType: file.type,
-      fileName: file.name,
-      isRead: false,
-      senderId: user.id,
-      receiverId: selectedConversation.value.otherUser.id
-    }
-    messages.value.push(localMessage)
+    const localMsg = { ...messageData, id: Date.now(), isRead: false, senderId: user.id, receiverId: selectedConversation.value.otherUser.id }
+    messages.value.push(localMsg)
     scrollToBottom()
-    
-    if (stompClient && stompClient.connected) {
-      stompClient.publish({
-        destination: '/app/chat.send',
-        body: JSON.stringify(messageData)
-      })
-    }
+    if (stompClient?.connected) stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
   }
-  
   reader.readAsDataURL(file)
   target.value = ''
 }
 
-// Marquer les messages comme lus
-const markMessagesAsRead = async (otherUserId: number) => {
-  try {
-    await api.post('/messages/mark-read', {
-      userId: user.id,
-      otherUserId: otherUserId
-    })
-    
-    if (stompClient && stompClient.connected) {
-      stompClient.publish({
-        destination: '/app/chat.markRead',
-        body: JSON.stringify({
-          currentUserId: user.id,
-          otherUserId: otherUserId
-        })
-      })
-    }
-  } catch (error) {
-    console.error('Erreur mark read:', error)
-  }
-}
-
-// Indicateur de frappe
 const onTyping = () => {
   if (!selectedConversation.value) return
-  
   if (typingTimeout) clearTimeout(typingTimeout)
-  
-  if (stompClient && stompClient.connected) {
-    stompClient.publish({
-      destination: '/app/chat.typing',
-      body: JSON.stringify({
-        senderId: user.id,
-        receiverId: selectedConversation.value.otherUser.id,
-        typing: true
-      })
-    })
-  }
-  
+  stompClient?.publish({
+    destination: '/app/chat.typing',
+    body: JSON.stringify({ senderId: user.id, receiverId: selectedConversation.value.otherUser.id, typing: true })
+  })
   typingTimeout = setTimeout(() => {
-    if (stompClient && stompClient.connected) {
-      stompClient.publish({
-        destination: '/app/chat.typing',
-        body: JSON.stringify({
-          senderId: user.id,
-          receiverId: selectedConversation.value.otherUser.id,
-          typing: false
-        })
-      })
-    }
+    stompClient?.publish({
+      destination: '/app/chat.typing',
+      body: JSON.stringify({ senderId: user.id, receiverId: selectedConversation.value.otherUser.id, typing: false })
+    })
   }, 1000)
 }
 
-// Scroll en bas
 const scrollToBottom = () => {
-  if (messagesArea.value) {
-    setTimeout(() => {
-      messagesArea.value!.scrollTop = messagesArea.value!.scrollHeight
-    }, 100)
-  }
+  if (messagesArea.value) setTimeout(() => { messagesArea.value.scrollTop = messagesArea.value.scrollHeight }, 100)
 }
-
-// Formater le temps pour l'affichage
-const formatTime = (dateString: string) => {
-  if (!dateString) return ''
-  const date = new Date(dateString)
-  const now = new Date()
-  const diff = now.getTime() - date.getTime()
-  
-  if (diff < 60000) {
-    return 'À l\'instant'
-  } else if (diff < 3600000) {
-    return `il y a ${Math.floor(diff / 60000)} min`
-  } else if (diff < 86400000) {
-    return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-  } else {
-    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
-  }
+const formatTime = (dateStr) => {
+  if (!dateStr) return ''
+  const d = new Date(dateStr), now = new Date(), diff = now - d
+  if (diff < 60000) return "À l'instant"
+  if (diff < 3600000) return `il y a ${Math.floor(diff/60000)} min`
+  if (diff < 86400000) return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
 }
-
-// Formater le temps pour le footer du message
-const formatMessageTime = (dateString: string) => {
-  if (!dateString) return ''
-  const date = new Date(dateString)
-  return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+const formatMessageTime = (dateStr) => dateStr ? new Date(dateStr).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : ''
+const truncateText = (txt, len) => txt?.length > len ? txt.substring(0, len) + '...' : txt || ''
+const goBack = () => {
+  if (isMobileView.value) { selectedConversation.value = null; isSidebarOpen.value = true }
+  else selectedConversation.value = null
 }
+const toggleMenu = (id) => { activeMenu.value = activeMenu.value === id ? null : id }
 
-// Tronquer le texte
-const truncateText = (text: string, maxLength: number) => {
-  if (!text) return ''
-  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
-}
-
-// Connecter WebSocket
+// WebSocket
 const connectWebSocket = () => {
   stompClient = new Client({
     webSocketFactory: () => new SockJS(WS_URL),
     reconnectDelay: 5000,
     onConnect: () => {
-      console.log('WebSocket connecté avec succès')
-      
-      stompClient?.subscribe(`/user/${user.id}/queue/messages`, (message) => {
-        const newMsg = JSON.parse(message.body)
-        
-        const formattedMsg = {
-          id: newMsg.id,
-          contenu: newMsg.contenu,
-          createdAt: newMsg.createdAt,
-          messageType: newMsg.messageType,
-          fileData: newMsg.fileData,
-          fileType: newMsg.fileType,
-          fileName: newMsg.fileName,
-          isRead: false,
-          senderId: newMsg.sender?.id,
-          receiverId: newMsg.receiver?.id
-        }
-        
-        if (selectedConversation.value && formattedMsg.senderId === selectedConversation.value.otherUser.id) {
-          messages.value.push(formattedMsg)
-          scrollToBottom()
-          markMessagesAsRead(selectedConversation.value.otherUser.id)
-        } else {
-          fetchConversations()
-        }
+      stompClient.subscribe(`/user/${user.id}/queue/messages`, (msg) => {
+        const newMsg = JSON.parse(msg.body)
+        const formatted = { ...newMsg, senderId: newMsg.sender?.id, receiverId: newMsg.receiver?.id }
+        if (selectedConversation.value && formatted.senderId === selectedConversation.value.otherUser.id) {
+          messages.value.push(formatted); scrollToBottom(); markMessagesAsRead(selectedConversation.value.otherUser.id)
+        } else fetchConversations()
       })
-      
-      stompClient?.subscribe(`/user/${user.id}/queue/typing`, (message) => {
-        const data = JSON.parse(message.body)
+      stompClient.subscribe(`/user/${user.id}/queue/typing`, (msg) => {
+        const data = JSON.parse(msg.body)
         if (selectedConversation.value && data.senderId === selectedConversation.value.otherUser.id) {
           isTyping.value = data.typing
           setTimeout(() => { isTyping.value = false }, 2000)
         }
       })
-      
-      stompClient?.subscribe(`/user/${user.id}/queue/read`, (message) => {
+      stompClient.subscribe(`/user/${user.id}/queue/read`, () => {
         fetchConversations()
-        messages.value.forEach(msg => {
-          if (msg.senderId !== user.id) {
-            msg.isRead = true
-          }
-        })
+        messages.value.forEach(m => { if (m.senderId !== user.id) m.isRead = true })
       })
-      
       fetchConversations()
-    },
-    onStompError: (frame) => {
-      console.error('STOMP error:', frame)
     }
   })
-  
   stompClient.activate()
 }
 
-// Vérifier si un utilisateur a été sélectionné depuis le feed
-const checkSelectedUserFromFeed = () => {
-  const selectedUser = localStorage.getItem('selectedChatUser')
-  if (selectedUser) {
-    const userToChat = JSON.parse(selectedUser)
-    
-    if (userToChat.id !== user.id) {
-      const newConversation = {
-        id: Date.now(),
-        otherUser: userToChat,
-        lastMessage: '',
-        lastMessageTime: new Date().toISOString(),
-        unreadCount: 0
-      }
-      
-      selectedConversation.value = newConversation
-      messages.value = []
-      
-      const exists = conversations.value.some(c => c.otherUser.id === userToChat.id)
-      if (!exists) {
-        conversations.value.unshift(newConversation)
-      }
-    }
-    
-    localStorage.removeItem('selectedChatUser')
-  }
+// Gestion mobile
+const handleResize = () => {
+  isMobileView.value = window.innerWidth < 640
+  const header = document.querySelector('header')
+  const headerHeight = header ? header.offsetHeight : 60
+  document.documentElement.style.setProperty('--header-height', `${headerHeight}px`)
+  if (!isMobileView.value && !selectedConversation.value) isSidebarOpen.value = false
+  else if (isMobileView.value && !selectedConversation.value) isSidebarOpen.value = true
+}
+const handleClickOutside = (e) => {
+  if (!e.target.closest('.conversation-menu')) activeMenu.value = null
+  if (!e.target.closest('.filter-menu')) showFilterMenu.value = false
 }
 
-watch(messages, () => {
-  scrollToBottom()
-}, { deep: true })
-
-// Écouter les clics en dehors des menus
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-  if (stompClient) {
-    stompClient.deactivate()
-  }
-})
-
 onMounted(async () => {
+  document.addEventListener('click', handleClickOutside)
+  window.addEventListener('resize', handleResize)
+  handleResize()
   await fetchConversations()
-  checkSelectedUserFromFeed()
   connectWebSocket()
 })
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('resize', handleResize)
+  if (stompClient) stompClient.deactivate()
+})
+watch(messages, () => scrollToBottom(), { deep: true })
 </script>
 
 <style scoped>
+/* ===== THÈME CLAIR ===== */
+* { color: #1e293b; }
 .chat-container {
   display: flex;
-  height: calc(100vh - 80px);
-  background: white;
+  height: calc(100vh - 120px);
+  max-height: 65vh;
+  width: 90%;
+  max-width: 1100px;
+  margin: 20px auto;
+  background: #fff;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
-
 /* Sidebar */
 .chat-sidebar {
-  width: 320px;
-  background: white;
-  border-right: 1px solid #e9ecef;
+  width: 260px;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
+  overflow-x: hidden;
 }
-
 .sidebar-header {
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
-.sidebar-header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #3E2C1F;
+.header-left { display: flex; align-items: center; gap: 12px; }
+.filter-menu { position: relative; }
+.menu-icon-btn, .new-message-btn {
+  background: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  color: #6F4E37;
 }
-
-.sidebar-toggle {
+.menu-icon-btn:hover, .new-message-btn:hover { background: #e5e7eb; transform: scale(1.02); }
+.sidebar-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.filter-dropdown {
+  position: absolute;
+  left: 0;
+  top: 36px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  width: 190px;
+  z-index: 100;
+  overflow: hidden;
+}
+.filter-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #3E2C1F;
+  font-size: 13px;
 }
-
-.new-message-btn {
-  background: #D2B48C;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  color: white;
+.filter-dropdown button:hover { background: #f9fafb; }
+.filter-dropdown button.active { background: #fef3e2; color: #8B4513; font-weight: 500; }
+.check-icon {
+  font-weight: bold;
+  font-size: 14px;
+  width: 18px;
+  display: inline-block;
 }
-
-.new-message-btn:hover {
-  background: #3E2C1F;
-  transform: scale(1.05);
-}
-
 .conversations-list {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
 }
-
 .conversation-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 20px;
-  transition: all 0.2s;
-  border-bottom: 1px solid #e9ecef;
-  position: relative;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
 }
-
-.conversation-item:hover {
-  background: #f8f9fa;
-}
-
-.conversation-item.active {
-  background: #fff3e0;
-  border-left: 3px solid #D2B48C;
-}
-
+.conversation-item:hover { background: #fafafa; }
+.conversation-item.active { background: #fef7e8; border-left: 3px solid #D2B48C; }
 .conversation-main {
   display: flex;
   align-items: center;
   flex: 1;
   cursor: pointer;
+  gap: 10px;
+  min-width: 0;
 }
-
-.conversation-menu {
+.avatar {
   position: relative;
-}
-
-.menu-trigger {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
+  width: 34px;
+  height: 34px;
+  background: #8B4513;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #adb5bd;
-  transition: all 0.2s;
+  font-weight: bold;
+  font-size: 13px;
+  color: white;
 }
-
-.menu-trigger:hover {
-  background: #e9ecef;
-  color: #3E2C1F;
+.unread-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
+.conversation-info { flex: 1; min-width: 0; }
+.name { font-weight: 600; font-size: 13px; }
+.last-message { font-size: 11px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.time {
+  font-size: 9px;
+  color: #9ca3af;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+.conversation-menu {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+.menu-trigger { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 50%; color: #9ca3af; }
+.menu-trigger:hover { background: #f0f0f0; color: #4b5563; }
 .menu-dropdown {
   position: absolute;
   right: 0;
-  top: 35px;
+  top: 28px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  width: 200px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  width: 180px;
   z-index: 100;
   overflow: hidden;
-  animation: fadeIn 0.2s ease;
 }
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  padding: 12px 16px;
+  padding: 8px 12px;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  color: #3E2C1F;
-  transition: background 0.2s;
-  text-align: left;
-}
-
-.menu-item:hover {
-  background: #f8f9fa;
-}
-
-.menu-item.delete {
-  color: #e74c3c;
-}
-
-.menu-item.delete:hover {
-  background: #fee;
-}
-
-.avatar {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #D2B48C, #3E2C1F);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  margin-right: 12px;
-  flex-shrink: 0;
-}
-
-.unread-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #e74c3c;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.conversation-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.name {
-  font-weight: 600;
-  color: #3E2C1F;
-  margin-bottom: 4px;
-}
-
-.last-message {
-  font-size: 13px;
-  color: #868e96;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.time {
-  font-size: 11px;
-  color: #adb5bd;
-  flex-shrink: 0;
-  margin-left: 8px;
-}
-
-/* Zone de chat principale */
-.chat-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: white;
-}
-
-.chat-header {
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
-  background: white;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.back-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #3E2C1F;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-info .avatar {
-  width: 45px;
-  height: 45px;
-  font-size: 16px;
-}
-
-.user-info h4 {
-  margin: 0;
-  font-size: 16px;
-  color: #3E2C1F;
-}
-
-.status {
   font-size: 12px;
-  color: #adb5bd;
 }
-
-.status.online {
-  color: #51cf66;
+.menu-item:hover { background: #f9fafb; }
+.menu-item.delete { color: #dc2626; }
+.menu-item.delete:hover { background: #fef2f2; }
+/* Chat main */
+.chat-main { flex: 1; display: flex; flex-direction: column; background: #fff; }
+.chat-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
-
-/* Messages area */
+.back-btn {
+  background: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  color: #6F4E37;
+}
+.back-btn:hover { background: #e5e7eb; }
+.user-info { display: flex; align-items: center; gap: 10px; }
+.user-info .avatar { width: 32px; height: 32px; font-size: 12px; }
+.status { font-size: 10px; color: #6b7280; }
+.status.online { color: #10b981; }
 .messages-area {
   flex: 1;
-  padding: 20px;
+  padding: 14px;
   overflow-y: auto;
-  background: #f8f9fa;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
-
-.message {
-  display: flex;
-  max-width: 70%;
-}
-
-.message.sent {
-  justify-content: flex-end;
-  align-self: flex-end;
-}
-
-.message.received {
-  justify-content: flex-start;
-  align-self: flex-start;
-}
-
+.message { display: flex; max-width: 70%; }
+.message.sent { justify-content: flex-end; align-self: flex-end; }
+.message.received { justify-content: flex-start; align-self: flex-start; }
 .message-content {
-  padding: 10px 14px;
-  border-radius: 18px;
-  position: relative;
+  padding: 6px 10px;
+  border-radius: 16px;
   max-width: 100%;
 }
-
-.message.sent .message-content {
-  background: #D2B48C;
-  color: white;
-  border-bottom-right-radius: 4px;
-}
-
-.message.received .message-content {
-  background: white;
-  color: #3E2C1F;
-  border-bottom-left-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.message-content p {
-  margin: 0;
-  font-size: 14px;
-  word-wrap: break-word;
-}
-
-.message-footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-}
-
-.message-content .time {
-  font-size: 10px;
-  color: #000000;
-  font-weight: 500;
-  opacity: 0.8;
-}
-
-.message.sent .message-content .time {
-  color: #2c2c2c;
-}
-
-.message.received .message-content .time {
-  color: #000000;
-}
-
-.read-status {
-  display: inline-flex;
-  align-items: center;
-  opacity: 0.7;
-}
-
-.message-image img {
-  max-width: 200px;
-  border-radius: 8px;
-}
-
-.message-file .file-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Typing indicator */
-.typing-indicator {
-  padding: 8px 16px;
-  background: white;
-  border-radius: 18px;
-  align-self: flex-start;
-  font-size: 12px;
-  color: #868e96;
-}
-
-/* Input area */
+.message.sent .message-content { background: #D2B48C; color: white; border-bottom-right-radius: 4px; }
+.message.received .message-content { background: #f3f4f6; border-bottom-left-radius: 4px; box-shadow: 0 1px 1px rgba(0,0,0,0.05); }
+.message-content p { margin: 0; font-size: 12px; word-wrap: break-word; }
+.message-footer { display: flex; justify-content: center; align-items: center; gap: 5px; margin-top: 3px; }
+.message-content .time { font-size: 8px; opacity: 0.7; }
+.message.sent .message-content .time { color: #fef9c3; }
+.message-image img { max-width: 160px; border-radius: 10px; }
+.typing-indicator { padding: 5px 10px; background: #f3f4f6; border-radius: 16px; align-self: flex-start; font-size: 10px; }
 .chat-input-area {
-  padding: 20px;
-  border-top: 1px solid #e9ecef;
+  padding: 10px 14px;
+  border-top: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: white;
-}
-
-.input-actions {
-  display: flex;
   gap: 8px;
+  background: #fff;
 }
-
 .action-btn {
-  background: none;
+  background: #f3f4f6;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
-  color: #adb5bd;
+  color: #6F4E37;
 }
-
-.action-btn:hover {
-  background: #f1f3f5;
-  color: #D2B48C;
-}
-
-.message-input {
-  flex: 1;
-  padding: 12px 16px;
-  border: 1px solid #e9ecef;
-  border-radius: 25px;
-  outline: none;
-  font-size: 14px;
-  transition: border 0.2s;
-}
-
-.message-input:focus {
-  border-color: #D2B48C;
-}
-
+.action-btn:hover { background: #e5e7eb; }
 .send-btn {
-  background: #D2B48C;
+  background: #8B4513;
   border: none;
   cursor: pointer;
-  padding: 10px;
+  padding: 6px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1253,379 +771,188 @@ onMounted(async () => {
   transition: all 0.2s;
   color: white;
 }
-
-.send-btn:hover {
-  background: #3E2C1F;
-  transform: scale(1.05);
-}
-
-.send-icon {
-  transform: rotate(-45deg);
-  transition: transform 0.3s ease;
-}
-
-.send-btn:hover .send-icon {
-  transform: rotate(0deg);
-}
-
-.hidden {
-  display: none;
-}
-
-/* États vides */
-.no-conversation {
+.send-btn:hover { background: #6F4E37; transform: scale(1.02); }
+.send-icon { transform: rotate(-45deg); }
+.message-input {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  color: #adb5bd;
-  background: white;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  outline: none;
+  font-size: 12px;
+  color: #1e293b;
 }
-
-.start-chat-btn-primary {
-  padding: 12px 24px;
-  background: #D2B48C;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.start-chat-btn-primary:hover {
-  background: #3E2C1F;
-  transform: scale(1.05);
-}
-
-.loading-conv, .loading-messages {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 40px;
-  text-align: center;
-  color: #adb5bd;
-}
-
+.message-input::placeholder { color: #9ca3af; }
+.message-input:focus { border-color: #D2B48C; box-shadow: 0 0 0 2px rgba(210,180,140,0.2); }
+.hidden { display: none; }
+.no-conversation { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; }
+.new-message-icon-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #8B4513; }
+.loading-conv, .loading-messages { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 30px; }
 .spinner-small {
-  width: 24px;
-  height: 24px;
-  border: 2px solid #e9ecef;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
   border-top-color: #D2B48C;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-
-.no-messages {
-  text-align: center;
-  padding: 40px;
-  color: #adb5bd;
-}
-
-/* Modal */
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Modals - centrées */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
-
 .modal-content {
   background: white;
   border-radius: 20px;
   width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
+  max-width: 420px;
+  max-height: 70vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
-
-.modal-header {
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.modal-header { padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+.search-bar { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; }
+.search-input { width: 100%; padding: 6px 10px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 20px; }
+.user-item { display: flex; align-items: center; padding: 8px 12px; cursor: pointer; }
+.user-item:hover { background: #f9fafb; }
+.user-item .avatar { width: 32px; height: 32px; margin-right: 10px; }
+/* MODALE DE SUPPRESSION (icône centrée) */
+.delete-overlay {
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
 }
-
-.modal-header h3 {
-  margin: 0;
-  color: #3E2C1F;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  color: #adb5bd;
-}
-
-.search-bar {
-  padding: 16px 20px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 16px;
-  border: 1px solid #e9ecef;
-  border-radius: 25px;
-  outline: none;
-  font-size: 14px;
-}
-
-.users-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px 0;
-}
-
-.user-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 20px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.user-item:hover {
-  background: #f8f9fa;
-}
-
-.user-item .avatar {
-  width: 45px;
-  height: 45px;
-  font-size: 16px;
-  margin-right: 12px;
-}
-
-.user-info .name {
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-
-.user-info .email, .user-info .role {
-  font-size: 12px;
-  color: #adb5bd;
-}
-
-.searching {
-  padding: 40px;
+.delete-modal-custom {
+  background: rgba(255,255,255,0.96);
+  border-radius: 32px;
   text-align: center;
-  color: #adb5bd;
-}
-
-.spinner {
-  width: 30px;
-  height: 30px;
-  border: 3px solid #e9ecef;
-  border-top-color: #D2B48C;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 10px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.no-results {
-  padding: 40px;
-  text-align: center;
-  color: #adb5bd;
-}
-
-/* Modal de suppression */
-.delete-modal {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
+  padding: 32px 24px;
   width: 90%;
-  max-width: 320px;
-  text-align: center;
-  animation: fadeIn 0.2s ease;
+  max-width: 340px;
+  box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+  animation: fadeInScale 0.2s ease-out;
 }
-
-.delete-modal-icon {
+.delete-icon {
+  display: flex;
+  justify-content: center;
   margin-bottom: 16px;
 }
-
-.delete-modal h3 {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-  color: #3E2C1F;
+.delete-icon svg {
+  width: 64px;
+  height: 64px;
+  stroke: #ef4444;
+  stroke-width: 1.2;
 }
-
-.delete-modal p {
-  margin: 0 0 24px 0;
-  font-size: 14px;
-  color: #868e96;
+.delete-modal-custom h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+  opacity: 0.85;
 }
-
-.delete-modal-buttons {
+.delete-modal-custom p {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 28px;
+}
+.delete-modal-custom .delete-modal-buttons {
   display: flex;
   gap: 12px;
+  justify-content: center;
 }
-
-.cancel-btn, .confirm-delete-btn {
+.delete-modal-custom .cancel-btn,
+.delete-modal-custom .confirm-delete-btn {
   flex: 1;
-  padding: 12px;
+  padding: 10px 0;
+  border-radius: 40px;
+  font-size: 0.9rem;
+  font-weight: 500;
   border: none;
-  border-radius: 12px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
   transition: all 0.2s;
 }
-
-.cancel-btn {
-  background: #f8f9fa;
-  color: #868e96;
+.delete-modal-custom .cancel-btn {
+  background: #f1f5f9;
+  color: #1e293b;
 }
-
-.cancel-btn:hover {
-  background: #e9ecef;
+.delete-modal-custom .cancel-btn:hover {
+  background: #e2e8f0;
 }
-
-.confirm-delete-btn {
-  background: #e74c3c;
+.delete-modal-custom .confirm-delete-btn {
+  background: #ef4444;
   color: white;
 }
-
-.confirm-delete-btn:hover {
-  background: #c0392b;
+.delete-modal-custom .confirm-delete-btn:hover {
+  background: #dc2626;
+  transform: scale(1.02);
 }
-
-/* Toast notification */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* Toast simple (style d'origine) */
 .toast-notification {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 12px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   padding: 12px 20px;
-  border-radius: 50px;
-  color: white;
-  font-size: 14px;
-  z-index: 1000;
-  animation: slideUp 0.3s ease;
+  z-index: 1100;
+  border: 1px solid #e5e7eb;
 }
-
-.toast-notification.success {
-  background: #27ae60;
+.toast-notification.success { border-left: 4px solid #10b981; }
+.toast-notification.error { border-left: 4px solid #ef4444; }
+.toast-notification button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 16px;
 }
-
-.toast-notification.error {
-  background: #e74c3c;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-/* Scrollbar */
-.messages-area::-webkit-scrollbar,
-.conversations-list::-webkit-scrollbar,
-.users-list::-webkit-scrollbar {
-  width: 5px;
-}
-
-.messages-area::-webkit-scrollbar-track,
-.conversations-list::-webkit-scrollbar-track,
-.users-list::-webkit-scrollbar-track {
-  background: #f1f3f5;
-}
-
-.messages-area::-webkit-scrollbar-thumb,
-.conversations-list::-webkit-scrollbar-thumb,
-.users-list::-webkit-scrollbar-thumb {
-  background: #D2B48C;
-  border-radius: 5px;
-}
-
-/* Responsive */
-.mobile-only {
-  display: none;
-}
-
+/* Responsive mobile */
 @media (max-width: 640px) {
-  .mobile-only {
-    display: flex;
-  }
-  
-  .chat-sidebar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 10;
-    transform: translateX(-100%);
-    width: 280px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .chat-sidebar.sidebar-open {
-    transform: translateX(0);
-  }
-  
-  .chat-main {
+  .desktop-only { display: none; }
+  .chat-container {
     width: 100%;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    margin: 0;
   }
-  
-  .message {
-    max-width: 85%;
+  .chat-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--header-height, 60px);
+    bottom: 0;
+    z-index: 20;
+    transform: translateX(-100%);
+    width: 85%;
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    background: white;
   }
-  
-  .sidebar-header h3 {
-    font-size: 16px;
-  }
-  
-  .avatar {
-    width: 40px;
-    height: 40px;
-    font-size: 14px;
-  }
-  
-  .name {
-    font-size: 14px;
-  }
-  
-  .last-message {
-    font-size: 11px;
-  }
-  
-  .chat-header {
-    padding: 12px 16px;
-  }
-  
-  .messages-area {
-    padding: 12px;
-  }
-  
-  .chat-input-area {
-    padding: 12px;
-  }
+  .chat-sidebar.sidebar-open { transform: translateX(0); }
+  .chat-main { width: 100%; height: 100%; }
+  .message { max-width: 85%; }
+  .back-btn { display: flex; }
+  .no-conversation.desktop-only { display: none; }
+  .modal-content { width: 90%; max-width: 90%; }
+  .delete-modal-custom { width: 85%; padding: 24px 20px; }
+  .delete-icon svg { width: 48px; height: 48px; }
 }
 </style>

@@ -1,9 +1,36 @@
 <template>
-  <div class="min-h-screen bg-[#F8F5F2] pt-24 pb-12 px-4 no-scrollbar">
-    <div class="max-w-[580px] mx-auto space-y-6">
+  <div class="min-h-screen bg-white">
+    <div class="max-w-[800px] mx-auto px-4 py-6">
       
+      <!-- Notification Toast -->
+      <transition name="notify-slow">
+        <div v-if="notification.show" 
+          class="fixed top-6 right-4 left-4 md:left-auto md:right-8 md:w-80 z-[100] flex items-center gap-4 px-5 py-4 rounded-2xl shadow-2xl border border-[#F3EEEA] bg-white/95 backdrop-blur-md"
+        >
+          <div class="flex-shrink-0 w-10 h-10 rounded-xl" :class="notification.type === 'success' ? 'bg-emerald-50' : 'bg-red-50'">
+            <div class="flex items-center justify-center h-full">
+              <svg v-if="notification.type === 'success'" class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <svg v-else class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+          
+          <div class="flex-grow">
+            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ notification.type === 'success' ? 'Succès' : 'Erreur' }}</p>
+            <p class="text-xs font-bold text-[#3E2C1F]">{{ notification.message }}</p>
+          </div>
+
+          <button @click="notification.show = false" class="text-gray-300 hover:text-gray-400 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5"/></svg>
+          </button>
+        </div>
+      </transition>
+
       <!-- Formulaire de création de post -->
-      <div class="bg-white rounded-xl shadow-sm border border-[#EFE9E4] p-4">
+      <div class="bg-white rounded-xl shadow-sm border border-[#EFE9E4] p-4 mb-6">
         <div class="flex gap-3">
           <div class="w-10 h-10 rounded-full bg-[#D2B48C] flex-shrink-0 flex items-center justify-center text-white font-bold shadow-inner">
             {{ userInitial }}
@@ -18,17 +45,42 @@
               :class="isExpanded ? 'h-24' : 'h-10'"
             ></textarea>
 
+            <!-- Aperçu des fichiers sélectionnés pour création -->
+            <div v-if="imagePreviewUrl || pdfFile" class="mt-2 p-2 bg-[#F8F5F2] rounded-lg flex items-center gap-3">
+              <div v-if="imagePreviewUrl" class="relative">
+                <img :src="imagePreviewUrl" class="h-16 w-16 object-cover rounded-lg border border-[#EFE9E4]">
+                <button @click="removeSelectedImage" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div v-if="pdfFile" class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#EFE9E4]">
+                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <span class="text-sm text-gray-700">{{ pdfFile.name }} ({{ formatFileSize(pdfFile.size) }})</span>
+                <button @click="removeSelectedPdf" class="text-red-500 hover:text-red-700">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
             <transition name="fade">
               <div v-if="isExpanded" class="flex items-center justify-between pt-2 border-t border-[#F3EEEA]">
                 <div class="flex gap-2">
-                  <button @click="$refs.imageInput.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#F3EEEA] rounded-lg transition-colors group">
+                  <button @click="imageInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#F3EEEA] rounded-lg transition-colors group">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="1.5"/></svg>
                     <span class="text-xs font-semibold text-gray-600">Photo</span>
                   </button>
 
-                  <button v-if="userRole !== 'parent'" @click="$refs.fileInput.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#F3EEEA] rounded-lg transition-colors">
-                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-width="1.5"/></svg>
-                    <span class="text-xs font-semibold text-gray-600">PDF</span>
+                  <button v-if="userRole !== 'parent'" @click="fileInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#F3EEEA] rounded-lg transition-colors">
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                    <span class="text-xs font-semibold text-gray-600">Fichier</span>
                   </button>
                 </div>
 
@@ -48,11 +100,6 @@
         <input type="file" ref="fileInput" accept=".pdf" class="hidden" @change="handleFileUpload">
       </div>
 
-      <!-- Message d'erreur/succès -->
-      <div v-if="message.text" :class="['p-3 rounded-lg text-center', message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700']">
-        {{ message.text }}
-      </div>
-
       <!-- Liste des posts -->
       <div class="space-y-4">
         <div v-for="post in posts" :key="post.id" class="bg-white rounded-xl shadow-sm border border-[#EFE9E4] overflow-hidden transition-all hover:shadow-md">
@@ -67,7 +114,6 @@
               </div>
             </div>
             
-            <!-- Menu d'actions -->
             <div v-if="post.user?.id === user.id" class="relative">
               <button @click="toggleMenu(post.id)" class="p-2 hover:bg-[#F8F5F2] rounded-lg transition-colors">
                 <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +128,7 @@
                   </svg>
                   Modifier
                 </button>
-                <button @click="deletePost(post.id)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F8F5F2] flex items-center gap-2">
+                <button @click="confirmDeletePost(post.id)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F8F5F2] flex items-center gap-2">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                   </svg>
@@ -96,19 +142,22 @@
             <p class="text-sm text-gray-700 leading-relaxed">{{ post.contenu }}</p>
           </div>
 
-          <!-- Affichage de l'image -->
-          <div v-if="post.imageData" class="w-full bg-gray-100">
+          <!-- Image cliquable -->
+          <div v-if="post.imageData" class="w-full bg-gray-100 cursor-pointer" @click="openImageViewer(post)">
             <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" alt="Publication">
           </div>
 
-          <!-- Affichage du PDF -->
+          <!-- PDF avec téléchargement confirmé -->
           <div v-if="post.fileData" class="px-4 py-2">
-            <a :href="`data:${post.fileType};base64,${post.fileData}`" :download="post.fileName" class="inline-flex items-center gap-2 text-sm text-[#D2B48C] hover:text-[#3E2C1F] transition-colors">
+            <button @click="confirmDownload(post)" class="inline-flex items-center gap-2 text-sm text-[#D2B48C] hover:text-[#3E2C1F] transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
               </svg>
-              {{ post.fileName }}
-            </a>
+              <span>{{ post.fileName }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+            </button>
           </div>
 
           <!-- Actions Like et Commentaire -->
@@ -158,23 +207,163 @@
 
     <!-- Modal de modification -->
     <div v-if="editModal.open" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" @click.self="closeEditModal">
-      <div class="bg-white rounded-xl max-w-lg w-full p-6">
+      <div class="bg-white rounded-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
         <h3 class="text-lg font-bold text-[#3E2C1F] mb-4">Modifier le post</h3>
-        <textarea v-model="editModal.contenu" class="w-full bg-[#F3EEEA] rounded-xl p-3 text-sm focus:ring-1 focus:ring-[#D2B48C] outline-none resize-none h-32"></textarea>
-        <div class="flex justify-end gap-3 mt-4">
+        
+        <textarea 
+          v-model="editModal.contenu" 
+          ref="editTextarea"
+          class="w-full bg-[#F3EEEA] rounded-xl p-3 text-sm focus:ring-1 focus:ring-[#D2B48C] outline-none resize-none overflow-hidden"
+          rows="3"
+          placeholder="Votre message..."
+          @input="autoResizeTextarea"
+        ></textarea>
+        
+        <!-- Section Image avec icône SVG -->
+        <div class="mt-4 border border-[#EFE9E4] rounded-lg p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="text-xs font-bold text-gray-600">Image</span>
+          </div>
+          
+          <div v-if="editModal.currentImageUrl && !editModal.newImagePreview" class="relative inline-block mb-3">
+            <img :src="editModal.currentImageUrl" class="max-h-32 rounded-lg border border-[#EFE9E4]">
+            <button @click="removeCurrentImage" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div v-if="editModal.newImagePreview" class="relative inline-block mb-3">
+            <img :src="editModal.newImagePreview" class="max-h-32 rounded-lg border border-[#EFE9E4]">
+            <button @click="removeNewImage" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <button @click="editImageInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 bg-[#F3EEEA] rounded-lg hover:bg-[#E8E0D8] transition-colors">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="1.5"/></svg>
+            <span class="text-xs font-semibold text-gray-700">Changer l'image</span>
+          </button>
+          <input type="file" accept="image/*" ref="editImageInput" class="hidden" @change="handleEditImageUpload">
+        </div>
+
+        <!-- Section PDF avec icône SVG -->
+        <div class="mt-4 border border-[#EFE9E4] rounded-lg p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            <span class="text-xs font-bold text-gray-600">Document PDF</span>
+          </div>
+          
+          <div v-if="editModal.currentFileName && !editModal.newPdfFile" class="flex items-center justify-between bg-gray-50 p-2 rounded-lg mb-3">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              <span class="text-sm text-gray-700">{{ editModal.currentFileName }}</span>
+            </div>
+            <button @click="removeCurrentFile" class="text-red-500 hover:text-red-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div v-if="editModal.newPdfFile" class="flex items-center justify-between bg-green-50 p-2 rounded-lg border border-green-200 mb-3">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              <span class="text-sm text-gray-700">{{ editModal.newPdfFile.name }} ({{ formatFileSize(editModal.newPdfFile.size) }})</span>
+            </div>
+            <button @click="removeNewFile" class="text-red-500 hover:text-red-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <button @click="editFileInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 bg-[#F3EEEA] rounded-lg hover:bg-[#E8E0D8] transition-colors">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+            </svg>
+            <span class="text-xs font-semibold text-gray-700">Changer le document</span>
+          </button>
+          <input type="file" accept=".pdf" ref="editFileInput" class="hidden" @change="handleEditFileUpload">
+        </div>
+        
+        <div class="flex justify-end gap-3 mt-6">
           <button @click="closeEditModal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Annuler</button>
-          <button @click="updatePost" class="px-4 py-2 bg-[#3E2C1F] text-white rounded-lg hover:bg-[#D2B48C]">Enregistrer</button>
+          <button @click="updatePost" :disabled="isUpdating" class="px-4 py-2 bg-[#3E2C1F] text-white rounded-lg hover:bg-[#D2B48C] disabled:opacity-50">
+            {{ isUpdating ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- Modal de confirmation personnalisée (icône dynamique selon l'action) -->
+    <div v-if="confirmModal.show" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[200] p-4" @click.self="closeConfirmModal">
+      <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl text-center">
+        <!-- Icône centrée avec condition -->
+        <div class="flex justify-center mb-4">
+          <div class="w-16 h-16 rounded-full bg-[#F3EEEA] flex items-center justify-center">
+            <!-- Icône de suppression (poubelle) -->
+            <svg v-if="confirmModal.iconType === 'delete'" class="w-8 h-8 text-[#D2B48C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <!-- Icône de téléchargement (flèche vers le bas) -->
+            <svg v-else class="w-8 h-8 text-[#D2B48C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+          </div>
+        </div>
+        <!-- Titre centré -->
+        <h3 class="text-lg font-bold text-[#3E2C1F] mb-2">{{ confirmModal.title }}</h3>
+        <!-- Message -->
+        <p class="text-sm text-gray-600 mb-6">{{ confirmModal.message }}</p>
+        <!-- Boutons centrés avec couleurs du site -->
+        <div class="flex justify-center gap-3">
+          <button @click="closeConfirmModal" class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+            Annuler
+          </button>
+          <button @click="confirmModal.onConfirm" class="px-5 py-2 text-sm font-medium text-white bg-[#3E2C1F] rounded-lg hover:bg-[#D2B48C] transition-colors">
+            Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal d'aperçu d'image avec téléchargement -->
+    <div v-if="imageViewer.show" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[200] p-4" @click.self="closeImageViewer">
+      <div class="relative max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden">
+        <img :src="imageViewer.url" class="max-w-full max-h-[80vh] object-contain">
+        <button @click="downloadCurrentImage" class="absolute bottom-4 right-4 bg-[#3E2C1F] text-white p-2 rounded-full hover:bg-[#D2B48C] transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        </button>
+        <button @click="closeImageViewer" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <input type="file" ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload">
+    <input type="file" ref="fileInput" accept=".pdf" class="hidden" @change="handleFileUpload">
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
 import axios from 'axios'
 
-// Données Utilisateur
 const user = JSON.parse(localStorage.getItem('user') || '{"nom": "Utilisateur", "role": "parent", "id": 1}')
 const userInitial = user.nom.charAt(0).toUpperCase()
 const userRole = user.role
@@ -182,238 +371,380 @@ const userRole = user.role
 // États UI
 const isExpanded = ref(false)
 const isLoading = ref(false)
+const isUpdating = ref(false)
 const activeMenu = ref<number | null>(null)
 const activeComments = ref<number | null>(null)
 const newComment = ref<{ [key: number]: string }>({})
 
-// Message
-const message = ref({ text: '', type: 'success' })
+// Notification
+const notification = ref({ show: false, message: '', type: 'success' })
 
-// Formulaire
+// Formulaire création
 const formData = reactive({ contenu: '', userId: user.id })
 const imageFile = ref<File | null>(null)
 const pdfFile = ref<File | null>(null)
+const imagePreviewUrl = ref<string | null>(null)
 
 // Posts
 const posts = ref<any[]>([])
 
-// Modal d'édition
+// Modal édition
 const editModal = reactive({
   open: false,
   id: null as number | null,
-  contenu: ''
+  contenu: '',
+  currentImageUrl: null as string | null,
+  currentImageType: null as string | null,
+  currentImageData: null as string | null,
+  currentFileName: null as string | null,
+  currentFileType: null as string | null,
+  currentFileData: null as string | null,
+  newImageFile: null as File | null,
+  newImagePreview: null as string | null,
+  newPdfFile: null as File | null,
+  removeImage: false,
+  removeFile: false
 })
 
-// API Base URL
+// Références inputs
+const imageInput = ref<HTMLInputElement | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
+const editImageInput = ref<HTMLInputElement | null>(null)
+const editFileInput = ref<HTMLInputElement | null>(null)
+const editTextarea = ref<HTMLTextAreaElement | null>(null)
+
+// Modal confirmation personnalisée (avec type d'icône)
+const confirmModal = reactive({
+  show: false,
+  title: '',
+  message: '',
+  iconType: 'delete' as 'delete' | 'download',
+  onConfirm: () => {}
+})
+
+// Image viewer
+const imageViewer = reactive({
+  show: false,
+  url: '',
+  fileType: '',
+  fileData: ''
+})
+
 const API_BASE_URL = 'http://localhost:8082/api'
 
-// Afficher un message
-const showMessage = (text: string, type: 'success' | 'error') => {
-  message.value = { text, type }
-  setTimeout(() => {
-    message.value = { text: '', type: 'success' }
-  }, 3000)
+// Helpers
+const formatFileSize = (bytes: number): string => {
+  if (bytes < 1024) return bytes + ' o'
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' Ko'
+  return (bytes / (1024 * 1024)).toFixed(1) + ' Mo'
 }
 
-// Récupérer les posts
+const showNotification = (message: string, type: 'success' | 'error') => {
+  notification.value = { show: true, message, type }
+  setTimeout(() => { notification.value.show = false }, 20000)
+}
+
+// Confirmation personnalisée avec icône dynamique
+const showConfirm = (title: string, message: string, onConfirm: () => void, iconType: 'delete' | 'download' = 'delete') => {
+  confirmModal.title = title
+  confirmModal.message = message
+  confirmModal.iconType = iconType
+  confirmModal.onConfirm = () => {
+    onConfirm()
+    closeConfirmModal()
+  }
+  confirmModal.show = true
+}
+
+const closeConfirmModal = () => {
+  confirmModal.show = false
+  confirmModal.onConfirm = () => {}
+}
+
+// Image viewer
+const openImageViewer = (post: any) => {
+  imageViewer.url = `data:${post.imageType};base64,${post.imageData}`
+  imageViewer.fileType = post.imageType
+  imageViewer.fileData = post.imageData
+  imageViewer.show = true
+}
+
+const closeImageViewer = () => {
+  imageViewer.show = false
+  imageViewer.url = ''
+  imageViewer.fileData = ''
+}
+
+const downloadCurrentImage = () => {
+  const link = document.createElement('a')
+  link.href = imageViewer.url
+  link.download = 'image.jpg'
+  link.click()
+  showNotification('Image téléchargée', 'success')
+}
+
+// API
 const fetchPosts = async () => {
   isLoading.value = true
   try {
-    console.log('Chargement des posts pour user:', user.id)
     const response = await axios.get(`${API_BASE_URL}/posts/user/${user.id}`)
-    console.log('Réponse brute:', response.data)
-    
     if (response.data.success) {
       posts.value = response.data.posts
-      console.log('Posts chargés:', posts.value.length)
-    } else {
-      console.error('Erreur dans la réponse:', response.data)
     }
-  } catch (error: any) {
-    console.error('Erreur lors du chargement des posts:', error)
-    showMessage('Erreur de chargement des publications', 'error')
+  } catch (error) {
+    showNotification('Erreur de chargement des publications', 'error')
   } finally {
     isLoading.value = false
   }
 }
 
-// Formater la date
 const formatDate = (dateString: string) => {
   if (!dateString) return 'Date inconnue'
   try {
     const date = new Date(dateString)
-    return date.toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   } catch {
     return 'Date inconnue'
   }
 }
 
-// Upload image
-const handleImageUpload = (e: any) => {
-  if (e.target.files[0]) {
-    imageFile.value = e.target.files[0]
-    console.log('Image sélectionnée:', imageFile.value.name)
+// Gestion fichier création
+const handleImageUpload = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    imageFile.value = file
+    const reader = new FileReader()
+    reader.onload = (ev) => { imagePreviewUrl.value = ev.target?.result as string }
+    reader.readAsDataURL(file)
+    showNotification('Image ajoutée ✓', 'success')
   }
 }
 
-// Upload PDF
-const handleFileUpload = (e: any) => {
-  if (e.target.files[0]) {
-    pdfFile.value = e.target.files[0]
-    console.log('PDF sélectionné:', pdfFile.value.name)
+const handleFileUpload = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    pdfFile.value = file
+    showNotification(`Document "${file.name}" ajouté ✓`, 'success')
   }
 }
 
-// Annuler la création
+const removeSelectedImage = () => {
+  imageFile.value = null
+  imagePreviewUrl.value = null
+  if (imageInput.value) imageInput.value.value = ''
+}
+
+const removeSelectedPdf = () => {
+  pdfFile.value = null
+  if (fileInput.value) fileInput.value.value = ''
+}
+
 const cancelPost = () => {
   formData.contenu = ''
   imageFile.value = null
   pdfFile.value = null
+  imagePreviewUrl.value = null
   isExpanded.value = false
+  if (imageInput.value) imageInput.value.value = ''
+  if (fileInput.value) fileInput.value.value = ''
 }
 
-// Créer un post
 const handleSubmit = async () => {
   if (!formData.contenu.trim()) {
-    showMessage('Veuillez écrire un message', 'error')
+    showNotification('Veuillez écrire un message', 'error')
     return
   }
-  
   isLoading.value = true
-  
   const submitData = new FormData()
   submitData.append('contenu', formData.contenu)
   submitData.append('userId', String(user.id))
-  
-  if (imageFile.value) {
-    submitData.append('image', imageFile.value)
-  }
-  if (pdfFile.value) {
-    submitData.append('file', pdfFile.value)
-  }
-  
+  if (imageFile.value) submitData.append('image', imageFile.value)
+  if (pdfFile.value) submitData.append('file', pdfFile.value)
   try {
-    console.log('Envoi du post...')
-    const response = await axios.post(`${API_BASE_URL}/posts/create`, submitData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
-    
-    console.log('Réponse création:', response.data)
-    
+    const response = await axios.post(`${API_BASE_URL}/posts/create`, submitData, { headers: { 'Content-Type': 'multipart/form-data' } })
     if (response.data.success) {
-      showMessage('Post publié avec succès !', 'success')
+      showNotification('Post publié avec succès !', 'success')
       cancelPost()
-      await fetchPosts() // Recharger la liste
+      await fetchPosts()
     } else {
-      showMessage(response.data.error || 'Erreur lors de la publication', 'error')
+      showNotification(response.data.error || 'Erreur lors de la publication', 'error')
     }
-  } catch (error: any) {
-    console.error('Erreur lors de la publication:', error)
-    const errorMsg = error.response?.data?.error || 'Erreur lors de la publication'
-    showMessage(errorMsg, 'error')
+  } catch (error) {
+    showNotification('Erreur lors de la publication', 'error')
   } finally {
     isLoading.value = false
   }
 }
 
-// Supprimer un post
+// Suppression avec confirmation (icône poubelle)
+const confirmDeletePost = (postId: number) => {
+  showConfirm('Supprimer le post', 'Voulez-vous vraiment supprimer cette publication ? Cette action est irréversible.', () => deletePost(postId), 'delete')
+}
+
 const deletePost = async (postId: number) => {
-  if (confirm('Voulez-vous vraiment supprimer ce post ?')) {
-    try {
-      const response = await axios.delete(`${API_BASE_URL}/posts/delete/${postId}`)
-      if (response.data.success) {
-        showMessage('Post supprimé avec succès', 'success')
-        await fetchPosts()
-      }
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error)
-      showMessage('Erreur lors de la suppression', 'error')
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/posts/delete/${postId}`)
+    if (response.data.success) {
+      showNotification('Post supprimé avec succès', 'success')
+      await fetchPosts()
     }
+  } catch (error) {
+    showNotification('Erreur lors de la suppression', 'error')
   }
   activeMenu.value = null
 }
 
-// Ouvrir le modal d'édition
+// Modale édition
 const openEditModal = (post: any) => {
   editModal.id = post.id
   editModal.contenu = post.contenu
+  editModal.currentImageUrl = post.imageData ? `data:${post.imageType};base64,${post.imageData}` : null
+  editModal.currentImageType = post.imageType || null
+  editModal.currentImageData = post.imageData || null
+  editModal.currentFileName = post.fileName || null
+  editModal.currentFileType = post.fileType || null
+  editModal.currentFileData = post.fileData || null
+  editModal.newImageFile = null
+  editModal.newImagePreview = null
+  editModal.newPdfFile = null
+  editModal.removeImage = false
+  editModal.removeFile = false
   editModal.open = true
   activeMenu.value = null
+  nextTick(() => autoResizeTextarea())
 }
 
-// Fermer le modal
 const closeEditModal = () => {
   editModal.open = false
   editModal.id = null
   editModal.contenu = ''
+  editModal.currentImageUrl = null
+  editModal.currentFileName = null
+  editModal.newImageFile = null
+  editModal.newImagePreview = null
+  editModal.newPdfFile = null
+  editModal.removeImage = false
+  editModal.removeFile = false
 }
 
-// Mettre à jour un post
-const updatePost = async () => {
-  if (!editModal.id) return
-  
-  try {
-    const response = await axios.put(`${API_BASE_URL}/posts/update/${editModal.id}`, null, {
-      params: { 
-        contenu: editModal.contenu,
-        userId: user.id
-      }
-    })
-    
-    if (response.data.success) {
-      showMessage('Post modifié avec succès', 'success')
-      await fetchPosts()
-      closeEditModal()
-    }
-  } catch (error) {
-    console.error('Erreur lors de la modification:', error)
-    showMessage('Erreur lors de la modification', 'error')
+const autoResizeTextarea = () => {
+  if (editTextarea.value) {
+    editTextarea.value.style.height = 'auto'
+    editTextarea.value.style.height = Math.min(editTextarea.value.scrollHeight, 200) + 'px'
   }
 }
 
-// Toggle like
+const handleEditImageUpload = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    editModal.newImageFile = file
+    const reader = new FileReader()
+    reader.onload = (ev) => { editModal.newImagePreview = ev.target?.result as string }
+    reader.readAsDataURL(file)
+    editModal.removeImage = false
+    showNotification('Nouvelle image sélectionnée', 'success')
+  }
+}
+
+const handleEditFileUpload = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    editModal.newPdfFile = file
+    editModal.removeFile = false
+    showNotification(`Nouveau document sélectionné : ${file.name}`, 'success')
+  }
+}
+
+const removeNewImage = () => {
+  editModal.newImageFile = null
+  editModal.newImagePreview = null
+  if (editImageInput.value) editImageInput.value.value = ''
+}
+
+const removeNewFile = () => {
+  editModal.newPdfFile = null
+  if (editFileInput.value) editFileInput.value.value = ''
+}
+
+const removeCurrentImage = () => {
+  editModal.removeImage = true
+  editModal.currentImageUrl = null
+  editModal.currentImageData = null
+  editModal.newImageFile = null
+  editModal.newImagePreview = null
+}
+
+const removeCurrentFile = () => {
+  editModal.removeFile = true
+  editModal.currentFileName = null
+  editModal.currentFileData = null
+  editModal.newPdfFile = null
+}
+
+const updatePost = async () => {
+  if (!editModal.id) return
+  isUpdating.value = true
+  const formDataUpdate = new FormData()
+  formDataUpdate.append('contenu', editModal.contenu)
+  formDataUpdate.append('userId', String(user.id))
+  if (editModal.newImageFile) formDataUpdate.append('image', editModal.newImageFile)
+  else if (editModal.removeImage) formDataUpdate.append('removeImage', 'true')
+  if (editModal.newPdfFile) formDataUpdate.append('file', editModal.newPdfFile)
+  else if (editModal.removeFile) formDataUpdate.append('removeFile', 'true')
+  try {
+    const response = await axios.put(`${API_BASE_URL}/posts/update/${editModal.id}`, formDataUpdate, { headers: { 'Content-Type': 'multipart/form-data' } })
+    if (response.data.success) {
+      showNotification('Post modifié avec succès', 'success')
+      await fetchPosts()
+      closeEditModal()
+    } else {
+      showNotification(response.data.error || 'Erreur lors de la modification', 'error')
+    }
+  } catch (error) {
+    showNotification('Erreur lors de la modification', 'error')
+  } finally {
+    isUpdating.value = false
+  }
+}
+
+// Téléchargement PDF avec confirmation (icône téléchargement)
+const confirmDownload = (post: any) => {
+  showConfirm('Télécharger le document', `Voulez-vous télécharger le fichier "${post.fileName}" ?`, () => {
+    const link = document.createElement('a')
+    link.href = `data:${post.fileType};base64,${post.fileData}`
+    link.download = post.fileName
+    link.click()
+    showNotification('Téléchargement démarré', 'success')
+  }, 'download')
+}
+
+// Likes, commentaires, etc.
 const toggleLike = async (postId: number) => {
   const post = posts.value.find(p => p.id === postId)
   if (!post) return
-  
   try {
-    const response = await axios.post(`${API_BASE_URL}/likes/toggle`, null, {
-      params: {
-        userId: user.id,
-        postId: postId
-      }
-    })
-    
+    const response = await axios.post(`${API_BASE_URL}/likes/toggle`, null, { params: { userId: user.id, postId } })
     if (response.data.success) {
       post.liked = response.data.liked
       post.likesCount = response.data.count
     }
-  } catch (error) {
-    console.error('Erreur like:', error)
-  }
+  } catch (error) { console.error(error) }
 }
 
-// Toggle commentaires
 const toggleComments = async (postId: number) => {
   if (activeComments.value === postId) {
     activeComments.value = null
   } else {
     activeComments.value = postId
-    // Charger les commentaires si pas déjà faits
     const post = posts.value.find(p => p.id === postId)
-    if (post && !post.comments?.length) {
-      await fetchComments(postId)
-    }
+    if (post && !post.comments?.length) await fetchComments(postId)
   }
 }
 
-// Récupérer les commentaires
 const fetchComments = async (postId: number) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/comments/post/${postId}`)
@@ -424,66 +755,55 @@ const fetchComments = async (postId: number) => {
         post.commentsCount = response.data.count
       }
     }
-  } catch (error) {
-    console.error('Erreur chargement commentaires:', error)
-  }
+  } catch (error) { console.error(error) }
 }
 
-// Ajouter un commentaire
 const addComment = async (postId: number) => {
   const commentText = newComment.value[postId]
   if (!commentText?.trim()) return
-  
   try {
-    const response = await axios.post(`${API_BASE_URL}/comments/add`, {
-      contenu: commentText,
-      user: { id: user.id },
-      post: { id: postId }
-    })
-    
+    const response = await axios.post(`${API_BASE_URL}/comments/add`, { contenu: commentText, user: { id: user.id }, post: { id: postId } })
     if (response.data.success) {
       const post = posts.value.find(p => p.id === postId)
       if (post) {
         if (!post.comments) post.comments = []
-        post.comments.unshift({
-          id: response.data.comment.id,
-          contenu: commentText,
-          user: { nom: user.nom, id: user.id },
-          createdAt: response.data.comment.createdAt
-        })
+        post.comments.unshift({ id: response.data.comment.id, contenu: commentText, user: { nom: user.nom, id: user.id }, createdAt: response.data.comment.createdAt })
         post.commentsCount = (post.commentsCount || 0) + 1
         newComment.value[postId] = ''
       }
     }
   } catch (error) {
-    console.error('Erreur commentaire:', error)
-    showMessage('Erreur lors de l\'ajout du commentaire', 'error')
+    showNotification('Erreur lors de l\'ajout du commentaire', 'error')
   }
 }
 
-// Toggle menu
-const toggleMenu = (postId: number) => {
-  activeMenu.value = activeMenu.value === postId ? null : postId
-}
-
-// Fermer le menu au clic ailleurs
+const toggleMenu = (postId: number) => { activeMenu.value = activeMenu.value === postId ? null : postId }
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement
-  if (!target.closest('.relative')) {
-    activeMenu.value = null
-  }
+  if (!target.closest('.relative')) activeMenu.value = null
 }
 
 onMounted(() => {
-  console.log('Composant monté, utilisateur:', user)
   fetchPosts()
   document.addEventListener('click', handleClickOutside)
 })
 </script>
 
 <style scoped>
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.notify-slow-enter-active {
+  transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.notify-slow-leave-active {
+  transition: all 0.5s ease-in;
+}
+.notify-slow-enter-from {
+  opacity: 0;
+  transform: translateX(30px) scale(0.95);
+}
+.notify-slow-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
 
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }

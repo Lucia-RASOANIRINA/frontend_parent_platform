@@ -6,14 +6,19 @@
       <div v-if="alert.show" 
         class="fixed top-6 right-4 left-4 md:left-auto md:right-8 md:w-80 z-[100] flex items-center gap-4 px-5 py-4 rounded-2xl shadow-2xl border border-[#F3EEEA] bg-white/95 backdrop-blur-md"
       >
-        <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+        <div class="flex-shrink-0 w-10 h-10 rounded-xl" :class="alert.type === 'success' ? 'bg-emerald-50' : 'bg-red-50'">
+          <div class="flex items-center justify-center h-full">
+            <svg v-if="alert.type === 'success'" class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <svg v-else class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
         </div>
         
         <div class="flex-grow">
-          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">Notification</p>
+          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ alert.type === 'success' ? 'Succès' : 'Erreur' }}</p>
           <p class="text-xs font-bold text-[#3E2C1F]">{{ alert.message }}</p>
         </div>
 
@@ -45,6 +50,29 @@
               class="w-full bg-transparent border-none text-base md:text-lg font-medium text-[#3E2C1F] placeholder-gray-300 outline-none resize-none transition-all py-2"
               :class="isExpanded ? 'h-24' : 'h-10'"
             ></textarea>
+
+            <!-- Aperçu des fichiers sélectionnés -->
+            <div v-if="imagePreviewUrl || pdfFile" class="mt-2 p-2 bg-[#F8F5F2] rounded-lg flex items-center gap-3">
+              <div v-if="imagePreviewUrl" class="relative">
+                <img :src="imagePreviewUrl" class="h-16 w-16 object-cover rounded-lg border border-[#EFE9E4]">
+                <button @click="removeSelectedImage" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div v-if="pdfFile" class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#EFE9E4]">
+                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <span class="text-sm text-gray-700">{{ pdfFile.name }} ({{ formatFileSize(pdfFile.size) }})</span>
+                <button @click="removeSelectedPdf" class="text-red-500 hover:text-red-700">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
 
             <transition name="expand">
               <div v-if="isExpanded" class="flex items-center justify-between py-4">
@@ -157,19 +185,22 @@
             <p class="text-sm text-gray-700 leading-relaxed">{{ post.contenu }}</p>
           </div>
 
-          <!-- Image -->
-          <div v-if="post.imageData" class="w-full bg-gray-100">
+          <!-- Image cliquable -->
+          <div v-if="post.imageData" class="w-full bg-gray-100 cursor-pointer" @click="openImageViewer(post)">
             <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" alt="Publication">
           </div>
 
-          <!-- Fichier -->
+          <!-- Fichier PDF avec confirmation personnalisée -->
           <div v-if="post.fileData" class="px-4 py-2">
-            <a :href="`data:${post.fileType};base64,${post.fileData}`" :download="post.fileName" class="inline-flex items-center gap-2 text-sm text-[#D2B48C] hover:text-[#3E2C1F] transition-colors">
+            <button @click="confirmDownload(post)" class="inline-flex items-center gap-2 text-sm text-[#D2B48C] hover:text-[#3E2C1F] transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
               </svg>
               {{ post.fileName }}
-            </a>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+            </button>
           </div>
 
           <!-- Actions Like et Commentaire -->
@@ -213,6 +244,57 @@
       </div>
     </div>
 
+    <!-- Modale d'aperçu d'image -->
+    <Teleport to="body">
+      <transition name="fade-scale">
+        <div v-if="imageViewer.show" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[200] p-4" @click.self="closeImageViewer">
+          <div class="relative max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden">
+            <img :src="imageViewer.url" class="max-w-full max-h-[80vh] object-contain">
+            <button @click="downloadCurrentImage" class="absolute bottom-4 right-4 bg-[#3E2C1F] text-white p-2 rounded-full hover:bg-[#D2B48C] transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+            </button>
+            <button @click="closeImageViewer" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </transition>
+    </Teleport>
+
+    <!-- Modale de confirmation personnalisée (style site, icône centrée, boutons aux couleurs de la charte) -->
+    <Teleport to="body">
+      <transition name="fade-scale">
+        <div v-if="confirmModal.show" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[200] p-4" @click.self="closeConfirmModal">
+          <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl text-center">
+            <!-- Icône centrée -->
+            <div class="flex justify-center mb-4">
+              <div class="w-16 h-16 rounded-full bg-[#F3EEEA] flex items-center justify-center">
+                <svg class="w-8 h-8 text-[#D2B48C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+            <!-- Titre en dessous -->
+            <h3 class="text-lg font-bold text-[#3E2C1F] mb-2">{{ confirmModal.title }}</h3>
+            <p class="text-sm text-gray-600 mb-6">{{ confirmModal.message }}</p>
+            <!-- Boutons centrés avec couleurs du site -->
+            <div class="flex justify-center gap-3">
+              <button @click="closeConfirmModal" class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                Annuler
+              </button>
+              <button @click="confirmModal.onConfirm" class="px-5 py-2 text-sm font-medium text-white bg-[#3E2C1F] rounded-lg hover:bg-[#D2B48C] transition-colors">
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </Teleport>
+
     <!-- Boîte d'information utilisateur (message box stylé) -->
     <Teleport to="body">
       <transition name="user-info">
@@ -223,7 +305,6 @@
           @click.stop
         >
           <div class="user-info-card">
-            <!-- Entête avec couleur de rôle -->
             <div class="user-info-header" :class="getRoleColorClass(selectedUser.role)">
               <div class="flex items-center gap-3">
                 <div class="user-info-avatar">
@@ -238,9 +319,7 @@
               </button>
             </div>
 
-            <!-- Corps avec infos -->
             <div class="user-info-body">
-              <!-- Email -->
               <div class="user-info-row">
                 <svg class="user-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
@@ -251,7 +330,6 @@
                 </div>
               </div>
 
-              <!-- Rôle -->
               <div class="user-info-row">
                 <svg class="user-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -263,7 +341,6 @@
               </div>
             </div>
 
-            <!-- Petit triangle pointeur -->
             <div class="user-info-arrow"></div>
           </div>
         </div>
@@ -299,11 +376,12 @@ const isExpanded = ref(false)
 const showUploadMenu = ref(false)
 const isConfirming = ref(false)
 const isLoading = ref(false)
-const alert = reactive({ show: false, message: '' })
+const alert = reactive({ show: false, message: '', type: 'success' })
 
 const formData = reactive({ contenu: '', userId: user.id })
 const imageFile = ref<File | null>(null)
 const pdfFile = ref<File | null>(null)
+const imagePreviewUrl = ref<string | null>(null)
 const imageInput = ref<HTMLInputElement | null>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
 
@@ -317,11 +395,34 @@ const newComment = ref<{ [key: number]: string }>({})
 const selectedUser = ref<any>(null)
 const infoBoxPosition = ref({ top: 0, left: 0 })
 
+// Image viewer
+const imageViewer = reactive({
+  show: false,
+  url: '',
+  fileType: '',
+  fileData: ''
+})
+
+// Modale de confirmation personnalisée
+const confirmModal = reactive({
+  show: false,
+  title: '',
+  message: '',
+  onConfirm: () => {}
+})
+
 // Fonctions utilitaires
-const showAlert = (msg: string) => {
+const showAlert = (msg: string, type: 'success' | 'error' = 'success') => {
   alert.message = msg
+  alert.type = type
   alert.show = true
-  setTimeout(() => alert.show = false, 4000)
+  setTimeout(() => alert.show = false, 20000)
+}
+
+const formatFileSize = (bytes: number): string => {
+  if (bytes < 1024) return bytes + ' o'
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' Ko'
+  return (bytes / (1024 * 1024)).toFixed(1) + ' Mo'
 }
 
 const triggerInput = (type: 'image' | 'file') => {
@@ -330,27 +431,46 @@ const triggerInput = (type: 'image' | 'file') => {
   showUploadMenu.value = false
 }
 
-const handleImageUpload = (e: any) => { 
-  if (e.target.files[0]) { 
-    imageFile.value = e.target.files[0]
-    showAlert("Photo ajoutée ✓") 
+const handleImageUpload = (e: Event) => { 
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files[0]) { 
+    imageFile.value = target.files[0]
+    const reader = new FileReader()
+    reader.onload = (ev) => { imagePreviewUrl.value = ev.target?.result as string }
+    reader.readAsDataURL(target.files[0])
+    showAlert("Photo ajoutée ✓", 'success')
   } 
 }
 
-const handleFileUpload = (e: any) => { 
-  if (e.target.files[0]) { 
-    pdfFile.value = e.target.files[0]
-    showAlert("Document ajouté ✓") 
+const handleFileUpload = (e: Event) => { 
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files[0]) { 
+    pdfFile.value = target.files[0]
+    showAlert(`Document pdf ajouté ✓`, 'success')
   } 
+}
+
+const removeSelectedImage = () => {
+  imageFile.value = null
+  imagePreviewUrl.value = null
+  if (imageInput.value) imageInput.value.value = ''
+}
+
+const removeSelectedPdf = () => {
+  pdfFile.value = null
+  if (fileInput.value) fileInput.value.value = ''
 }
 
 const resetForm = () => {
   formData.contenu = ''
   imageFile.value = null
   pdfFile.value = null
+  imagePreviewUrl.value = null
   isExpanded.value = false
   isConfirming.value = false
   showUploadMenu.value = false
+  if (imageInput.value) imageInput.value.value = ''
+  if (fileInput.value) fileInput.value.value = ''
 }
 
 // Créer un post
@@ -360,7 +480,10 @@ const handleSubmit = async () => {
     setTimeout(() => { isConfirming.value = false }, 3000)
     return 
   }
-  if (!formData.contenu.trim()) return
+  if (!formData.contenu.trim()) {
+    showAlert("Veuillez écrire un message", 'error')
+    return
+  }
   
   isLoading.value = true
   
@@ -375,12 +498,14 @@ const handleSubmit = async () => {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     if (response.data.success) {
-      showAlert("Post publié avec succès !")
+      showAlert("Post publié avec succès !", 'success')
       resetForm()
       fetchPosts()
+    } else {
+      showAlert(response.data.error || "Erreur lors de l'envoi", 'error')
     }
   } catch (error) {
-    showAlert("Erreur lors de l'envoi")
+    showAlert("Erreur lors de l'envoi", 'error')
   } finally {
     isLoading.value = false
   }
@@ -396,6 +521,7 @@ const fetchPosts = async () => {
     }
   } catch (error) {
     console.error('Erreur chargement posts:', error)
+    showAlert("Erreur de chargement", 'error')
   } finally {
     isLoadingPosts.value = false
   }
@@ -452,6 +578,7 @@ const addComment = async (postId: number) => {
     }
   } catch (error) {
     console.error('Erreur commentaire:', error)
+    showAlert("Erreur lors de l'ajout du commentaire", 'error')
   }
 }
 
@@ -481,73 +608,92 @@ const formatDate = (dateString: string) => {
   }
 }
 
-// Afficher ou fermer la boîte d'information utilisateur (toggle)
+// Image viewer
+const openImageViewer = (post: any) => {
+  imageViewer.url = `data:${post.imageType};base64,${post.imageData}`
+  imageViewer.fileType = post.imageType
+  imageViewer.fileData = post.imageData
+  imageViewer.show = true
+}
+
+const closeImageViewer = () => {
+  imageViewer.show = false
+  imageViewer.url = ''
+  imageViewer.fileData = ''
+}
+
+const downloadCurrentImage = () => {
+  const link = document.createElement('a')
+  link.href = imageViewer.url
+  link.download = 'image.jpg'
+  link.click()
+  showAlert("Image téléchargée", 'success')
+}
+
+// Confirmation personnalisée pour téléchargement PDF
+const confirmDownload = (post: any) => {
+  confirmModal.title = "Télécharger le document"
+  confirmModal.message = `Voulez-vous télécharger le fichier "${post.fileName}" ?`
+  confirmModal.onConfirm = () => {
+    const link = document.createElement('a')
+    link.href = `data:${post.fileType};base64,${post.fileData}`
+    link.download = post.fileName
+    link.click()
+    showAlert("Téléchargement démarré", 'success')
+    closeConfirmModal()
+  }
+  confirmModal.show = true
+}
+
+const closeConfirmModal = () => {
+  confirmModal.show = false
+  confirmModal.onConfirm = () => {}
+}
+
+// Boîte d'info utilisateur
 const toggleUserInfoBox = (userData: any, event: MouseEvent) => {
   if (!userData) return
-  
-  // Si la boîte est déjà ouverte pour le même utilisateur, on la ferme
   if (selectedUser.value && selectedUser.value.id === userData.id) {
     closeUserInfoBox()
     return
   }
-  
-  // Sinon, on affiche la boîte pour le nouvel utilisateur
   selectedUser.value = userData
-  
   const target = event.currentTarget as HTMLElement
   const rect = target.getBoundingClientRect()
-  
   let top = rect.bottom + 8
   let left = rect.left
-  
   const boxWidth = 280
-  if (left + boxWidth > window.innerWidth - 16) {
-    left = window.innerWidth - boxWidth - 16
-  }
+  if (left + boxWidth > window.innerWidth - 16) left = window.innerWidth - boxWidth - 16
   if (left < 16) left = 16
-  
   const boxHeight = 220
-  if (top + boxHeight > window.innerHeight - 16) {
-    top = rect.top - boxHeight - 8
-  }
-  
+  if (top + boxHeight > window.innerHeight - 16) top = rect.top - boxHeight - 8
   infoBoxPosition.value = { top, left }
 }
 
-// Fermer la boîte d'information
 const closeUserInfoBox = () => {
   selectedUser.value = null
 }
 
-// Couleurs "café au lait, terre" pour chaque rôle
 const getRoleColorClass = (role: string) => {
   switch (role?.toLowerCase()) {
-    case 'admin':
-      return 'role-admin'      // terre cuite / brique
-    case 'educatrice':
-      return 'role-educatrice' // café au lait / caramel
-    case 'parent':
-      return 'role-parent'     // beige / sable
-    default:
-      return 'role-default'    // marron foncé
+    case 'admin': return 'role-admin'
+    case 'educatrice': return 'role-educatrice'
+    case 'parent': return 'role-parent'
+    default: return 'role-default'
   }
 }
 
-// Gestionnaire de clic global pour fermer la boîte
 const handleGlobalClick = (event: MouseEvent) => {
   if (selectedUser.value) {
     const box = document.querySelector('.user-info-card')
-    if (box && !box.contains(event.target as Node)) {
-      closeUserInfoBox()
-    }
+    if (box && !box.contains(event.target as Node)) closeUserInfoBox()
   }
 }
 
-// Gestionnaire de touche Échap
 const handleEscapeKey = (event: KeyboardEvent) => {
-  if (event.key === 'Escape' && selectedUser.value) {
-    closeUserInfoBox()
-  }
+  if (event.key === 'Escape' && selectedUser.value) closeUserInfoBox()
+  if (event.key === 'Escape' && imageViewer.show) closeImageViewer()
+  if (event.key === 'Escape' && confirmModal.show) closeConfirmModal()
 }
 
 onMounted(() => {
@@ -620,6 +766,19 @@ textarea { scrollbar-width: none; }
   transform: scale(0.92) translateY(-8px);
 }
 
+/* Animation pour modales */
+.fade-scale-enter-active {
+  transition: all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+.fade-scale-leave-active {
+  transition: all 0.15s ease-in;
+}
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.92);
+}
+
 /* Carte utilisateur */
 .user-info-card {
   position: relative;
@@ -630,7 +789,6 @@ textarea { scrollbar-width: none; }
   overflow: hidden;
 }
 
-/* Couleurs "café au lait, terre" pour les rôles */
 .user-info-header {
   padding: 0.875rem 1rem;
   display: flex;
@@ -638,20 +796,16 @@ textarea { scrollbar-width: none; }
   justify-content: space-between;
   color: white;
 }
-/* Admin - terre cuite / brique */
 .user-info-header.role-admin {
   background: linear-gradient(135deg, #a0522d, #8b4513);
 }
-/* Éducatrice - café au lait / caramel */
 .user-info-header.role-educatrice {
   background: linear-gradient(135deg, #c19a6b, #a67c52);
 }
-/* Parent - beige / sable clair */
 .user-info-header.role-parent {
   background: linear-gradient(135deg, #d2b48c, #c4a27a);
   color: #3e2c1f;
 }
-/* Défaut - marron foncé (terre) */
 .user-info-header.role-default {
   background: linear-gradient(135deg, #5c3d2e, #3e2c1f);
 }
@@ -690,7 +844,6 @@ textarea { scrollbar-width: none; }
   transform: scale(1.05);
 }
 
-/* Corps */
 .user-info-body {
   padding: 1rem;
   display: flex;
@@ -729,7 +882,6 @@ textarea { scrollbar-width: none; }
   line-height: 1.3;
 }
 
-/* Triangle pointeur */
 .user-info-arrow {
   position: absolute;
   top: -8px;
