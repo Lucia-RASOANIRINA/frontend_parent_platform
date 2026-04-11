@@ -6,6 +6,7 @@ import APropos from '../pages/APropos.vue'
 import HomeParent from '../pages/HomeParent.vue'
 import HomeTeacher from '../pages/HomeTeacher.vue'
 import DiscussionsTeacher from '../pages/DiscussionsTeacher.vue'
+import RessourcesTeacher from '../pages/RessourcesTeacher.vue'
 import HomePsy from '../pages/HomePsy.vue'
 import DiscussionsPsy from '../pages/DiscussionsPsy.vue'
 import ParentPub from "../pages/ParentPub.vue";
@@ -64,6 +65,12 @@ const routes = [
     path: '/discussionsteacher',  
     name: 'DiscussionsTeacher',
     component: DiscussionsTeacher,
+    meta: { layout: 'educatrice' }
+  },
+  {
+    path: '/ressourcesteacher',  
+    name: 'RessourcesTeacher',
+    component: RessourcesTeacher,
     meta: { layout: 'educatrice' }
   },
   {
