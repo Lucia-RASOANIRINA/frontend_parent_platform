@@ -8,9 +8,12 @@ import HomeTeacher from '../pages/HomeTeacher.vue'
 import DiscussionsTeacher from '../pages/DiscussionsTeacher.vue'
 import RessourcesTeacher from '../pages/RessourcesTeacher.vue'
 import HomePsy from '../pages/HomePsy.vue'
+import PsyPub from '../pages/PsyPub.vue'
 import DiscussionsPsy from '../pages/DiscussionsPsy.vue'
+import RessourcesPsy from '../pages/RessourcesPsy.vue'
 import ParentPub from "../pages/ParentPub.vue";
 import DiscussionsParent from "../pages/DiscussionsParent.vue";
+import RessourcesParent from "../pages/RessourcesParent.vue";
 
 const routes = [
   {
@@ -56,6 +59,12 @@ const routes = [
     meta: { layout: 'parent' }
   },
   {
+    path: '/ressourcesparent',
+    name: 'RessourcesParent',
+    component: RessourcesParent,
+    meta: { layout: 'parent' }
+  },
+  {
     path: '/hometeacher',  
     name: 'HomeTeacher',
     component: HomeTeacher,
@@ -77,6 +86,18 @@ const routes = [
     path: '/homepsy',  
     name: 'HomePsy',
     component: HomePsy,
+    meta: { layout: 'psy' }
+  },
+  {
+    path: '/psypub',  
+    name: 'PsyPub',
+    component: PsyPub,
+    meta: { layout: 'psy' }
+  },
+  {
+    path: '/ressourcespsy',  
+    name: 'RessourcesPsy',
+    component: RessourcesPsy,
     meta: { layout: 'psy' }
   },
   {
