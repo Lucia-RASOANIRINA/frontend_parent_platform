@@ -16,6 +16,7 @@ import ParentPub from "../pages/ParentPub.vue";
 import ProfilParent from "../pages/ProfilParent.vue";
 import DiscussionsParent from "../pages/DiscussionsParent.vue";
 import RessourcesParent from "../pages/RessourcesParent.vue";
+import RessourcesEquipe from '../pages/RessourcesEquipe.vue'
 
 const routes = [
   {
@@ -94,6 +95,12 @@ const routes = [
     path: '/ressourcesteacher',  
     name: 'RessourcesTeacher',
     component: RessourcesTeacher,
+    meta: { layout: 'educatrice', showFooter: true }
+  },
+  {
+    path: '/ressourcesequipe',  
+    name: 'RessourcesEquipe',
+    component: RessourcesEquipe,
     meta: { layout: 'educatrice', showFooter: true }
   },
   {

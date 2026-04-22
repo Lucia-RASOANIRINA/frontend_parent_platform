@@ -1,14 +1,14 @@
 <template>
   <div class="resources-container">
     <div class="resources-header">
-      <button :class="['tab-btn', { active: activeTab === 'mine' }]" @click="switchTab('mine')">
-        <svg class="icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2m0 7c2.67 0 8 1.34 8 4v3H4v-3c0-2.66 5.33-4 8-4m0 2c-2.46 0-6 1.1-6 2v1h12v-1c0-.9-3.54-2-6-2z"/></svg>
-        Mes ressources
-      </button>
-      <button :class="['tab-btn', { active: activeTab === 'shared' }]" @click="switchTab('shared')">
+      <router-link to="/ressourcesequipe" class="tab-btn">
         <svg class="icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-1 .05 1.16.84 2 1.87 2 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         Ressources de l'équipe
-      </button>
+      </router-link>
+      <router-link to="/ressourcesteacher" class="tab-btn active">
+        <svg class="icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2m0 7c2.67 0 8 1.34 8 4v3H4v-3c0-2.66 5.33-4 8-4m0 2c-2.46 0-6 1.1-6 2v1h12v-1c0-.9-3.54-2-6-2z"/></svg>
+        Mes ressources
+      </router-link>
     </div>
 
     <div class="filters-bar">
@@ -32,11 +32,14 @@
       </div>
     </div>
 
-    <div v-if="loading && allResources.length === 0" class="loading-spinner"><svg class="spin" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Chargement...</div>
+    <div v-if="loading && allResources.length === 0" class="loading-spinner-center">
+      <div class="spinner-round"></div>
+    </div>
+
     <div v-else class="resources-grid">
       <div v-for="res in displayedResources" :key="res.id" class="resource-card">
         <div class="card-menu">
-          <button v-if="activeTab === 'mine'" class="menu-trigger" @click.stop="toggleMenu(res.id)">
+          <button class="menu-trigger" @click.stop="toggleMenu(res.id)">
             <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
           </button>
           <div v-if="menuResourceId === res.id" class="menu-popup">
@@ -91,7 +94,7 @@
 
         <div class="card-actions">
           <button @click="previewResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg> Aperçu</button>
-          <button v-if="activeTab === 'mine'" @click="openScheduleModal(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmer</button>
+          <button @click="openScheduleModal(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmer</button>
           <button @click="exportResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Export ZIP</button>
           <div class="feedback-stats">
             <span class="stat-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> {{ res.likes }}</span>
@@ -105,11 +108,6 @@
             <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             J'ai adoré
           </button>
-          <button v-if="activeTab === 'shared'" @click="openRatingModal(res)" class="fb-star" :disabled="ratingSubmitting === res.id">
-            <svg v-if="!res.userRated" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-            <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-            {{ res.userRated ? 'Noté' : 'Noter' }}
-          </button>
           <button @click="toggleComments(res.id)" class="fb-comment">
             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
             Commentaires ({{ res.commentsCount || 0 }})
@@ -117,25 +115,22 @@
         </div>
 
         <div v-if="showComments[res.id]" class="comments-section">
-          <div v-if="loadingComments[res.id]" class="loading-small">Chargement...</div>
-          <div v-else>
-            <div class="comments-list">
-              <div v-for="c in (res.comments || [])" :key="c.id" class="comment-item">
-                <strong><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> {{ c.userName }}</strong>
-                <p>{{ c.content }}</p>
-                <small>{{ formatDate(c.createdAt) }}</small>
-                <button v-if="c.userId === currentUserId" @click="confirmDeleteComment(res.id, c.id)" class="delete-comment"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
-              </div>
-              <div v-if="!res.comments || res.comments.length === 0" class="no-comments">Aucun commentaire.</div>
+          <div class="comments-list">
+            <div v-for="c in (res.comments || [])" :key="c.id" class="comment-item">
+              <strong><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> {{ c.userName }}</strong>
+              <p>{{ c.content }}</p>
+              <small>{{ formatDate(c.createdAt) }}</small>
+              <button v-if="c.userId === currentUserId" @click="confirmDeleteComment(res.id, c.id)" class="delete-comment"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
             </div>
-            <div class="add-comment">
-              <textarea v-model="newCommentText[res.id]" placeholder="Ajouter un commentaire..."></textarea>
-              <button @click="addComment(res.id)" class="primary small" :disabled="commentSubmitting[res.id]">
-                <svg v-if="!commentSubmitting[res.id]" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                <svg v-else class="spin" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>
-                Envoyer
-              </button>
-            </div>
+            <div v-if="!res.comments || res.comments.length === 0" class="no-comments">Aucun commentaire.</div>
+          </div>
+          <div class="add-comment">
+            <textarea v-model="newCommentText[res.id]" placeholder="Ajouter un commentaire..."></textarea>
+            <button @click="addComment(res.id)" class="primary small" :disabled="commentSubmitting[res.id]">
+              <svg v-if="!commentSubmitting[res.id]" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              <svg v-else class="spin" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>
+              Envoyer
+            </button>
           </div>
         </div>
       </div>
@@ -144,12 +139,12 @@
     <div v-if="hasMore && !loading" class="load-more-container">
       <button @click="loadMore" class="load-more-btn">Charger plus de ressources</button>
     </div>
-    <div v-if="loading && allResources.length > 0" class="loading-more"><svg class="spin" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Chargement...</div>
+    <div v-if="loading && allResources.length > 0" class="loading-more"><div class="spinner-small"></div></div>
 
     <button class="fab" @click="openCreateModal"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
-    <button class="fab-scheduled" @click="openScheduledModal"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg></button>
+    <button class="fab-scheduled" @click="openScheduledListModal"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg></button>
 
-    <!-- Modale création -->
+    <!-- Modale création (identique) -->
     <div v-if="createModalOpen" class="modal-overlay" @click.self="createModalOpen = false">
       <div class="modal-content large">
         <div class="modal-header stylized-header">
@@ -217,20 +212,7 @@
           </div>
           <div class="preview-description" v-html="selectedResource?.description || 'Aucune description'"></div>
         </div>
-        <div class="modal-footer"><button v-if="activeTab === 'mine'" class="primary" @click="openScheduleModal(selectedResource)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmer</button></div>
-      </div>
-    </div>
-
-    <!-- Modale notation -->
-    <div v-if="ratingModalOpen" class="modal-overlay" @click.self="ratingModalOpen = false">
-      <div class="modal-content small">
-        <div class="modal-header stylized-header">
-          <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
-          <h3>Noter "{{ selectedRatingResource?.title }}"</h3>
-          <button class="close-modal" @click="ratingModalOpen = false"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
-        </div>
-        <div class="rating-stars"><span v-for="star in 5" :key="star" @click="ratingValue = star" :class="{ active: star <= ratingValue }"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span></div>
-        <div class="modal-footer"><button @click="ratingModalOpen = false">Annuler</button><button class="primary" @click="submitRating" :disabled="ratingSubmitting === selectedRatingResource?.id"><svg v-if="ratingSubmitting !== selectedRatingResource?.id" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Valider</button></div>
+        <div class="modal-footer"><button class="primary" @click="openScheduleModal(selectedResource)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmer</button></div>
       </div>
     </div>
 
@@ -251,12 +233,12 @@
     </div>
 
     <!-- Modale liste des ressources programmées -->
-    <div v-if="scheduledModalOpen" class="modal-overlay" @click.self="scheduledModalOpen = false">
+    <div v-if="scheduledListModalOpen" class="modal-overlay" @click.self="scheduledListModalOpen = false">
       <div class="modal-content large">
         <div class="modal-header stylized-header">
           <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg></div>
           <h2>Ressources programmées</h2>
-          <button class="close-modal" @click="scheduledModalOpen = false"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+          <button class="close-modal" @click="scheduledListModalOpen = false"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         </div>
         <div v-if="scheduledResourcesList.length === 0" class="empty-state">Aucune ressource programmée.</div>
         <div v-else class="scheduled-list">
@@ -338,22 +320,19 @@ const currentUserId = ref(user.id)
 const currentUserName = ref(user.nom)
 const API_BASE_URL = 'http://localhost:8082/api'
 
-const activeTab = ref('mine')
-const filters = ref({ type: '', age: '' })
 const allResources = ref([])
 const displayedResources = ref([])
 const loading = ref(false)
 const page = ref(0)
 const pageSize = 10
 const hasMore = ref(true)
+const filters = ref({ type: '', age: '' })
 
 const modalOpen = ref(false)
 const selectedResource = ref(null)
 const createModalOpen = ref(false)
-const ratingModalOpen = ref(false)
-const selectedRatingResource = ref(null)
-const ratingValue = ref(0)
 const scheduleModalOpen = ref(false)
+const scheduledListModalOpen = ref(false)
 const scheduleDate = ref('')
 const editModalOpen = ref(false)
 const editResource = ref({ id: null, title: '', description: '', age: '', type: 'fiche', videoUrl: '', currentFileName: null, removeFile: false })
@@ -364,7 +343,6 @@ const menuResourceId = ref(null)
 const creating = ref(false)
 const updating = ref(false)
 const likingInProgress = ref(null)
-const ratingSubmitting = ref(null)
 const scheduling = ref(false)
 const toastVisible = ref(false)
 const toastMessage = ref('')
@@ -373,9 +351,7 @@ const newCommentText = ref({})
 const deleteConfirm = ref({ show: false, resource: null })
 const showComments = ref({})
 const commentSubmitting = ref({})
-const loadingComments = ref({})
 const confirmCommentDelete = ref({ show: false, resourceId: null, commentId: null })
-const scheduledModalOpen = ref(false)
 const expandedDetails = ref({})
 
 const typeOptions = [
@@ -415,14 +391,28 @@ const scheduledResourcesList = computed(() => allResources.value.filter(r => r.s
 const fetchAllResources = async () => {
   loading.value = true
   try {
-    const params = { owner: activeTab.value }
-    const response = await axios.get(`${API_BASE_URL}/resources`, { params, headers: { 'X-User-Id': currentUserId.value } })
-    allResources.value = response.data.map(r => ({
+    const response = await axios.get(`${API_BASE_URL}/resources`, {
+      params: { owner: 'mine' },
+      headers: { 'X-User-Id': currentUserId.value }
+    })
+    const resourcesData = response.data
+    const commentPromises = resourcesData.map(async (r) => {
+      try {
+        const commentsRes = await axios.get(`${API_BASE_URL}/resources/${r.id}/comments`)
+        return { id: r.id, comments: commentsRes.data }
+      } catch (err) {
+        return { id: r.id, comments: [] }
+      }
+    })
+    const commentsResults = await Promise.all(commentPromises)
+    const commentsMap = new Map(commentsResults.map(c => [c.id, c.comments]))
+    
+    allResources.value = resourcesData.map(r => ({
       ...r,
       liked: r.liked || false,
-      userRated: r.userRated || false,
-      comments: r.comments || [],
-      commentsCount: r.commentsCount || 0,
+      userRated: false,
+      comments: commentsMap.get(r.id) || [],
+      commentsCount: commentsMap.get(r.id)?.length || 0,
       mediaLoaded: false,
       ownerId: r.ownerId || r.userId,
       ownerName: r.ownerName || r.userName
@@ -457,11 +447,8 @@ const filterResources = () => {
   let result = [...allResources.value]
   if (filters.value.type) result = result.filter(r => r.type === filters.value.type)
   if (filters.value.age) result = result.filter(r => r.age === filters.value.age)
-  if (activeTab.value === 'shared') result = result.filter(r => !r.scheduledAt || new Date(r.scheduledAt) <= new Date())
   return result
 }
-
-const switchTab = (tab) => { activeTab.value = tab; fetchAllResources() }
 
 watch([() => filters.value.type, () => filters.value.age], () => {
   resetPagination()
@@ -482,45 +469,8 @@ const sendLike = async (id) => {
   finally { likingInProgress.value = null }
 }
 
-const openRatingModal = (res) => {
-  if (res.userRated) { showToast('Vous avez déjà noté cette ressource'); return }
-  selectedRatingResource.value = res
-  ratingValue.value = 0
-  ratingModalOpen.value = true
-}
-const submitRating = async () => {
-  if (ratingValue.value < 1) return
-  const id = selectedRatingResource.value.id
-  ratingSubmitting.value = id
-  try {
-    await axios.post(`${API_BASE_URL}/resources/${id}/rating`, { rating: ratingValue.value }, { headers: { 'X-User-Id': currentUserId.value } })
-    const res = allResources.value.find(r => r.id === id)
-    if (res) {
-      const oldTotal = res.totalRatings || 0
-      const oldAvg = res.averageRating || 0
-      res.averageRating = (oldAvg * oldTotal + ratingValue.value) / (oldTotal + 1)
-      res.totalRatings = oldTotal + 1
-      res.userRated = true
-    }
-    ratingModalOpen.value = false
-    showToast('Note enregistrée ✓')
-  } catch (error) { showToast('Erreur notation') }
-  finally { ratingSubmitting.value = null }
-}
-
-const toggleComments = async (resourceId) => {
-  if (showComments.value[resourceId]) { showComments.value[resourceId] = false; return }
-  showComments.value[resourceId] = true
-  const res = allResources.value.find(r => r.id === resourceId)
-  if (res && (!res.comments || res.comments.length === 0) && !loadingComments.value[resourceId]) {
-    loadingComments.value[resourceId] = true
-    try {
-      const commentsRes = await axios.get(`${API_BASE_URL}/resources/${resourceId}/comments`)
-      res.comments = commentsRes.data
-      res.commentsCount = commentsRes.data.length
-    } catch (err) { console.error(err) }
-    finally { loadingComments.value[resourceId] = false }
-  }
+const toggleComments = (resourceId) => {
+  showComments.value[resourceId] = !showComments.value[resourceId]
 }
 
 const addComment = async (resourceId) => {
@@ -607,7 +557,7 @@ const previewResource = (res) => { selectedResource.value = res; modalOpen.value
 const openCreateModal = () => { createModalOpen.value = true }
 const toggleMenu = (id) => { menuResourceId.value = menuResourceId.value === id ? null : id }
 const handleClickOutside = (event) => { if (!event.target.closest('.card-menu')) menuResourceId.value = null }
-const openScheduledModal = () => { scheduledModalOpen.value = true }
+const openScheduledListModal = () => { scheduledListModalOpen.value = true }
 const toggleScheduledDetails = (id) => { expandedDetails.value[id] = !expandedDetails.value[id] }
 
 const handleFile = (e) => {
@@ -651,7 +601,7 @@ const openEditModal = (res) => {
   menuResourceId.value = null
 }
 const handleEditFile = (e) => { editSelectedFile = e.target.files[0] }
-const removeEditSelectedFile = () => { editSelectedFile = null; document.querySelector('#editFileInput').value = '' }
+const removeEditSelectedFile = () => { editSelectedFile = null; if (document.querySelector('#editFileInput')) document.querySelector('#editFileInput').value = '' }
 const removeCurrentFile = () => { editResource.value.currentFileName = null; editResource.value.removeFile = true }
 const updateResource = async () => {
   updating.value = true
@@ -694,185 +644,1111 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Copiez ici tous les styles de l'ancienne version (inchangés) */
-.resources-container { max-width: 1400px; margin: 0 auto; padding: 2rem; background: white; min-height: 100vh; font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif; }
-.resources-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid #FDF2F8; padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
-.tab-btn { background: none; border: none; font-size: 1.2rem; font-weight: 500; padding: 0.5rem 1.5rem; cursor: pointer; color: #64748B; transition: all 0.2s; border-radius: 40px; display: inline-flex; align-items: center; gap: 0.5rem; }
-.tab-btn svg { width: 18px; height: 18px; color: #64748B; }
-.tab-btn.active { color: #EC489A; border-bottom: 2px solid #EC489A; margin-bottom: -2px; }
-.tab-btn.active svg { color: #EC489A; }
-.tab-btn:hover:not(.active) { color: #831843; background-color: #FDF2F8; transform: translateY(-1px); }
-.filters-bar { background: #F8FAFC; border-radius: 60px; padding: 0.8rem 1.5rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.filter-group { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
-.filter-label { font-weight: 500; color: #1E293B; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.3rem; }
-.filter-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.pill { background: white; border: 1px solid #E2E8F0; border-radius: 40px; padding: 0.3rem 0.9rem; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; color: #1E293B; display: inline-flex; align-items: center; gap: 0.3rem; }
-.pill svg { width: 12px; height: 12px; color: #64748B; }
-.pill.active { background: #EC489A; border-color: #EC489A; color: white; }
-.pill.active svg { color: white; }
-.pill:hover:not(.active) { background: #FDF2F8; transform: translateY(-1px); }
-.resources-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.8rem; }
-.loading-spinner { text-align: center; padding: 2rem; color: #EC489A; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-.empty-state { text-align: center; padding: 3rem; background: #F8FAFC; border-radius: 24px; color: #64748B; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.resource-card { background: white; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; transition: all 0.25s ease; border: 1px solid #E2E8F0; position: relative; }
-.resource-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); border-color: #FDF2F8; }
-.card-menu { position: absolute; top: 0.8rem; right: 0.8rem; z-index: 2; }
-.menu-trigger { background: white; border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: 0.2s; }
-.menu-trigger svg { color: #1E293B; width: 18px; height: 18px; }
-.menu-trigger:hover { background: #FDF2F8; transform: scale(1.05); }
-.menu-popup { position: absolute; top: 100%; right: 0; margin-top: 0.5rem; background: white; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); min-width: 140px; z-index: 10; display: flex; flex-direction: column; overflow: hidden; animation: fadeIn 0.2s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-.menu-popup button { background: none; border: none; padding: 0.6rem 1rem; text-align: left; cursor: pointer; font-size: 0.8rem; transition: background 0.15s; display: inline-flex; align-items: center; gap: 0.5rem; }
-.menu-popup button:hover { background: #FDF2F8; }
-.card-badge { display: inline-flex; align-items: center; gap: 0.3rem; margin: 1rem 1rem 0 1rem; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: bold; background: #FDF2F8; color: #EC489A; }
-.card-badge.video { background: #FCE7F3; color: #DB2777; }
-.card-badge.pdf { background: #FFF1F2; color: #BE123C; }
-.card-badge.bloc { background: #FCE7F3; color: #831843; }
-.card-content { padding: 0 1rem 1rem; }
-.card-content h3 { font-size: 1.2rem; margin: 0.5rem 0; color: #0F172A; }
-.meta { display: flex; gap: 1rem; font-size: 0.7rem; color: #64748B; margin-bottom: 0.8rem; flex-wrap: wrap; }
-.meta-item { display: inline-flex; align-items: center; gap: 0.2rem; }
-.scheduled-badge { color: #EC489A; font-weight: 500; }
-.media-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #F1F5F9; border-radius: 12px; overflow: hidden; margin: 0.5rem 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.media-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FDF2F8; color: #EC489A; cursor: pointer; gap: 0.5rem; font-size: 0.8rem; }
-.media-content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: contain; background: #000; }
-.video-embed-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-.video-embed-container iframe { width: 100%; height: 100%; }
-.video-link-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #F1F5F9; }
-.video-link { padding: 0.5rem 1rem; background: #EC489A; color: white; border-radius: 30px; text-decoration: none; font-size: 0.8rem; }
-.video-link:hover { background: #831843; }
-.description-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #F8FAFC; padding: 1rem; box-sizing: border-box; overflow-y: auto; text-align: center; }
-.description-icon { margin-bottom: 0.5rem; color: #EC489A; }
-.description-text { font-size: 0.85rem; color: #334155; line-height: 1.4; margin: 0; max-height: 100%; overflow-y: auto; }
-.no-media-preview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #F1F5F9; color: #64748B; gap: 0.5rem; }
-.no-media-preview svg { color: #94A3B8; }
-.no-media-preview span { font-size: 0.8rem; }
-.pdf-link { margin-top: 0.5rem; text-align: center; }
-.pdf-link a { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; color: #EC489A; text-decoration: none; }
-.pdf-link a:hover { text-decoration: underline; }
-.card-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.8rem 1rem; border-top: 1px solid #E2E8F0; background: #FEFCF8; align-items: center; }
-.action-btn { background: none; border: 1px solid #EC489A; padding: 0.2rem 0.7rem; border-radius: 30px; font-size: 0.7rem; cursor: pointer; transition: 0.1s; color: #EC489A; display: inline-flex; align-items: center; gap: 0.3rem; }
-.action-btn svg { width: 14px; height: 14px; color: #1E293B; }
-.action-btn:hover { background: #EC489A; color: white; }
-.action-btn:hover svg { color: white; }
-.feedback-stats { margin-left: auto; display: flex; gap: 0.6rem; font-size: 0.7rem; color: #64748B; }
-.stat-item { display: inline-flex; align-items: center; gap: 0.2rem; }
-.feedback-buttons { display: flex; gap: 0.8rem; padding: 0.6rem 1rem; background: #FEFCF8; border-top: 1px solid #E2E8F0; flex-wrap: wrap; }
-.fb-like, .fb-star, .fb-comment { background: none; border: none; font-size: 0.75rem; cursor: pointer; color: #EC489A; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.3rem; }
-.fb-like svg, .fb-star svg, .fb-comment svg { width: 14px; height: 14px; }
-.fb-like:hover { color: #e74c3c; }
-.fb-like:hover svg { color: #e74c3c; }
-.fb-star:hover { color: #f39c12; }
-.fb-comment:hover { color: #831843; }
-.comments-section { padding: 0.8rem 1rem; background: #F8FAFC; border-top: 1px solid #E2E8F0; }
-.comments-list { max-height: 200px; overflow-y: auto; margin-bottom: 0.5rem; }
-.comment-item { background: white; border-radius: 12px; padding: 0.4rem 0.6rem; margin-bottom: 0.5rem; position: relative; font-size: 0.75rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-.comment-item strong { display: block; font-size: 0.7rem; color: #831843; margin-bottom: 0.2rem; }
-.comment-item p { margin: 0.2rem 0; }
-.comment-item small { font-size: 0.6rem; color: #64748B; display: inline-flex; align-items: center; gap: 0.2rem; }
-.delete-comment { position: absolute; top: 0.2rem; right: 0.2rem; background: none; border: none; cursor: pointer; opacity: 0.6; }
-.delete-comment svg { width: 12px; height: 12px; color: #64748B; }
-.delete-comment:hover { opacity: 1; }
-.add-comment { display: flex; gap: 0.5rem; align-items: flex-start; margin-top: 0.5rem; }
-.add-comment textarea { flex: 1; border-radius: 16px; border: 1px solid #CBD5E1; padding: 0.4rem; font-size: 0.7rem; resize: vertical; transition: 0.2s; }
-.add-comment textarea:focus { outline: none; border-color: #EC489A; box-shadow: 0 0 0 2px rgba(236,72,154,0.1); }
-.add-comment button.primary.small { padding: 0.3rem 0.8rem; font-size: 0.7rem; background: #EC489A; border: none; color: white; border-radius: 40px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; }
-.add-comment button.primary.small:hover { background: #831843; }
-.no-comments { text-align: center; color: #94A3B8; font-size: 0.7rem; padding: 0.5rem; }
-.fab { position: fixed; bottom: 2rem; right: 2rem; background: #EC489A; border: none; width: 56px; height: 56px; border-radius: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s; display: flex; align-items: center; justify-content: center; z-index: 100; }
-.fab svg { width: 28px; height: 28px; color: white; }
-.fab:hover { background: #831843; transform: scale(1.05); }
-.fab-scheduled { position: fixed; bottom: 2rem; left: 2rem; background: #EC489A; border: none; width: 56px; height: 56px; border-radius: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s; display: flex; align-items: center; justify-content: center; z-index: 100; }
-.fab-scheduled svg { width: 28px; height: 28px; color: white; }
-.fab-scheduled:hover { background: #831843; transform: scale(1.05); }
-.load-more-container { text-align: center; margin-top: 2rem; }
-.load-more-btn { background: #FDF2F8; border: 1px solid #EC489A; padding: 0.5rem 1.5rem; border-radius: 40px; color: #EC489A; font-weight: 500; cursor: pointer; transition: 0.2s; }
-.load-more-btn:hover { background: #EC489A; color: white; }
-.loading-more { text-align: center; margin-top: 1rem; color: #EC489A; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-.toast-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; z-index: 1000; font-size: 0.9rem; font-weight: 500; overflow: hidden; min-width: 200px; max-width: 90%; }
-.toast-blue-line { width: 4px; background-color: #EC489A; align-self: stretch; }
-.toast-content { padding: 0.75rem 1.5rem; color: #1E293B; display: flex; align-items: center; gap: 0.5rem; }
-.toast-content svg { color: #EC489A; }
-.toast-fade-enter-active, .toast-fade-leave-active { transition: opacity 0.3s ease; }
-.toast-fade-enter-from, .toast-fade-leave-to { opacity: 0; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-.modal-overlay.blur-bg { backdrop-filter: blur(4px); background: rgba(0,0,0,0.3); }
-.modal-content { background: white; border-radius: 32px; max-width: 700px; width: 90%; padding: 1.5rem; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 35px rgba(0,0,0,0.2); }
-.modal-content.small { max-width: 400px; }
-.modal-content.confirm-modal { text-align: center; max-width: 400px; }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid #E2E8F0; }
-.modal-header.stylized-header { background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 100%); margin: -1.5rem -1.5rem 1.5rem -1.5rem; padding: 1rem 1.5rem; border-radius: 32px 32px 0 0; border-bottom: none; }
-.modal-header.stylized-header .header-icon { background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #EC489A; }
-.modal-header.stylized-header h2, .modal-header.stylized-header h3 { margin: 0; flex: 1; text-align: center; color: #831843; font-weight: 600; }
-.modal-header.stylized-header .close-modal { background: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
-.modal-header.stylized-header .close-modal svg { width: 18px; height: 18px; }
-.close-modal { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; transition: 0.2s; }
-.close-modal svg { width: 24px; height: 24px; color: #64748B; transition: 0.2s; }
-.close-modal:hover svg { color: #ef4444; }
-.confirm-icon { text-align: center; margin-bottom: 1rem; color: #64748B; }
-.confirm-icon svg { color: #64748B; }
-.modal-footer.centered { justify-content: center; }
-.form-group { margin-bottom: 1rem; }
-.form-group label { display: block; font-size: 0.8rem; font-weight: 500; color: #1E293B; margin-bottom: 0.3rem; }
-.form-group input, .form-group textarea, .modal-content select { width: 100%; padding: 0.8rem; border-radius: 16px; border: 1px solid #CBD5E1; font-size: 0.9rem; transition: 0.2s; }
-.form-group input:focus, .form-group textarea:focus, .modal-content select:focus { outline: none; border-color: #EC489A; box-shadow: 0 0 0 2px rgba(236,72,154,0.2); }
-.form-row { display: flex; gap: 1rem; margin-bottom: 1rem; }
-.form-row .form-group { flex: 1; margin-bottom: 0; }
-.or-divider { text-align: center; margin: 0.5rem 0; color: #64748B; }
-.file-upload .file-label { display: inline-flex; align-items: center; gap: 0.5rem; background: #FDF2F8; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; font-size: 0.85rem; color: #EC489A; transition: 0.2s; }
-.file-upload .file-label:hover { background: #FCE7F3; }
-.file-preview { margin-top: 0.5rem; background: #FDF2F8; border-radius: 16px; padding: 0.5rem 0.8rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; }
-.file-preview.existing { background: #FEF3C7; }
-.remove-file { background: none; border: none; cursor: pointer; color: #ef4444; margin-left: auto; display: flex; align-items: center; }
-.modal-footer { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; }
-.modal-footer button { padding: 0.5rem 1rem; border-radius: 40px; border: 1px solid #EC489A; background: white; cursor: pointer; color: #EC489A; display: inline-flex; align-items: center; gap: 0.3rem; transition: 0.2s; }
-.modal-footer button.primary { background: #EC489A; color: white; border: none; }
-.modal-footer button.primary:hover { background: #831843; }
-.modal-footer button:hover:not(.primary) { background: #FDF2F8; }
-.rating-stars { display: flex; justify-content: center; gap: 0.5rem; margin: 1rem 0; cursor: pointer; }
-.rating-stars span { opacity: 0.4; transition: 0.1s; }
-.rating-stars span.active { opacity: 1; }
-.rating-stars span svg { width: 32px; height: 32px; color: #f39c12; }
-.preview-body { margin-bottom: 1rem; }
-.preview-meta { display: flex; gap: 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #64748B; }
-.preview-description { background: #F8FAFC; padding: 1rem; border-radius: 16px; margin-bottom: 1rem; }
-.scheduled-list { display: flex; flex-direction: column; gap: 1.5rem; }
-.scheduled-item { border: 1px solid #E2E8F0; border-radius: 20px; padding: 1rem; transition: 0.2s; background: white; }
-.scheduled-item:hover { border-color: #EC489A; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.scheduled-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem; margin-bottom: 1rem; }
-.scheduled-header h3 { margin: 0; font-size: 1.2rem; color: #0F172A; }
-.scheduled-meta-line { display: flex; gap: 1rem; font-size: 0.75rem; color: #64748B; }
-.scheduled-date, .scheduled-created { display: inline-flex; align-items: center; gap: 0.2rem; }
-.scheduled-actions { display: flex; gap: 0.8rem; justify-content: flex-end; margin-bottom: 1rem; }
-.scheduled-actions .action-btn { background: none; border: 1px solid #EC489A; padding: 0.3rem 1rem; border-radius: 30px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; color: #EC489A; }
-.scheduled-actions .action-btn:hover { background: #EC489A; color: white; }
-.scheduled-actions .cancel-btn { border-color: #ef4444; color: #ef4444; }
-.scheduled-actions .cancel-btn:hover { background: #ef4444; color: white; }
-.scheduled-details { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #E2E8F0; }
-.scheduled-full-content { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-start; }
-.media-preview { flex: 1; min-width: 240px; max-width: 320px; }
-.media-preview .media-container { margin: 0; border-radius: 12px; overflow: hidden; background: #F1F5F9; }
-.info-preview { flex: 2; }
-.full-description { background: #F8FAFC; padding: 0.8rem; border-radius: 12px; margin: 0 0 0.8rem 0; font-size: 0.9rem; line-height: 1.4; color: #1E293B; }
-.scheduled-meta { display: flex; gap: 1rem; font-size: 0.8rem; color: #64748B; margin-bottom: 0.8rem; flex-wrap: wrap; }
-.scheduled-meta span { display: inline-flex; align-items: center; gap: 0.3rem; }
-.spin { animation: spin 1s linear infinite; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+/* Couleurs café (identique au fichier précédent) */
+.resources-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: white;
+  min-height: 100vh;
+  font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
+}
+.resources-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #F5EBE0;
+  padding-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  color: #6F4E37;
+  transition: all 0.2s;
+  border-radius: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+.tab-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #6F4E37;
+}
+.tab-btn.active {
+  color: #8B5A2B;
+  border-bottom: 2px solid #8B5A2B;
+  margin-bottom: -2px;
+}
+.tab-btn.active svg {
+  color: #8B5A2B;
+}
+.tab-btn:hover:not(.active) {
+  color: #5C3A1E;
+  background-color: #F5EBE0;
+  transform: translateY(-1px);
+}
+.filters-bar {
+  background: #F8F4F0;
+  border-radius: 60px;
+  padding: 0.8rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.filter-label {
+  font-weight: 500;
+  color: #4A3520;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.filter-pills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.pill {
+  background: white;
+  border: 1px solid #E2D4C8;
+  border-radius: 40px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #4A3520;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.pill svg {
+  width: 12px;
+  height: 12px;
+  color: #8B5A2B;
+}
+.pill.active {
+  background: #8B5A2B;
+  border-color: #8B5A2B;
+  color: white;
+}
+.pill.active svg {
+  color: white;
+}
+.pill:hover:not(.active) {
+  background: #F5EBE0;
+  transform: translateY(-1px);
+}
+.loading-spinner-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+.spinner-round {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #F5EBE0;
+  border-top-color: #8B5A2B;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #F5EBE0;
+  border-top-color: #8B5A2B;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.8rem;
+}
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: #F8F4F0;
+  border-radius: 24px;
+  color: #8B5A2B;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.resource-card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: all 0.25s ease;
+  border: 1px solid #E2D4C8;
+  position: relative;
+}
+.resource-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  border-color: #D4BBA5;
+}
+.card-menu {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 2;
+}
+.menu-trigger {
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: 0.2s;
+}
+.menu-trigger svg {
+  color: #4A3520;
+  width: 18px;
+  height: 18px;
+}
+.menu-trigger:hover {
+  background: #F5EBE0;
+  transform: scale(1.05);
+}
+.menu-popup {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  min-width: 140px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.menu-popup button {
+  background: none;
+  border: none;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.menu-popup button:hover {
+  background: #F5EBE0;
+}
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 1rem 1rem 0 1rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  background: #F5EBE0;
+  color: #8B5A2B;
+}
+.card-badge.video {
+  background: #F0E2D4;
+  color: #6F4E37;
+}
+.card-badge.pdf {
+  background: #F5EBE0;
+  color: #8B5A2B;
+}
+.card-badge.bloc {
+  background: #F0E2D4;
+  color: #5C3A1E;
+}
+.card-content {
+  padding: 0 1rem 1rem;
+}
+.card-content h3 {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  color: #2C1A0E;
+}
+.meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.7rem;
+  color: #8B5A2B;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.scheduled-badge {
+  color: #8B5A2B;
+  font-weight: 500;
+}
+.media-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: #F8F4F0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.media-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #F5EBE0;
+  color: #8B5A2B;
+  cursor: pointer;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.media-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: contain;
+  background: #000;
+}
+.video-embed-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.video-embed-container iframe {
+  width: 100%;
+  height: 100%;
+}
+.video-link-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F8F4F0;
+}
+.video-link {
+  padding: 0.5rem 1rem;
+  background: #8B5A2B;
+  color: white;
+  border-radius: 30px;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+.video-link:hover {
+  background: #5C3A1E;
+}
+.description-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #F8F4F0;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  text-align: center;
+}
+.description-icon {
+  margin-bottom: 0.5rem;
+  color: #8B5A2B;
+}
+.description-text {
+  font-size: 0.85rem;
+  color: #4A3520;
+  line-height: 1.4;
+  margin: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+.no-media-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #F8F4F0;
+  color: #8B5A2B;
+  gap: 0.5rem;
+}
+.no-media-preview svg {
+  color: #C4A484;
+}
+.no-media-preview span {
+  font-size: 0.8rem;
+}
+.pdf-link {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+.pdf-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: #8B5A2B;
+  text-decoration: none;
+}
+.pdf-link a:hover {
+  text-decoration: underline;
+}
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #E2D4C8;
+  background: #FEFCF8;
+  align-items: center;
+}
+.action-btn {
+  background: none;
+  border: 1px solid #8B5A2B;
+  padding: 0.2rem 0.7rem;
+  border-radius: 30px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: 0.1s;
+  color: #8B5A2B;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.action-btn svg {
+  width: 14px;
+  height: 14px;
+  color: #4A3520;
+}
+.action-btn:hover {
+  background: #8B5A2B;
+  color: white;
+}
+.action-btn:hover svg {
+  color: white;
+}
+.feedback-stats {
+  margin-left: auto;
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  color: #8B5A2B;
+}
+.stat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.feedback-buttons {
+  display: flex;
+  gap: 0.8rem;
+  padding: 0.6rem 1rem;
+  background: #FEFCF8;
+  border-top: 1px solid #E2D4C8;
+  flex-wrap: wrap;
+}
+.fb-like, .fb-comment {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: #8B5A2B;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.fb-like svg, .fb-comment svg {
+  width: 14px;
+  height: 14px;
+}
+.fb-like:hover {
+  color: #C0392B;
+}
+.fb-like:hover svg {
+  color: #C0392B;
+}
+.fb-comment:hover {
+  color: #5C3A1E;
+}
+.comments-section {
+  padding: 0.8rem 1rem;
+  background: #F8F4F0;
+  border-top: 1px solid #E2D4C8;
+}
+.comments-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 0.5rem;
+}
+.comment-item {
+  background: white;
+  border-radius: 12px;
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  font-size: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.comment-item strong {
+  display: block;
+  font-size: 0.7rem;
+  color: #5C3A1E;
+  margin-bottom: 0.2rem;
+}
+.comment-item p {
+  margin: 0.2rem 0;
+}
+.comment-item small {
+  font-size: 0.6rem;
+  color: #8B5A2B;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.delete-comment {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.delete-comment svg {
+  width: 12px;
+  height: 12px;
+  color: #8B5A2B;
+}
+.delete-comment:hover {
+  opacity: 1;
+}
+.add-comment {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+}
+.add-comment textarea {
+  flex: 1;
+  border-radius: 16px;
+  border: 1px solid #D4BBA5;
+  padding: 0.4rem;
+  font-size: 0.7rem;
+  resize: vertical;
+  transition: 0.2s;
+}
+.add-comment textarea:focus {
+  outline: none;
+  border-color: #8B5A2B;
+  box-shadow: 0 0 0 2px rgba(139,90,43,0.1);
+}
+.add-comment button.primary.small {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.7rem;
+  background: #8B5A2B;
+  border: none;
+  color: white;
+  border-radius: 40px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.add-comment button.primary.small:hover {
+  background: #5C3A1E;
+}
+.no-comments {
+  text-align: center;
+  color: #C4A484;
+  font-size: 0.7rem;
+  padding: 0.5rem;
+}
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: #8B5A2B;
+  border: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.fab svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+.fab:hover {
+  background: #5C3A1E;
+  transform: scale(1.05);
+}
+.fab-scheduled {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  background: #8B5A2B;
+  border: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.fab-scheduled svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+.fab-scheduled:hover {
+  background: #5C3A1E;
+  transform: scale(1.05);
+}
+.load-more-container {
+  text-align: center;
+  margin-top: 2rem;
+}
+.load-more-btn {
+  background: #F5EBE0;
+  border: 1px solid #8B5A2B;
+  padding: 0.5rem 1.5rem;
+  border-radius: 40px;
+  color: #8B5A2B;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.load-more-btn:hover {
+  background: #8B5A2B;
+  color: white;
+}
+.loading-more {
+  text-align: center;
+  margin-top: 1rem;
+  color: #8B5A2B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  font-size: 0.9rem;
+  font-weight: 500;
+  overflow: hidden;
+  min-width: 200px;
+  max-width: 90%;
+}
+.toast-blue-line {
+  width: 4px;
+  background-color: #8B5A2B;
+  align-self: stretch;
+}
+.toast-content {
+  padding: 0.75rem 1.5rem;
+  color: #2C1A0E;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.toast-content svg {
+  color: #8B5A2B;
+}
+.toast-fade-enter-active, .toast-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.toast-fade-enter-from, .toast-fade-leave-to {
+  opacity: 0;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-overlay.blur-bg {
+  backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.3);
+}
+.modal-content {
+  background: white;
+  border-radius: 32px;
+  max-width: 700px;
+  width: 90%;
+  padding: 1.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+}
+.modal-content.small {
+  max-width: 400px;
+}
+.modal-content.confirm-modal {
+  text-align: center;
+  max-width: 400px;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #E2D4C8;
+}
+.modal-header.stylized-header {
+  background: linear-gradient(135deg, #F5EBE0 0%, #E8D8C8 100%);
+  margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 32px 32px 0 0;
+  border-bottom: none;
+}
+.modal-header.stylized-header .header-icon {
+  background: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8B5A2B;
+}
+.modal-header.stylized-header h2, .modal-header.stylized-header h3 {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  color: #5C3A1E;
+  font-weight: 600;
+}
+.modal-header.stylized-header .close-modal {
+  background: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-header.stylized-header .close-modal svg {
+  width: 18px;
+  height: 18px;
+}
+.close-modal {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: 0.2s;
+}
+.close-modal svg {
+  width: 24px;
+  height: 24px;
+  color: #8B5A2B;
+  transition: 0.2s;
+}
+.close-modal:hover svg {
+  color: #ef4444;
+}
+.confirm-icon {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #8B5A2B;
+}
+.confirm-icon svg {
+  color: #8B5A2B;
+}
+.modal-footer.centered {
+  justify-content: center;
+}
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #4A3520;
+  margin-bottom: 0.3rem;
+}
+.form-group input, .form-group textarea, .modal-content select {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 16px;
+  border: 1px solid #D4BBA5;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus, .modal-content select:focus {
+  outline: none;
+  border-color: #8B5A2B;
+  box-shadow: 0 0 0 2px rgba(139,90,43,0.2);
+}
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+.or-divider {
+  text-align: center;
+  margin: 0.5rem 0;
+  color: #8B5A2B;
+}
+.file-upload .file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #F5EBE0;
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #8B5A2B;
+  transition: 0.2s;
+}
+.file-upload .file-label:hover {
+  background: #E8D8C8;
+}
+.file-preview {
+  margin-top: 0.5rem;
+  background: #F5EBE0;
+  border-radius: 16px;
+  padding: 0.5rem 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.file-preview.existing {
+  background: #FEF3C7;
+}
+.remove-file {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ef4444;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.modal-footer button {
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  border: 1px solid #8B5A2B;
+  background: white;
+  cursor: pointer;
+  color: #8B5A2B;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: 0.2s;
+}
+.modal-footer button.primary {
+  background: #8B5A2B;
+  color: white;
+  border: none;
+}
+.modal-footer button.primary:hover {
+  background: #5C3A1E;
+}
+.modal-footer button:hover:not(.primary) {
+  background: #F5EBE0;
+}
+.preview-body {
+  margin-bottom: 1rem;
+}
+.preview-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  color: #8B5A2B;
+}
+.preview-description {
+  background: #F8F4F0;
+  padding: 1rem;
+  border-radius: 16px;
+  margin-bottom: 1rem;
+}
+.scheduled-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.scheduled-item {
+  border: 1px solid #E2D4C8;
+  border-radius: 20px;
+  padding: 1rem;
+  transition: 0.2s;
+  background: white;
+}
+.scheduled-item:hover {
+  border-color: #8B5A2B;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.scheduled-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.scheduled-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2C1A0E;
+}
+.scheduled-meta-line {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: #8B5A2B;
+}
+.scheduled-date, .scheduled-created {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.scheduled-actions {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+.scheduled-actions .action-btn {
+  background: none;
+  border: 1px solid #8B5A2B;
+  padding: 0.3rem 1rem;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #8B5A2B;
+}
+.scheduled-actions .action-btn:hover {
+  background: #8B5A2B;
+  color: white;
+}
+.scheduled-actions .cancel-btn {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.scheduled-actions .cancel-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+.scheduled-details {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #E2D4C8;
+}
+.scheduled-full-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.media-preview {
+  flex: 1;
+  min-width: 240px;
+  max-width: 320px;
+}
+.media-preview .media-container {
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #F8F4F0;
+}
+.info-preview {
+  flex: 2;
+}
+.full-description {
+  background: #F8F4F0;
+  padding: 0.8rem;
+  border-radius: 12px;
+  margin: 0 0 0.8rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #2C1A0E;
+}
+.scheduled-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #8B5A2B;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+.scheduled-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
 @media (max-width: 768px) {
-  .resources-container { padding: 1rem; }
-  .filters-bar { flex-direction: column; align-items: stretch; border-radius: 24px; padding: 1rem; }
-  .filter-group { justify-content: space-between; }
-  .filter-pills { justify-content: center; }
-  .form-row { flex-direction: column; }
-  .fab, .fab-scheduled { bottom: 1rem; width: 48px; height: 48px; }
-  .fab { right: 1rem; }
-  .fab-scheduled { left: 1rem; }
-  .fab svg, .fab-scheduled svg { width: 24px; height: 24px; }
-  .toast-notification { white-space: normal; text-align: center; max-width: 90%; }
-  .modal-header.stylized-header .header-icon { width: 32px; height: 32px; }
-  .modal-header.stylized-header h2, .modal-header.stylized-header h3 { font-size: 1.1rem; }
-  .scheduled-full-content { flex-direction: column; }
-  .media-preview { max-width: 100%; }
-  .scheduled-actions { justify-content: center; }
+  .resources-container {
+    padding: 1rem;
+  }
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 24px;
+    padding: 1rem;
+  }
+  .filter-group {
+    justify-content: space-between;
+  }
+  .filter-pills {
+    justify-content: center;
+  }
+  .form-row {
+    flex-direction: column;
+  }
+  .fab, .fab-scheduled {
+    bottom: 1rem;
+    width: 48px;
+    height: 48px;
+  }
+  .fab {
+    right: 1rem;
+  }
+  .fab-scheduled {
+    left: 1rem;
+  }
+  .fab svg, .fab-scheduled svg {
+    width: 24px;
+    height: 24px;
+  }
+  .toast-notification {
+    white-space: normal;
+    text-align: center;
+    max-width: 90%;
+  }
+  .modal-header.stylized-header .header-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .modal-header.stylized-header h2, .modal-header.stylized-header h3 {
+    font-size: 1.1rem;
+  }
+  .scheduled-full-content {
+    flex-direction: column;
+  }
+  .media-preview {
+    max-width: 100%;
+  }
+  .scheduled-actions {
+    justify-content: center;
+  }
 }
 </style>
