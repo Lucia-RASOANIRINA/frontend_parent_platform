@@ -5,11 +5,11 @@
       <!-- Notification Toast -->
       <transition name="notify-slow">
         <div v-if="notification.show" 
-          class="fixed top-6 right-4 left-4 md:left-auto md:right-8 md:w-80 z-[100] flex items-center gap-4 px-5 py-4 rounded-2xl shadow-2xl border border-[#CFFAFE] bg-white/95 backdrop-blur-md"
+          class="fixed top-6 right-4 left-4 md:left-auto md:right-8 md:w-80 z-[100] flex items-center gap-4 px-5 py-4 rounded-2xl shadow-2xl border border-[#D2B48C] bg-white/95 backdrop-blur-md"
         >
-          <div class="flex-shrink-0 w-10 h-10 rounded-xl" :class="notification.type === 'success' ? 'bg-[#F0F9FF]' : 'bg-red-50'">
+          <div class="flex-shrink-0 w-10 h-10 rounded-xl" :class="notification.type === 'success' ? 'bg-[#F5EDE4]' : 'bg-red-50'">
             <div class="flex items-center justify-center h-full">
-              <svg v-if="notification.type === 'success'" class="w-6 h-6 text-[#0891B2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg v-if="notification.type === 'success'" class="w-6 h-6 text-[#8B5A2B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <svg v-else class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,7 +20,7 @@
           
           <div class="flex-grow">
             <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ notification.type === 'success' ? 'Succès' : 'Erreur' }}</p>
-            <p class="text-xs font-bold text-[#164E63]">{{ notification.message }}</p>
+            <p class="text-xs font-bold text-[#2C1810]">{{ notification.message }}</p>
           </div>
 
           <button @click="notification.show = false" class="text-gray-300 hover:text-gray-400 transition-colors">
@@ -30,9 +30,9 @@
       </transition>
 
       <!-- Formulaire de création de post -->
-      <div class="bg-white rounded-xl shadow-sm border border-[#CFFAFE] p-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm border border-[#D2B48C] p-4 mb-6">
         <div class="flex gap-3">
-          <div class="w-10 h-10 rounded-full bg-[#0891B2] flex-shrink-0 flex items-center justify-center text-white font-bold shadow-inner">
+          <div class="w-10 h-10 rounded-full bg-[#8B5A2B] flex-shrink-0 flex items-center justify-center text-white font-bold shadow-inner">
             {{ userInitial }}
           </div>
           
@@ -41,21 +41,21 @@
               v-model="formData.contenu" 
               @focus="isExpanded = true"
               placeholder="Quoi de neuf pour les petits ?" 
-              class="w-full bg-[#F0F9FF] border-none rounded-2xl py-2.5 px-4 text-sm focus:ring-1 focus:ring-[#06B6D4] transition-all resize-none outline-none text-[#164E63]"
+              class="w-full bg-[#F5EDE4] border-none rounded-2xl py-2.5 px-4 text-sm focus:ring-1 focus:ring-[#8B5A2B] transition-all resize-none outline-none text-[#2C1810]"
               :class="isExpanded ? 'h-24' : 'h-10'"
             ></textarea>
 
             <!-- Aperçu des fichiers sélectionnés pour création -->
-            <div v-if="imagePreviewUrl || pdfFile" class="mt-2 p-2 bg-[#F0F9FF] rounded-lg flex items-center gap-3">
+            <div v-if="imagePreviewUrl || pdfFile" class="mt-2 p-2 bg-[#F5EDE4] rounded-lg flex items-center gap-3">
               <div v-if="imagePreviewUrl" class="relative">
-                <img :src="imagePreviewUrl" class="h-16 w-16 object-cover rounded-lg border border-[#CFFAFE]">
+                <img :src="imagePreviewUrl" class="h-16 w-16 object-cover rounded-lg border border-[#D2B48C]">
                 <button @click="removeSelectedImage" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5">
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
-              <div v-if="pdfFile" class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#CFFAFE]">
+              <div v-if="pdfFile" class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#D2B48C]">
                 <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
@@ -69,14 +69,14 @@
             </div>
 
             <transition name="fade">
-              <div v-if="isExpanded" class="flex items-center justify-between pt-2 border-t border-[#CFFAFE]">
+              <div v-if="isExpanded" class="flex items-center justify-between pt-2 border-t border-[#D2B48C]">
                 <div class="flex gap-2">
-                  <button @click="imageInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#F0F9FF] rounded-lg transition-colors group">
+                  <button @click="imageInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#F5EDE4] rounded-lg transition-colors group">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="1.5"/></svg>
                     <span class="text-xs font-semibold text-gray-600">Photo</span>
                   </button>
 
-                  <button v-if="userRole !== 'parent'" @click="fileInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#F0F9FF] rounded-lg transition-colors">
+                  <button v-if="userRole !== 'parent'" @click="fileInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#F5EDE4] rounded-lg transition-colors">
                     <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                     </svg>
@@ -87,7 +87,7 @@
                 <div class="flex gap-2">
                   <button @click="cancelPost" class="text-xs text-gray-400 font-bold px-3">Annuler</button>
                   <button @click="handleSubmit" :disabled="!formData.contenu.trim() || isLoading" 
-                    class="bg-[#164E63] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-[#0891B2] disabled:opacity-50 transition-all">
+                    class="bg-[#2C1810] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-[#8B5A2B] disabled:opacity-50 transition-all">
                     {{ isLoading ? 'Publication...' : 'Publier' }}
                   </button>
                 </div>
@@ -102,33 +102,33 @@
 
       <!-- Liste des posts -->
       <div class="space-y-4">
-        <div v-for="post in posts" :key="post.id" class="bg-white rounded-xl shadow-sm border border-[#CFFAFE] overflow-hidden transition-all hover:shadow-md">
+        <div v-for="post in posts" :key="post.id" class="bg-white rounded-xl shadow-sm border border-[#D2B48C] overflow-hidden transition-all hover:shadow-md">
           <div class="p-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-[#F0F9FF] flex items-center justify-center text-[#164E63] font-bold">
+              <div class="w-10 h-10 rounded-full bg-[#F5EDE4] flex items-center justify-center text-[#2C1810] font-bold">
                 {{ post.user?.nom?.charAt(0) || 'U' }}
               </div>
               <div>
-                <h4 class="text-sm font-bold text-[#164E63]">{{ post.user?.nom || 'Utilisateur' }}</h4>
+                <h4 class="text-sm font-bold text-[#2C1810]">{{ post.user?.nom || 'Utilisateur' }}</h4>
                 <p class="text-[10px] text-gray-400">{{ formatDate(post.createdAt) }}</p>
               </div>
             </div>
             
             <div v-if="post.user?.id === user.id" class="relative">
-              <button @click="toggleMenu(post.id)" class="p-2 hover:bg-[#F0F9FF] rounded-lg transition-colors">
+              <button @click="toggleMenu(post.id)" class="p-2 hover:bg-[#F5EDE4] rounded-lg transition-colors">
                 <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
                 </svg>
               </button>
               
-              <div v-if="activeMenu === post.id" class="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-lg border border-[#CFFAFE] z-10">
-                <button @click="openEditModal(post)" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-[#F0F9FF] flex items-center gap-2">
+              <div v-if="activeMenu === post.id" class="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-lg border border-[#D2B48C] z-10">
+                <button @click="openEditModal(post)" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-[#F5EDE4] flex items-center gap-2">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                   </svg>
                   Modifier
                 </button>
-                <button @click="confirmDeletePost(post.id)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F0F9FF] flex items-center gap-2">
+                <button @click="confirmDeletePost(post.id)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F5EDE4] flex items-center gap-2">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                   </svg>
@@ -149,7 +149,7 @@
 
           <!-- PDF avec téléchargement confirmé -->
           <div v-if="post.fileData" class="px-4 py-2">
-            <button @click="confirmDownload(post)" class="inline-flex items-center gap-2 text-sm text-[#0891B2] hover:text-[#164E63] transition-colors">
+            <button @click="confirmDownload(post)" class="inline-flex items-center gap-2 text-sm text-[#8B5A2B] hover:text-[#2C1810] transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
               </svg>
@@ -161,15 +161,15 @@
           </div>
 
           <!-- Actions Like et Commentaire -->
-          <div class="px-4 py-2 flex items-center gap-4 border-t border-[#F0F9FF]">
-            <button @click="toggleLike(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#F0F9FF] rounded-lg transition-all" :class="post.liked ? 'text-red-500' : 'text-gray-500'">
+          <div class="px-4 py-2 flex items-center gap-4 border-t border-[#F5EDE4]">
+            <button @click="toggleLike(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#F5EDE4] rounded-lg transition-all" :class="post.liked ? 'text-red-500' : 'text-gray-500'">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path :fill="post.liked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
               </svg>
               <span class="text-xs font-bold">{{ post.likesCount || 0 }} J'aime</span>
             </button>
             
-            <button @click="toggleComments(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#F0F9FF] rounded-lg transition-all text-gray-500">
+            <button @click="toggleComments(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#F5EDE4] rounded-lg transition-all text-gray-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-width="2"/>
               </svg>
@@ -178,10 +178,10 @@
           </div>
 
           <!-- Section des commentaires -->
-          <div v-if="activeComments === post.id" class="border-t border-[#F0F9FF] p-4 bg-[#FAFAFA]">
+          <div v-if="activeComments === post.id" class="border-t border-[#F5EDE4] p-4 bg-[#FAFAFA]">
             <div class="space-y-3 max-h-60 overflow-y-auto">
               <div v-for="comment in post.comments" :key="comment.id" class="flex gap-2 text-sm">
-                <span class="font-bold text-[#164E63]">{{ comment.user?.nom || 'Utilisateur' }}:</span>
+                <span class="font-bold text-[#2C1810]">{{ comment.user?.nom || 'Utilisateur' }}:</span>
                 <span class="text-gray-600">{{ comment.contenu }}</span>
               </div>
               <div v-if="!post.comments?.length" class="text-center text-gray-400 text-sm">
@@ -191,8 +191,8 @@
             
             <div class="flex gap-2 mt-3">
               <input v-model="newComment[post.id]" type="text" placeholder="Écrire un commentaire..." 
-                class="flex-grow bg-white border border-[#CFFAFE] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#06B6D4]">
-              <button @click="addComment(post.id)" class="bg-[#06B6D4] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#164E63] transition-colors">
+                class="flex-grow bg-white border border-[#D2B48C] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#8B5A2B]">
+              <button @click="addComment(post.id)" class="bg-[#8B5A2B] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#2C1810] transition-colors">
                 Envoyer
               </button>
             </div>
@@ -208,19 +208,19 @@
     <!-- Modal de modification -->
     <div v-if="editModal.open" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" @click.self="closeEditModal">
       <div class="bg-white rounded-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-        <h3 class="text-lg font-bold text-[#164E63] mb-4">Modifier le post</h3>
+        <h3 class="text-lg font-bold text-[#2C1810] mb-4">Modifier le post</h3>
         
         <textarea 
           v-model="editModal.contenu" 
           ref="editTextarea"
-          class="w-full bg-[#F0F9FF] rounded-xl p-3 text-sm focus:ring-1 focus:ring-[#06B6D4] outline-none resize-none overflow-hidden"
+          class="w-full bg-[#F5EDE4] rounded-xl p-3 text-sm focus:ring-1 focus:ring-[#8B5A2B] outline-none resize-none overflow-hidden"
           rows="3"
           placeholder="Votre message..."
           @input="autoResizeTextarea"
         ></textarea>
         
         <!-- Section Image avec icône SVG -->
-        <div class="mt-4 border border-[#CFFAFE] rounded-lg p-3">
+        <div class="mt-4 border border-[#D2B48C] rounded-lg p-3">
           <div class="flex items-center gap-2 mb-2">
             <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -229,7 +229,7 @@
           </div>
           
           <div v-if="editModal.currentImageUrl && !editModal.newImagePreview" class="relative inline-block mb-3">
-            <img :src="editModal.currentImageUrl" class="max-h-32 rounded-lg border border-[#CFFAFE]">
+            <img :src="editModal.currentImageUrl" class="max-h-32 rounded-lg border border-[#D2B48C]">
             <button @click="removeCurrentImage" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -237,7 +237,7 @@
             </button>
           </div>
           <div v-if="editModal.newImagePreview" class="relative inline-block mb-3">
-            <img :src="editModal.newImagePreview" class="max-h-32 rounded-lg border border-[#CFFAFE]">
+            <img :src="editModal.newImagePreview" class="max-h-32 rounded-lg border border-[#D2B48C]">
             <button @click="removeNewImage" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -245,7 +245,7 @@
             </button>
           </div>
           
-          <button @click="editImageInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 bg-[#F0F9FF] rounded-lg hover:bg-[#CFFAFE] transition-colors">
+          <button @click="editImageInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 bg-[#F5EDE4] rounded-lg hover:bg-[#D2B48C] transition-colors">
             <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="1.5"/></svg>
             <span class="text-xs font-semibold text-gray-700">Changer l'image</span>
           </button>
@@ -253,7 +253,7 @@
         </div>
 
         <!-- Section PDF avec icône SVG -->
-        <div class="mt-4 border border-[#CFFAFE] rounded-lg p-3">
+        <div class="mt-4 border border-[#D2B48C] rounded-lg p-3">
           <div class="flex items-center gap-2 mb-2">
             <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -288,7 +288,7 @@
             </button>
           </div>
           
-          <button @click="editFileInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 bg-[#F0F9FF] rounded-lg hover:bg-[#CFFAFE] transition-colors">
+          <button @click="editFileInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 bg-[#F5EDE4] rounded-lg hover:bg-[#D2B48C] transition-colors">
             <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
@@ -299,7 +299,7 @@
         
         <div class="flex justify-end gap-3 mt-6">
           <button @click="closeEditModal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Annuler</button>
-          <button @click="updatePost" :disabled="isUpdating" class="px-4 py-2 bg-[#164E63] text-white rounded-lg hover:bg-[#0891B2] disabled:opacity-50">
+          <button @click="updatePost" :disabled="isUpdating" class="px-4 py-2 bg-[#2C1810] text-white rounded-lg hover:bg-[#8B5A2B] disabled:opacity-50">
             {{ isUpdating ? 'Enregistrement...' : 'Enregistrer' }}
           </button>
         </div>
@@ -309,29 +309,25 @@
     <!-- Modal de confirmation personnalisée (icône dynamique selon l'action) -->
     <div v-if="confirmModal.show" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[200] p-4" @click.self="closeConfirmModal">
       <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl text-center">
-        <!-- Icône centrée avec condition -->
         <div class="flex justify-center mb-4">
-          <div class="w-16 h-16 rounded-full bg-[#F0F9FF] flex items-center justify-center">
+          <div class="w-16 h-16 rounded-full bg-[#F5EDE4] flex items-center justify-center">
             <!-- Icône de suppression (poubelle) -->
-            <svg v-if="confirmModal.iconType === 'delete'" class="w-8 h-8 text-[#0891B2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg v-if="confirmModal.iconType === 'delete'" class="w-8 h-8 text-[#8B5A2B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
             <!-- Icône de téléchargement (flèche vers le bas) -->
-            <svg v-else class="w-8 h-8 text-[#0891B2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg v-else class="w-8 h-8 text-[#8B5A2B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
           </div>
         </div>
-        <!-- Titre centré -->
-        <h3 class="text-lg font-bold text-[#164E63] mb-2">{{ confirmModal.title }}</h3>
-        <!-- Message -->
+        <h3 class="text-lg font-bold text-[#2C1810] mb-2">{{ confirmModal.title }}</h3>
         <p class="text-sm text-gray-600 mb-6">{{ confirmModal.message }}</p>
-        <!-- Boutons centrés avec couleurs du site -->
         <div class="flex justify-center gap-3">
           <button @click="closeConfirmModal" class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
             Annuler
           </button>
-          <button @click="confirmModal.onConfirm" class="px-5 py-2 text-sm font-medium text-white bg-[#164E63] rounded-lg hover:bg-[#0891B2] transition-colors">
+          <button @click="confirmModal.onConfirm" class="px-5 py-2 text-sm font-medium text-white bg-[#2C1810] rounded-lg hover:bg-[#8B5A2B] transition-colors">
             Confirmer
           </button>
         </div>
@@ -342,7 +338,7 @@
     <div v-if="imageViewer.show" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[200] p-4" @click.self="closeImageViewer">
       <div class="relative max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden">
         <img :src="imageViewer.url" class="max-w-full max-h-[80vh] object-contain">
-        <button @click="downloadCurrentImage" class="absolute bottom-4 right-4 bg-[#164E63] text-white p-2 rounded-full hover:bg-[#0891B2] transition-colors">
+        <button @click="downloadCurrentImage" class="absolute bottom-4 right-4 bg-[#2C1810] text-white p-2 rounded-full hover:bg-[#8B5A2B] transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>

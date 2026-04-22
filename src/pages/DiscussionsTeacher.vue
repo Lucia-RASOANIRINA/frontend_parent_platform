@@ -11,7 +11,6 @@
               </svg>
             </button>
             <div v-if="showFilterMenu" class="filter-dropdown">
-              <!-- Options du filtre avec icône "✓" devant l'option active -->
               <button @click="setFilter('all')" :class="{ active: currentFilter === 'all' }">
                 <span v-if="currentFilter === 'all'" class="check-icon">✓</span>
                 Toutes
@@ -196,7 +195,7 @@
       </div>
     </div>
 
-    <!-- Toast simple (style d'origine) -->
+    <!-- Toast simple -->
     <div v-if="toast.show" class="toast-notification" :class="toast.type">
       <span>{{ toast.message }}</span>
       <button @click="closeToast">✕</button>
@@ -209,7 +208,9 @@ import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { Client } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const api = axios.create({ baseURL: 'http://localhost:8082/api', headers: { 'Content-Type': 'application/json' } })
 const user = JSON.parse(localStorage.getItem('user') || '{"id": 6, "nom": "Lora", "role": "PSY"}')
 const WS_URL = 'http://localhost:8082/ws'
@@ -242,7 +243,7 @@ const messagesArea = ref(null)
 const fileInput = ref(null)
 
 // Toast simple
-const showToast = (msg, type) => {
+const showToast = (msg, type = 'success') => {
   if (toast.value.timeoutId) clearTimeout(toast.value.timeoutId)
   toast.value = { show: true, message: msg, type, timeoutId: null }
   toast.value.timeoutId = setTimeout(() => { toast.value.show = false }, 20000)
@@ -260,7 +261,7 @@ const setFilter = (filter) => {
   fetchConversations()
 }
 
-// Récupération des conversations (backend filtré)
+// Récupération des conversations
 const fetchConversations = async () => {
   isLoadingConv.value = true
   try {
@@ -280,7 +281,6 @@ const fetchMessages = async (otherUserId) => {
       formatted.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt))
       messages.value = formatted
       await nextTick(); scrollToBottom()
-      // On marque comme lu via la même logique que le bouton
       await markMessagesAsRead(otherUserId)
     }
   } catch (err) { console.error(err) }
@@ -290,7 +290,6 @@ const fetchMessages = async (otherUserId) => {
 const selectConversation = async (conv) => {
   selectedConversation.value = conv
   if (conv.unreadCount > 0) {
-    // Appel identique à markAsRead (mais sans recharger toute la liste)
     await markMessagesAsRead(conv.otherUser.id)
     conv.unreadCount = 0
   }
@@ -301,7 +300,6 @@ const selectConversation = async (conv) => {
 const markMessagesAsRead = async (otherUserId) => {
   try {
     await api.post('/messages/mark-read', { userId: user.id, otherUserId })
-    // Mise à jour locale du compteur
     const conv = conversations.value.find(c => c.otherUser.id === otherUserId)
     if (conv) conv.unreadCount = 0
   } catch (err) { console.error(err) }
@@ -313,7 +311,7 @@ const markAsRead = async (conv) => {
     conv.unreadCount = 0
     activeMenu.value = null
     showToast('Conversation marquée comme lue', 'success')
-    await fetchConversations() // recharge pour mettre à jour les filtres
+    await fetchConversations()
   } catch (err) { showToast('Erreur', 'error') }
 }
 
@@ -353,13 +351,24 @@ const deleteConversation = async () => {
   } catch (err) { showToast('Erreur suppression', 'error') }
 }
 
+// Démarrer une conversation (avec un utilisateur donné)
 const startConversation = async (otherUser) => {
+  if (!otherUser || !otherUser.id) {
+    console.error('startConversation: utilisateur invalide', otherUser)
+    showToast("Impossible d'identifier l'utilisateur", 'error')
+    return
+  }
+  if (otherUser.id === user.id) {
+    showToast("Vous ne pouvez pas discuter avec vous-même", 'error')
+    return
+  }
   const existing = conversations.value.find(c => c.otherUser.id === otherUser.id)
-  if (existing) await selectConversation(existing)
-  else {
+  if (existing) {
+    await selectConversation(existing)
+  } else {
     const newConv = {
       id: Date.now(),
-      otherUser,
+      otherUser: { ...otherUser },
       lastMessage: '',
       lastMessageTime: new Date().toISOString(),
       unreadCount: 0,
@@ -385,10 +394,15 @@ const searchUsers = async () => {
 
 const sendMessage = async () => {
   if (!newMessage.value.trim() || !selectedConversation.value) return
+  const receiverId = selectedConversation.value.otherUser?.id
+  if (!receiverId) {
+    showToast("Destinataire invalide", 'error')
+    return
+  }
   const messageData = {
     contenu: newMessage.value,
     sender: { id: user.id },
-    receiver: { id: selectedConversation.value.otherUser.id },
+    receiver: { id: receiverId },
     messageType: 'TEXT',
     createdAt: new Date().toISOString()
   }
@@ -399,12 +413,23 @@ const sendMessage = async () => {
     messageType: 'TEXT',
     isRead: false,
     senderId: user.id,
-    receiverId: selectedConversation.value.otherUser.id
+    receiverId: receiverId
   }
   messages.value.push(localMsg)
   scrollToBottom()
-  if (stompClient?.connected) stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
-  else connectWebSocket()
+  if (stompClient?.connected) {
+    stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
+  } else {
+    showToast("Connexion au chat en cours... Veuillez réessayer dans un instant", 'error')
+    connectWebSocket()
+    setTimeout(() => {
+      if (stompClient?.connected) {
+        stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
+      } else {
+        showToast("Impossible d'envoyer le message, connexion au serveur échouée", 'error')
+      }
+    }, 1000)
+  }
   newMessage.value = ''
 }
 
@@ -412,6 +437,11 @@ const triggerFileUpload = () => fileInput.value?.click()
 const sendFile = async (event) => {
   const target = event.target
   if (!target.files?.length || !selectedConversation.value) return
+  const receiverId = selectedConversation.value.otherUser?.id
+  if (!receiverId) {
+    showToast("Destinataire invalide", 'error')
+    return
+  }
   const file = target.files[0]
   const reader = new FileReader()
   reader.onload = async () => {
@@ -419,17 +449,26 @@ const sendFile = async (event) => {
     const messageData = {
       contenu: file.name,
       sender: { id: user.id },
-      receiver: { id: selectedConversation.value.otherUser.id },
+      receiver: { id: receiverId },
       messageType: file.type.startsWith('image/') ? 'IMAGE' : 'FILE',
       fileData: base64,
       fileType: file.type,
       fileName: file.name,
       createdAt: new Date().toISOString()
     }
-    const localMsg = { ...messageData, id: Date.now(), isRead: false, senderId: user.id, receiverId: selectedConversation.value.otherUser.id }
+    const localMsg = { ...messageData, id: Date.now(), isRead: false, senderId: user.id, receiverId: receiverId }
     messages.value.push(localMsg)
     scrollToBottom()
-    if (stompClient?.connected) stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
+    if (stompClient?.connected) {
+      stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
+    } else {
+      showToast("Connexion au chat en cours...", 'error')
+      connectWebSocket()
+      setTimeout(() => {
+        if (stompClient?.connected) stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
+        else showToast("Échec de l'envoi du fichier", 'error')
+      }, 1000)
+    }
   }
   reader.readAsDataURL(file)
   target.value = ''
@@ -471,10 +510,12 @@ const toggleMenu = (id) => { activeMenu.value = activeMenu.value === id ? null :
 
 // WebSocket
 const connectWebSocket = () => {
+  if (stompClient && stompClient.connected) return
   stompClient = new Client({
     webSocketFactory: () => new SockJS(WS_URL),
     reconnectDelay: 5000,
     onConnect: () => {
+      console.log('WebSocket connecté')
       stompClient.subscribe(`/user/${user.id}/queue/messages`, (msg) => {
         const newMsg = JSON.parse(msg.body)
         const formatted = { ...newMsg, senderId: newMsg.sender?.id, receiverId: newMsg.receiver?.id }
@@ -513,12 +554,38 @@ const handleClickOutside = (e) => {
   if (!e.target.closest('.filter-menu')) showFilterMenu.value = false
 }
 
+// Gestion de l'utilisateur sélectionné depuis localStorage
+const checkAndStartSelectedUser = async () => {
+  const selectedUserStr = localStorage.getItem('selectedChatUser')
+  if (!selectedUserStr) return
+  localStorage.removeItem('selectedChatUser')
+  let targetUser
+  try {
+    targetUser = JSON.parse(selectedUserStr)
+  } catch(e) {
+    console.error('Erreur parsing selectedChatUser', e)
+    return
+  }
+  if (!targetUser || !targetUser.id) {
+    console.warn('selectedChatUser invalide', targetUser)
+    showToast("Utilisateur cible invalide", 'error')
+    return
+  }
+  if (targetUser.id === user.id) {
+    showToast("Vous êtes déjà sur votre page de messages", 'info')
+    return
+  }
+  await new Promise(resolve => setTimeout(resolve, 300))
+  await startConversation(targetUser)
+}
+
 onMounted(async () => {
   document.addEventListener('click', handleClickOutside)
   window.addEventListener('resize', handleResize)
   handleResize()
   await fetchConversations()
   connectWebSocket()
+  await checkAndStartSelectedUser()
 })
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
@@ -529,8 +596,11 @@ watch(messages, () => scrollToBottom(), { deep: true })
 </script>
 
 <style scoped>
-/* ===== THÈME ROSE (HEADER) ===== */
-* { color: #1e293b; }
+/* ===== THÈME COFFEE (harmonisé avec header/footer) ===== */
+* {
+  color: #2C1810; /* café foncé pour le texte principal */
+}
+
 .chat-container {
   display: flex;
   height: calc(100vh - 120px);
@@ -543,11 +613,12 @@ watch(messages, () => scrollToBottom(), { deep: true })
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
+
 /* Sidebar */
 .chat-sidebar {
   width: 260px;
   background: #fff;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid #E8DCCC; /* beige clair */
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
@@ -555,29 +626,45 @@ watch(messages, () => scrollToBottom(), { deep: true })
 }
 .sidebar-header {
   padding: 12px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #E8DCCC;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.header-left { display: flex; align-items: center; gap: 12px; }
-.filter-menu { position: relative; }
-.menu-icon-btn, .new-message-btn {
-  background: #f3f4f6;
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.filter-menu {
+  position: relative;
+}
+.menu-icon-btn,
+.new-message-btn {
+  background: #F5EDE4; /* beige très clair */
   border: none;
   cursor: pointer;
   padding: 6px;
   border-radius: 50%;
-  color: #EC489A; /* rose principal */
+  color: #8B5A2B; /* café moyen */
 }
-.menu-icon-btn:hover, .new-message-btn:hover { background: #FDF2F8; transform: scale(1.02); }
-.sidebar-header h3 { margin: 0; font-size: 16px; font-weight: 600; color: #831843; }
+.menu-icon-btn:hover,
+.new-message-btn:hover {
+  background: #E8DCCC;
+  transform: scale(1.02);
+}
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2C1810;
+}
 .filter-dropdown {
   position: absolute;
   left: 0;
   top: 36px;
   background: white;
-  border: 1px solid #FCE7F3;
+  border: 1px solid #D2B48C; /* beige café */
   border-radius: 12px;
   width: 190px;
   z-index: 100;
@@ -594,8 +681,14 @@ watch(messages, () => scrollToBottom(), { deep: true })
   cursor: pointer;
   font-size: 13px;
 }
-.filter-dropdown button:hover { background: #FDF2F8; }
-.filter-dropdown button.active { background: #FDF2F8; color: #EC489A; font-weight: 500; }
+.filter-dropdown button:hover {
+  background: #F5EDE4;
+}
+.filter-dropdown button.active {
+  background: #F5EDE4;
+  color: #8B5A2B;
+  font-weight: 500;
+}
 .check-icon {
   font-weight: bold;
   font-size: 14px;
@@ -612,10 +705,15 @@ watch(messages, () => scrollToBottom(), { deep: true })
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #F5EDE4;
 }
-.conversation-item:hover { background: #fafafa; }
-.conversation-item.active { background: #FDF2F8; border-left: 3px solid #EC489A; }
+.conversation-item:hover {
+  background: #FDF9F5;
+}
+.conversation-item.active {
+  background: #F5EDE4;
+  border-left: 3px solid #8B5A2B;
+}
 .conversation-main {
   display: flex;
   align-items: center;
@@ -628,7 +726,7 @@ watch(messages, () => scrollToBottom(), { deep: true })
   position: relative;
   width: 34px;
   height: 34px;
-  background: #EC489A;
+  background: #8B5A2B; /* café */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -641,7 +739,7 @@ watch(messages, () => scrollToBottom(), { deep: true })
   position: absolute;
   top: -4px;
   right: -4px;
-  background: #ef4444;
+  background: #DC2626;
   color: white;
   border-radius: 50%;
   width: 16px;
@@ -651,12 +749,25 @@ watch(messages, () => scrollToBottom(), { deep: true })
   align-items: center;
   justify-content: center;
 }
-.conversation-info { flex: 1; min-width: 0; }
-.name { font-weight: 600; font-size: 13px; color: #831843; }
-.last-message { font-size: 11px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conversation-info {
+  flex: 1;
+  min-width: 0;
+}
+.name {
+  font-weight: 600;
+  font-size: 13px;
+  color: #2C1810;
+}
+.last-message {
+  font-size: 11px;
+  color: #6B4C3B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .time {
   font-size: 9px;
-  color: #9ca3af;
+  color: #A68A6F;
   margin-left: 8px;
   flex-shrink: 0;
 }
@@ -665,14 +776,24 @@ watch(messages, () => scrollToBottom(), { deep: true })
   flex-shrink: 0;
   margin-left: 4px;
 }
-.menu-trigger { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 50%; color: #9ca3af; }
-.menu-trigger:hover { background: #FDF2F8; color: #4b5563; }
+.menu-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  color: #A68A6F;
+}
+.menu-trigger:hover {
+  background: #F5EDE4;
+  color: #6B4C3B;
+}
 .menu-dropdown {
   position: absolute;
   right: 0;
   top: 28px;
   background: white;
-  border: 1px solid #FCE7F3;
+  border: 1px solid #D2B48C;
   border-radius: 10px;
   width: 180px;
   z-index: 100;
@@ -689,31 +810,59 @@ watch(messages, () => scrollToBottom(), { deep: true })
   cursor: pointer;
   font-size: 12px;
 }
-.menu-item:hover { background: #FDF2F8; }
-.menu-item.delete { color: #dc2626; }
-.menu-item.delete:hover { background: #fef2f2; }
+.menu-item:hover {
+  background: #F5EDE4;
+}
+.menu-item.delete {
+  color: #DC2626;
+}
+.menu-item.delete:hover {
+  background: #FEF2F2;
+}
+
 /* Chat main */
-.chat-main { flex: 1; display: flex; flex-direction: column; background: #fff; }
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
 .chat-header {
   padding: 10px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #E8DCCC;
   display: flex;
   align-items: center;
   gap: 12px;
 }
 .back-btn {
-  background: #f3f4f6;
+  background: #F5EDE4;
   border: none;
   cursor: pointer;
   padding: 6px;
   border-radius: 50%;
-  color: #EC489A;
+  color: #8B5A2B;
 }
-.back-btn:hover { background: #FDF2F8; }
-.user-info { display: flex; align-items: center; gap: 10px; }
-.user-info .avatar { width: 32px; height: 32px; font-size: 12px; background: #EC489A; }
-.status { font-size: 10px; color: #6b7280; }
-.status.online { color: #10b981; }
+.back-btn:hover {
+  background: #E8DCCC;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-info .avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  background: #8B5A2B;
+}
+.status {
+  font-size: 10px;
+  color: #6B4C3B;
+}
+.status.online {
+  color: #2E7D32;
+}
 .messages-area {
   flex: 1;
   padding: 14px;
@@ -722,33 +871,81 @@ watch(messages, () => scrollToBottom(), { deep: true })
   flex-direction: column;
   gap: 8px;
 }
-.message { display: flex; max-width: 70%; }
-.message.sent { justify-content: flex-end; align-self: flex-end; }
-.message.received { justify-content: flex-start; align-self: flex-start; }
+.message {
+  display: flex;
+  max-width: 70%;
+}
+.message.sent {
+  justify-content: flex-end;
+  align-self: flex-end;
+}
+.message.received {
+  justify-content: flex-start;
+  align-self: flex-start;
+}
 .message-content {
   padding: 6px 10px;
   border-radius: 16px;
   max-width: 100%;
 }
-.message.sent .message-content { background: #EC489A; color: white; border-bottom-right-radius: 4px; }
-.message.received .message-content { background: #f3f4f6; border-bottom-left-radius: 4px; box-shadow: 0 1px 1px rgba(0,0,0,0.05); }
-.message-content p { margin: 0; font-size: 12px; word-wrap: break-word; }
-.message-footer { display: flex; justify-content: center; align-items: center; gap: 5px; margin-top: 3px; }
-.message-content .time { font-size: 8px; opacity: 0.7; }
-.message.sent .message-content .time { color: #fef9c3; }
-.message-image img { max-width: 160px; border-radius: 10px; }
-.message-file a { color: #EC489A; text-decoration: none; font-size: 12px; display: flex; align-items: center; gap: 5px; }
-.typing-indicator { padding: 5px 10px; background: #f3f4f6; border-radius: 16px; align-self: flex-start; font-size: 10px; }
+.message.sent .message-content {
+  background: #8B5A2B;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+.message.received .message-content {
+  background: #F5EDE4;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+.message-content p {
+  margin: 0;
+  font-size: 12px;
+  word-wrap: break-word;
+}
+.message-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+}
+.message-content .time {
+  font-size: 8px;
+  opacity: 0.7;
+}
+.message.sent .message-content .time {
+  color: #FEF9F2;
+}
+.message-image img {
+  max-width: 160px;
+  border-radius: 10px;
+}
+.message-file a {
+  color: #8B5A2B;
+  text-decoration: none;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.typing-indicator {
+  padding: 5px 10px;
+  background: #F5EDE4;
+  border-radius: 16px;
+  align-self: flex-start;
+  font-size: 10px;
+}
 .chat-input-area {
   padding: 10px 14px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #E8DCCC;
   display: flex;
   align-items: center;
   gap: 8px;
   background: #fff;
 }
 .action-btn {
-  background: #f3f4f6;
+  background: #F5EDE4;
   border: none;
   cursor: pointer;
   padding: 6px;
@@ -757,11 +954,13 @@ watch(messages, () => scrollToBottom(), { deep: true })
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
-  color: #EC489A;
+  color: #8B5A2B;
 }
-.action-btn:hover { background: #FDF2F8; }
+.action-btn:hover {
+  background: #E8DCCC;
+}
 .send-btn {
-  background: #EC489A;
+  background: #8B5A2B;
   border: none;
   cursor: pointer;
   padding: 6px;
@@ -772,33 +971,73 @@ watch(messages, () => scrollToBottom(), { deep: true })
   transition: all 0.2s;
   color: white;
 }
-.send-btn:hover { background: #831843; transform: scale(1.02); }
-.send-icon { transform: rotate(-45deg); }
+.send-btn:hover {
+  background: #6F4E37;
+  transform: scale(1.02);
+}
+.send-icon {
+  transform: rotate(-45deg);
+}
 .message-input {
   flex: 1;
   padding: 8px 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: #FDF9F5;
+  border: 1px solid #E8DCCC;
   border-radius: 24px;
   outline: none;
   font-size: 12px;
-  color: #1e293b;
+  color: #2C1810;
 }
-.message-input::placeholder { color: #9ca3af; }
-.message-input:focus { border-color: #EC489A; box-shadow: 0 0 0 2px rgba(236,72,154,0.2); }
-.hidden { display: none; }
-.no-conversation { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; }
-.new-message-icon-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #EC489A; }
-.loading-conv, .loading-messages { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 30px; }
+.message-input::placeholder {
+  color: #A68A6F;
+}
+.message-input:focus {
+  border-color: #8B5A2B;
+  box-shadow: 0 0 0 2px rgba(139,90,43,0.2);
+}
+.hidden {
+  display: none;
+}
+.no-conversation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+.new-message-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #8B5A2B;
+}
+.loading-conv,
+.loading-messages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px;
+}
 .spinner-small {
   width: 20px;
   height: 20px;
-  border: 2px solid #e5e7eb;
-  border-top-color: #EC489A;
+  border: 2px solid #E8DCCC;
+  border-top-color: #8B5A2B;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Modals - centrées */
 .modal-overlay {
   position: fixed;
@@ -822,12 +1061,40 @@ watch(messages, () => scrollToBottom(), { deep: true })
   display: flex;
   flex-direction: column;
 }
-.modal-header { padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
-.search-bar { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; }
-.search-input { width: 100%; padding: 6px 10px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 20px; }
-.user-item { display: flex; align-items: center; padding: 8px 12px; cursor: pointer; }
-.user-item:hover { background: #FDF2F8; }
-.user-item .avatar { width: 32px; height: 32px; margin-right: 10px; background: #EC489A; }
+.modal-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #E8DCCC;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.search-bar {
+  padding: 10px 12px;
+  border-bottom: 1px solid #E8DCCC;
+}
+.search-input {
+  width: 100%;
+  padding: 6px 10px;
+  background: #FDF9F5;
+  border: 1px solid #E8DCCC;
+  border-radius: 20px;
+}
+.user-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.user-item:hover {
+  background: #F5EDE4;
+}
+.user-item .avatar {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+  background: #8B5A2B;
+}
+
 /* MODALE DE SUPPRESSION (icône centrée) */
 .delete-overlay {
   background: rgba(0,0,0,0.5);
@@ -851,7 +1118,7 @@ watch(messages, () => scrollToBottom(), { deep: true })
 .delete-icon svg {
   width: 64px;
   height: 64px;
-  stroke: #ef4444;
+  stroke: #DC2626;
   stroke-width: 1.2;
 }
 .delete-modal-custom h3 {
@@ -862,7 +1129,7 @@ watch(messages, () => scrollToBottom(), { deep: true })
 }
 .delete-modal-custom p {
   font-size: 0.9rem;
-  color: #64748b;
+  color: #6B4C3B;
   margin-bottom: 28px;
 }
 .delete-modal-custom .delete-modal-buttons {
@@ -882,25 +1149,26 @@ watch(messages, () => scrollToBottom(), { deep: true })
   transition: all 0.2s;
 }
 .delete-modal-custom .cancel-btn {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: #F5EDE4;
+  color: #2C1810;
 }
 .delete-modal-custom .cancel-btn:hover {
-  background: #e2e8f0;
+  background: #E8DCCC;
 }
 .delete-modal-custom .confirm-delete-btn {
-  background: #ef4444;
+  background: #DC2626;
   color: white;
 }
 .delete-modal-custom .confirm-delete-btn:hover {
-  background: #dc2626;
+  background: #B91C1C;
   transform: scale(1.02);
 }
 @keyframes fadeInScale {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
-/* Toast simple (style d'origine) */
+
+/* Toast simple */
 .toast-notification {
   position: fixed;
   top: 20px;
@@ -914,20 +1182,27 @@ watch(messages, () => scrollToBottom(), { deep: true })
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   padding: 12px 20px;
   z-index: 1100;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #E8DCCC;
 }
-.toast-notification.success { border-left: 4px solid #10b981; }
-.toast-notification.error { border-left: 4px solid #ef4444; }
+.toast-notification.success {
+  border-left: 4px solid #2E7D32;
+}
+.toast-notification.error {
+  border-left: 4px solid #DC2626;
+}
 .toast-notification button {
   background: none;
   border: none;
   cursor: pointer;
-  color: #9ca3af;
+  color: #A68A6F;
   font-size: 16px;
 }
+
 /* Responsive mobile */
 @media (max-width: 640px) {
-  .desktop-only { display: none; }
+  .desktop-only {
+    display: none;
+  }
   .chat-container {
     width: 100%;
     height: 100vh;
@@ -947,13 +1222,33 @@ watch(messages, () => scrollToBottom(), { deep: true })
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
     background: white;
   }
-  .chat-sidebar.sidebar-open { transform: translateX(0); }
-  .chat-main { width: 100%; height: 100%; }
-  .message { max-width: 85%; }
-  .back-btn { display: flex; }
-  .no-conversation.desktop-only { display: none; }
-  .modal-content { width: 90%; max-width: 90%; }
-  .delete-modal-custom { width: 85%; padding: 24px 20px; }
-  .delete-icon svg { width: 48px; height: 48px; }
+  .chat-sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+  .chat-main {
+    width: 100%;
+    height: 100%;
+  }
+  .message {
+    max-width: 85%;
+  }
+  .back-btn {
+    display: flex;
+  }
+  .no-conversation.desktop-only {
+    display: none;
+  }
+  .modal-content {
+    width: 90%;
+    max-width: 90%;
+  }
+  .delete-modal-custom {
+    width: 85%;
+    padding: 24px 20px;
+  }
+  .delete-icon svg {
+    width: 48px;
+    height: 48px;
+  }
 }
 </style>

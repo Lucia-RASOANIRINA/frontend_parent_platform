@@ -25,24 +25,25 @@
           <div class="flex items-center space-x-3">
             <div class="bg-gradient-to-br from-coffee-600 to-coffee-700 rounded-2xl p-2.5 shadow-lg ring-1 ring-white/20">
               <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
             <div>
               <h2 class="text-2xl font-bold tracking-tight text-white">
-                Parent<span class="text-coffee-300">'Lien</span>
+                Cabinet<span class="text-coffee-300">'Psy</span>
               </h2>
-              <p class="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Espace famille</p>
+              <p class="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Espace professionnel</p>
             </div>
           </div>
           <p class="text-white/60 text-sm leading-relaxed">
-            Une communauté bienveillante pour partager, échanger et grandir ensemble. Soutien parental, ressources et moments de vie.
+            Accompagnement psychologique bienveillant pour enfants, adolescents et familles. 
+            Écoute, partage et outils adaptés.
           </p>
           <div class="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/10">
             <svg class="w-3 h-3 text-coffee-300" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
-            <span class="text-[11px] font-medium text-white/70">Parents solidaires</span>
+            <span class="text-[11px] font-medium text-white/70">Membre FFPP</span>
           </div>
         </div>
 
@@ -76,7 +77,7 @@
           <ul class="space-y-3">
             <li>
               <router-link 
-                to="/parentprofil"
+                to="/profilpsy"
                 class="text-white/50 hover:text-white transition-all duration-300 text-sm flex items-center gap-3 group"
               >
                 <svg class="w-4 h-4 text-coffee-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,13 +109,13 @@
           <ul class="space-y-4">
             <li>
               <a 
-                href="mailto:parentlien@example.com"
+                href="mailto:luciarasoanirina8@gmail.com"
                 class="text-white/50 hover:text-white transition-colors duration-300 text-sm flex items-center gap-3 group"
               >
                 <svg class="w-4 h-4 text-coffee-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span>parentlien@example.com</span>
+                <span>luciarasoanirina8@gmail.com</span>
               </a>
             </li>
             <li class="flex items-center gap-3 text-white/50 text-sm">
@@ -138,7 +139,7 @@
       <div class="border-t border-white/10 pt-6 mt-2">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
           <p class="text-white/40 text-xs">
-            &copy; 2025 Parent'Lien – Tous droits réservés.
+            &copy; 2025 Cabinet'Psy – Tous droits réservés.
           </p>
           <div class="flex space-x-6">
             <router-link to="/mentions" class="text-white/30 hover:text-white/60 transition-colors text-xs">Mentions légales</router-link>
@@ -164,18 +165,16 @@
         <div class="bg-coffee-800 rounded-[3rem] p-10 max-w-sm w-full relative shadow-2xl text-center border border-coffee-600">
           <div class="mx-auto w-20 h-20 rounded-full bg-coffee-700/50 flex items-center justify-center mb-8 border-4 border-coffee-600 shadow-md">
             <svg class="w-10 h-10 text-coffee-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M12 21l-8.228-9.96a5 5 0 117.75-6.6l.478.572.478-.572a5 5 0 117.75 6.6L12 21z" stroke-width="1"></path>
+              <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
           </div>
-          <h3 class="text-3xl font-extralight text-white mb-4">À très vite !</h3>
-          <p class="text-coffee-300 text-sm leading-relaxed mb-10 italic">"Le bien-être des enfants commence par le soutien mutuel des parents."</p>
+          <h3 class="text-3xl font-extralight text-white mb-4">À demain ?</h3>
+          <p class="text-white/60 text-sm leading-relaxed mb-10 italic">"Chaque accompagnement compte dans le parcours de nos familles."</p>
           <div class="flex flex-col space-y-4">
-            <button @click="confirmLogout" class="w-full py-4 rounded-2xl bg-coffee-600 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-coffee-500 transition-all shadow-lg active:scale-95">
-              Confirmer la pause
-            </button>
+            <button @click="confirmLogout" class="w-full py-4 rounded-2xl bg-coffee-600 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-coffee-500 transition-all shadow-lg active:scale-95">Terminer la session</button>
             <button @click="closeLogoutModal" class="group flex items-center justify-center w-full py-2 text-white/50 text-[10px] font-bold uppercase tracking-widest transition-all">
               <span class="mr-2 transition-transform duration-300 group-hover:-translate-x-2">←</span>
-              <span class="group-hover:text-coffee-300 transition-colors">Revenir au partage</span>
+              <span class="group-hover:text-coffee-300 transition-colors">Rester connecté</span>
             </button>
           </div>
         </div>
@@ -207,30 +206,28 @@ const confirmLogout = () => {
   router.push('/connexion')
 }
 
-// Icônes SVG pour les liens de navigation
+// Icônes pour les liens de navigation
 const homeIcon = h('svg', { class: 'w-3.5 h-3.5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
   h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '1.5', d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' })
 ])
+
 const publicationsIcon = h('svg', { class: 'w-3.5 h-3.5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
   h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '1.5', d: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' })
 ])
+
 const ressourcesIcon = h('svg', { class: 'w-3.5 h-3.5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
   h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '1.5', d: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' })
 ])
-const eventsIcon = h('svg', { class: 'w-3.5 h-3.5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
-  h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '1.5', d: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' })
-])
+
 const discussionsIcon = h('svg', { class: 'w-3.5 h-3.5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
   h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '1.5', d: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' })
 ])
 
-// Liens de navigation (identiques à ceux du header parent)
 const navLinks = [
-  { name: 'Actu', path: '/homeparent', icon: homeIcon },
-  { name: 'Mes pub', path: '/parentpub', icon: publicationsIcon },
-  { name: 'Ressources', path: '/ressourcesparent', icon: ressourcesIcon },
-  { name: 'Événements', path: '/parent/evenements', icon: eventsIcon },
-  { name: 'Discussions', path: '/parentdiscussions', icon: discussionsIcon }
+  { name: 'Actu', path: '/homepsy', icon: homeIcon },
+  { name: 'Mes publications', path: '/psypub', icon: publicationsIcon },
+  { name: 'Ressources', path: '/ressourcespsy', icon: ressourcesIcon },
+  { name: 'Mes discussions', path: '/discussionspsy', icon: discussionsIcon }
 ]
 </script>
 

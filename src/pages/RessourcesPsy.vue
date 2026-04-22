@@ -12,24 +12,22 @@
       </button>
     </div>
 
-    <!-- Filtres (filtrage local) -->
+    <!-- Filtres -->
     <div class="filters-bar">
       <div class="filter-group">
         <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M5.5 7A1.5 1.5 0 0 1 7 5.5h10A1.5 1.5 0 0 1 18.5 7 1.5 1.5 0 0 1 17 8.5H7A1.5 1.5 0 0 1 5.5 7zm2 5a1.5 1.5 0 0 1 1.5-1.5h6a1.5 1.5 0 0 1 0 3H9a1.5 1.5 0 0 1-1.5-1.5zm2 5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 0 3h-2a1.5 1.5 0 0 1-1.5-1.5z"/></svg> Type :</span>
         <div class="filter-pills">
-          <button v-for="opt in typeOptions" :key="opt.value" :class="['pill', { active: filters.type === opt.value }]"
-            @click="filters.type = opt.value">
+          <button v-for="opt in typeOptions" :key="opt.value" :class="['pill', { active: filters.type === opt.value }]" @click="filters.type = opt.value">
             <svg class="icon-small" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" :d="opt.iconPath"/></svg>
             {{ opt.label }}
           </button>
         </div>
       </div>
       <div class="filter-group">
-        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V10h14v10zM7 12h4v4H7v-4z"/></svg> Âge cible :</span>
+        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Âge cible :</span>
         <div class="filter-pills">
-          <button v-for="opt in ageOptions" :key="opt.value" :class="['pill', { active: filters.age === opt.value }]"
-            @click="filters.age = opt.value">
-            <svg class="icon-small" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9zm0 2c3.87 0 7 3.13 7 7 0 3.28-2.17 6.03-5.08 6.93L12 19.76l-1.92-1.83C7.17 17.03 5 14.28 5 11c0-3.87 3.13-7 7-7z"/></svg>
+          <button v-for="opt in ageOptions" :key="opt.value" :class="['pill', { active: filters.age === opt.value }]" @click="filters.age = opt.value">
+            <svg class="icon-small" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg>
             {{ opt.label }}
           </button>
         </div>
@@ -62,7 +60,6 @@
             <span class="meta-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ formatDate(res.createdAt) }}</span>
             <span v-if="res.scheduledAt" class="meta-item scheduled-badge"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmé le {{ formatDate(res.scheduledAt) }}</span>
           </div>
-          <!-- Conteneur média style YouTube (16:9) -->
           <div class="media-container">
             <video v-if="res.type === 'video' && res.fileType" controls :src="getFileUrl(res.id, res.updatedAt)" class="media-content"></video>
             <embed v-else-if="res.type === 'pdf' && res.fileType" :src="getFileUrl(res.id, res.updatedAt)" type="application/pdf" class="media-content" />
@@ -119,9 +116,9 @@
             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
             Commentaires ({{ res.comments?.length || 0 }})
           </button>
+          <!-- Bouton Message SUPPRIMÉ -->
         </div>
 
-        <!-- Section commentaires -->
         <div v-if="showComments[res.id]" class="comments-section">
           <div class="comments-list">
             <div v-for="c in res.comments" :key="c.id" class="comment-item">
@@ -260,12 +257,50 @@
         <div v-if="scheduledResources.length === 0" class="empty-state">Aucune ressource programmée.</div>
         <div v-else class="scheduled-list">
           <div v-for="res in scheduledResources" :key="res.id" class="scheduled-item">
-            <div class="scheduled-header"><h3>{{ res.title }}</h3><span class="scheduled-date"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ formatDate(res.scheduledAt) }}</span></div>
-            <div class="scheduled-content">
-              <div class="scheduled-media"><div class="media-container small-media"><video v-if="res.type === 'video' && res.fileType" controls :src="getFileUrl(res.id, res.updatedAt)" class="media-content"></video><embed v-else-if="res.type === 'pdf' && res.fileType" :src="getFileUrl(res.id, res.updatedAt)" type="application/pdf" class="media-content" /><div v-else-if="res.type === 'video' && res.videoUrl" class="video-url-container"><video controls :src="res.videoUrl" class="media-content"></video></div><div v-else-if="res.type === 'fiche' || res.type === 'bloc'" class="description-container"><div class="description-icon"><svg v-if="res.type === 'fiche'" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg><svg v-else viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z"/></svg></div><p class="description-text">{{ res.description }}</p></div><div v-else class="no-media-preview"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg></div></div></div>
-              <div class="scheduled-info"><p class="scheduled-desc">{{ res.description }}</p><div class="scheduled-meta"><span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> {{ res.age }}</span><span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ formatDate(res.createdAt) }}</span></div></div>
+            <div class="scheduled-header">
+              <h3>{{ res.title }}</h3>
+              <div class="scheduled-meta-line">
+                <span class="scheduled-date"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmé le {{ formatDate(res.scheduledAt) }}</span>
+                <span class="scheduled-created"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Créé le {{ formatDate(res.createdAt) }}</span>
+              </div>
+              <button @click="toggleScheduledDetails(res.id)" class="action-btn details-btn">
+                {{ expandedDetails[res.id] ? 'Masquer détails' : 'Voir détails' }}
+              </button>
             </div>
-            <div class="scheduled-actions"><button @click="previewResource(res)" class="action-btn">Voir détails</button><button @click="removeSchedule(res.id)" class="action-btn">Annuler programmation</button></div>
+            <div v-if="expandedDetails[res.id]" class="scheduled-details">
+              <div class="scheduled-full-content">
+                <div class="media-container small-media">
+                  <video v-if="res.type === 'video' && res.fileType" controls :src="getFileUrl(res.id, res.updatedAt)" class="media-content"></video>
+                  <embed v-else-if="res.type === 'pdf' && res.fileType" :src="getFileUrl(res.id, res.updatedAt)" type="application/pdf" class="media-content" />
+                  <div v-else-if="res.type === 'video' && res.videoUrl" class="video-url-container">
+                    <video controls :src="res.videoUrl" class="media-content"></video>
+                  </div>
+                  <div v-else-if="res.type === 'fiche' || res.type === 'bloc'" class="description-container">
+                    <div class="description-icon">
+                      <svg v-if="res.type === 'fiche'" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+                      <svg v-else viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z"/></svg>
+                    </div>
+                    <p class="description-text">{{ res.description }}</p>
+                  </div>
+                  <div v-else class="no-media-preview">
+                    <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+                  </div>
+                </div>
+                <div class="scheduled-info-text">
+                  <p><strong>Description :</strong> {{ res.description }}</p>
+                  <div class="scheduled-meta">
+                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> Âge : {{ res.age }}</span>
+                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Type : {{ getTypeLabel(res.type) }}</span>
+                  </div>
+                  <div v-if="res.type === 'pdf' && res.fileType" class="pdf-link">
+                    <a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> Ouvrir le PDF</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="scheduled-actions">
+              <button @click="removeSchedule(res.id)" class="action-btn">Annuler programmation</button>
+            </div>
           </div>
         </div>
       </div>
@@ -302,8 +337,7 @@ const user = JSON.parse(localStorage.getItem('user') || '{"id": 1, "nom": "Utili
 const currentUserId = ref(user.id)
 const currentUserName = ref(user.nom)
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8082/api'
-const api = axios.create({ baseURL: API_BASE })
+const API_BASE_URL = 'http://localhost:8082/api'
 
 // États
 const resources = ref([])
@@ -338,19 +372,24 @@ const showComments = ref({})
 const commentSubmitting = ref({})
 const confirmCommentDelete = ref({ show: false, resourceId: null, commentId: null })
 const scheduledModalOpen = ref(false)
+const expandedDetails = ref({})
 
 // Filtrage local
 const filteredResources = computed(() => {
   let result = [...resources.value]
   if (filters.value.type) result = result.filter(r => r.type === filters.value.type)
   if (filters.value.age) result = result.filter(r => r.age === filters.value.age)
+  if (activeTab.value === 'shared') {
+    result = result.filter(r => {
+      if (!r.scheduledAt) return true
+      return new Date(r.scheduledAt) <= new Date()
+    })
+  }
   return result
 })
 
-// Ressources programmées (avec une date)
 const scheduledResources = computed(() => resources.value.filter(r => r.scheduledAt))
 
-// Options filtres
 const typeOptions = [
   { value: '', label: 'Tous', iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
   { value: 'fiche', label: 'Fiche', iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
@@ -359,7 +398,7 @@ const typeOptions = [
   { value: 'bloc', label: 'Bloc', iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' }
 ]
 const ageOptions = [
-  { value: '', label: 'Tous âges', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9zm0 2c3.87 0 7 3.13 7 7 0 3.28-2.17 6.03-5.08 6.93L12 19.76l-1.92-1.83C7.17 17.03 5 14.28 5 11c0-3.87 3.13-7 7-7z' },
+  { value: '', label: 'Tous âges', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
   { value: '1-3', label: '1-3 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
   { value: '3-5', label: '3-5 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
   { value: '5-7', label: '5-7 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
@@ -367,7 +406,7 @@ const ageOptions = [
 ]
 
 const formatFileSize = (bytes) => { if (bytes < 1024) return bytes + ' o'; if (bytes < 1024*1024) return (bytes/1024).toFixed(1)+' Ko'; return (bytes/(1024*1024)).toFixed(1)+' Mo' }
-const getFileUrl = (id, updatedAt=null) => `${API_BASE}/resources/${id}/file?t=${updatedAt ? new Date(updatedAt).getTime() : Date.now()}`
+const getFileUrl = (id, updatedAt=null) => `${API_BASE_URL}/resources/${id}/file?t=${updatedAt ? new Date(updatedAt).getTime() : Date.now()}`
 const badgeIconPath = (type) => ({ fiche:'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z', video:'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z', pdf:'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z', bloc:'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' }[type] || 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z')
 const getTypeLabel = (type) => ({ fiche:'Fiche activité', video:'Vidéo', pdf:'PDF', bloc:'Blocs' }[type] || type)
 const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('fr-FR') : ''
@@ -378,17 +417,21 @@ const fetchResources = async () => {
   loading.value = true
   try {
     const params = { owner: activeTab.value }
-    const res = await api.get('/resources', {
+    const response = await axios.get(`${API_BASE_URL}/resources`, {
       params,
-      headers: { 'X-User-Id': currentUserId.value },
-      timeout: 15000
+      headers: { 'X-User-Id': currentUserId.value }
     })
-    resources.value = res.data.map(r => ({ ...r, liked: r.liked || false, userRated: r.userRated || false, comments: r.comments || [] }))
+    resources.value = response.data.map(r => ({
+      ...r,
+      liked: r.liked || false,
+      userRated: r.userRated || false,
+      comments: r.comments || []
+    }))
   } catch (error) {
-    if (error.response) showToast('Erreur serveur : ' + error.response.status)
-    else if (error.request) showToast('Impossible de contacter le serveur')
-    else showToast('Erreur de chargement')
-  } finally { loading.value = false }
+    showToast('Erreur de chargement des ressources')
+  } finally {
+    loading.value = false
+  }
 }
 
 // Création
@@ -404,14 +447,19 @@ const createResource = async () => {
   if (newResource.value.type === 'video' && newResource.value.videoUrl) fd.append('videoUrl', newResource.value.videoUrl)
   if (selectedFile) fd.append('file', selectedFile)
   try {
-    await api.post('/resources', fd, { headers: { 'X-User-Id': currentUserId.value }, timeout: 120000 })
+    await axios.post(`${API_BASE_URL}/resources`, fd, {
+      headers: { 'X-User-Id': currentUserId.value, 'Content-Type': 'multipart/form-data' }
+    })
     await fetchResources()
     createModalOpen.value = false
     newResource.value = { title: '', description: '', age: '', type: 'fiche', videoUrl: '' }
     selectedFile = null
     showToast('Ressource créée ✓')
-  } catch (error) { showToast('Erreur création') }
-  finally { creating.value = false }
+  } catch (error) {
+    showToast('Erreur création')
+  } finally {
+    creating.value = false
+  }
 }
 
 // Modification
@@ -435,12 +483,17 @@ const updateResource = async () => {
   if (editSelectedFile) fd.append('file', editSelectedFile)
   if (editResource.value.removeFile) fd.append('removeFile', 'true')
   try {
-    await api.put(`/resources/${editResource.value.id}`, fd, { headers: { 'X-User-Id': currentUserId.value }, timeout: 120000 })
+    await axios.put(`${API_BASE_URL}/resources/${editResource.value.id}`, fd, {
+      headers: { 'X-User-Id': currentUserId.value, 'Content-Type': 'multipart/form-data' }
+    })
     await fetchResources()
     editModalOpen.value = false
     showToast('Ressource mise à jour ✓')
-  } catch (error) { showToast('Erreur mise à jour') }
-  finally { updating.value = false }
+  } catch (error) {
+    showToast('Erreur mise à jour')
+  } finally {
+    updating.value = false
+  }
 }
 
 // Suppression ressource
@@ -449,10 +502,14 @@ const performDelete = async () => {
   const id = deleteConfirm.value.resource.id
   deleteConfirm.value.show = false
   try {
-    await api.delete(`/resources/${id}`, { headers: { 'X-User-Id': currentUserId.value } })
+    await axios.delete(`${API_BASE_URL}/resources/${id}`, {
+      headers: { 'X-User-Id': currentUserId.value }
+    })
     await fetchResources()
     showToast('Ressource supprimée ✓')
-  } catch (error) { showToast('Erreur suppression') }
+  } catch (error) {
+    showToast('Erreur suppression')
+  }
 }
 
 // Like unique
@@ -464,11 +521,16 @@ const sendLike = async (id) => {
   }
   likingInProgress.value = id
   try {
-    await api.post(`/resources/${id}/like`, {}, { headers: { 'X-User-Id': currentUserId.value } })
+    await axios.post(`${API_BASE_URL}/resources/${id}/like`, {}, {
+      headers: { 'X-User-Id': currentUserId.value }
+    })
     await fetchResources()
     showToast('Merci pour votre ❤️')
-  } catch (error) { showToast('Erreur like') }
-  finally { likingInProgress.value = null }
+  } catch (error) {
+    showToast('Erreur like')
+  } finally {
+    likingInProgress.value = null
+  }
 }
 
 // Notation unique
@@ -483,12 +545,17 @@ const submitRating = async () => {
   const id = selectedRatingResource.value.id
   ratingSubmitting.value = id
   try {
-    await api.post(`/resources/${id}/rating`, { rating: ratingValue.value }, { headers: { 'X-User-Id': currentUserId.value } })
+    await axios.post(`${API_BASE_URL}/resources/${id}/rating`, { rating: ratingValue.value }, {
+      headers: { 'X-User-Id': currentUserId.value }
+    })
     await fetchResources()
     ratingModalOpen.value = false
     showToast('Note enregistrée ✓')
-  } catch (error) { showToast('Erreur notation') }
-  finally { ratingSubmitting.value = null }
+  } catch (error) {
+    showToast('Erreur notation')
+  } finally {
+    ratingSubmitting.value = null
+  }
 }
 
 // Commentaires
@@ -501,7 +568,7 @@ const toggleComments = async (resourceId) => {
 }
 const fetchComments = async (resourceId) => {
   try {
-    const response = await api.get(`/resources/${resourceId}/comments`)
+    const response = await axios.get(`${API_BASE_URL}/resources/${resourceId}/comments`)
     const res = resources.value.find(r => r.id === resourceId)
     if (res) res.comments = response.data
   } catch (error) { console.error(error) }
@@ -511,12 +578,17 @@ const addComment = async (resourceId) => {
   if (!text || !text.trim()) return
   commentSubmitting.value[resourceId] = true
   try {
-    await api.post(`/resources/${resourceId}/comments`, { content: text }, { headers: { 'X-User-Id': currentUserId.value, 'X-User-Name': currentUserName.value } })
+    await axios.post(`${API_BASE_URL}/resources/${resourceId}/comments`, { content: text }, {
+      headers: { 'X-User-Id': currentUserId.value, 'X-User-Name': currentUserName.value }
+    })
     await fetchComments(resourceId)
     newCommentText.value[resourceId] = ''
     showToast('Commentaire ajouté ✓')
-  } catch (error) { showToast('Erreur ajout commentaire') }
-  finally { commentSubmitting.value[resourceId] = false }
+  } catch (error) {
+    showToast('Erreur ajout commentaire')
+  } finally {
+    commentSubmitting.value[resourceId] = false
+  }
 }
 const confirmDeleteComment = (resourceId, commentId) => {
   confirmCommentDelete.value = { show: true, resourceId, commentId }
@@ -525,11 +597,15 @@ const executeDeleteComment = async () => {
   const { resourceId, commentId } = confirmCommentDelete.value
   confirmCommentDelete.value.show = false
   try {
-    await api.delete(`/resources/comments/${commentId}`, { headers: { 'X-User-Id': currentUserId.value } })
+    await axios.delete(`${API_BASE_URL}/resources/comments/${commentId}`, {
+      headers: { 'X-User-Id': currentUserId.value }
+    })
     const res = resources.value.find(r => r.id === resourceId)
     if (res) res.comments = res.comments.filter(c => c.id !== commentId)
     showToast('Commentaire supprimé')
-  } catch (error) { showToast('Erreur suppression commentaire') }
+  } catch (error) {
+    showToast('Erreur suppression commentaire')
+  }
 }
 
 // Programmation
@@ -538,28 +614,40 @@ const submitSchedule = async () => {
   if (!scheduleDate.value) return
   scheduling.value = true
   try {
-    await api.post(`/resources/${selectedResource.value.id}/schedule`, { scheduledAt: scheduleDate.value }, { headers: { 'X-User-Id': currentUserId.value } })
+    await axios.post(`${API_BASE_URL}/resources/${selectedResource.value.id}/schedule`, { scheduledAt: scheduleDate.value }, {
+      headers: { 'X-User-Id': currentUserId.value }
+    })
     await fetchResources()
     showToast('Programmation enregistrée ✓')
     scheduleModalOpen.value = false
-  } catch (error) { showToast('Erreur programmation') }
-  finally { scheduling.value = false }
+  } catch (error) {
+    showToast('Erreur programmation')
+  } finally {
+    scheduling.value = false
+  }
 }
 
 // Annulation programmation
 const removeSchedule = async (resourceId) => {
   try {
-    await api.delete(`/resources/${resourceId}/schedule`, { headers: { 'X-User-Id': currentUserId.value } })
+    await axios.delete(`${API_BASE_URL}/resources/${resourceId}/schedule`, {
+      headers: { 'X-User-Id': currentUserId.value }
+    })
     await fetchResources()
     if (scheduledModalOpen.value) await fetchResources()
     showToast('Programmation annulée')
-  } catch (error) { showToast('Erreur annulation') }
+  } catch (error) {
+    showToast('Erreur annulation')
+  }
 }
 
 // Export ZIP
 const exportResource = async (res) => {
   try {
-    const response = await api.get(`/resources/${res.id}/export`, { responseType: 'blob' })
+    const response = await axios.get(`${API_BASE_URL}/resources/${res.id}/export`, {
+      responseType: 'blob',
+      headers: { 'X-User-Id': currentUserId.value }
+    })
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
@@ -569,7 +657,9 @@ const exportResource = async (res) => {
     link.remove()
     window.URL.revokeObjectURL(url)
     showToast('Export ZIP démarré')
-  } catch (error) { showToast('Erreur export') }
+  } catch (error) {
+    showToast('Erreur export')
+  }
 }
 
 // Aperçu
@@ -579,18 +669,23 @@ const previewResource = (res) => { selectedResource.value = res; modalOpen.value
 const openCreateModal = () => { createModalOpen.value = true }
 const toggleMenu = (id) => { menuResourceId.value = menuResourceId.value === id ? null : id }
 const handleClickOutside = (event) => { if (!event.target.closest('.card-menu')) menuResourceId.value = null }
-
-// Modale programmations
 const openScheduledModal = () => { scheduledModalOpen.value = true }
+const toggleScheduledDetails = (id) => { expandedDetails.value[id] = !expandedDetails.value[id] }
 
 watch(() => activeTab.value, () => fetchResources())
 
-onMounted(() => { document.addEventListener('click', handleClickOutside); fetchResources() })
-onUnmounted(() => { document.removeEventListener('click', handleClickOutside); if (toastTimeout) clearTimeout(toastTimeout) })
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+  fetchResources()
+})
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+  if (toastTimeout) clearTimeout(toastTimeout)
+})
 </script>
 
 <style scoped>
-/* ===== STYLES COMPLETS ===== */
+/* ===== TOUS LES STYLES (inchangés - thème cyan/teal) ===== */
 .resources-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -888,6 +983,7 @@ onUnmounted(() => { document.removeEventListener('click', handleClickOutside); i
   padding: 0.6rem 1rem;
   background: #FEFCF8;
   border-top: 1px solid #E2E8F0;
+  flex-wrap: wrap;
 }
 .fb-like, .fb-star, .fb-comment {
   background: none;
@@ -1188,32 +1284,62 @@ onUnmounted(() => { document.removeEventListener('click', handleClickOutside); i
 .scheduled-item:hover { border-color: #0891B2; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 .scheduled-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.8rem;
-  flex-wrap: wrap;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 .scheduled-header h3 { margin: 0; font-size: 1.1rem; color: #0F172A; }
-.scheduled-date {
-  font-size: 0.75rem;
-  color: #0891B2;
+.scheduled-meta-line {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.7rem;
+  color: #64748B;
+}
+.scheduled-date, .scheduled-created {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.2rem;
 }
-.scheduled-content { display: flex; gap: 1rem; flex-wrap: wrap; }
-.scheduled-media { flex: 1; min-width: 180px; }
-.media-container.small-media { padding-bottom: 56.25%; max-width: 300px; }
-.scheduled-info { flex: 2; }
-.scheduled-desc {
-  font-size: 0.85rem;
-  color: #334155;
-  margin: 0 0 0.5rem 0;
+.details-btn {
+  background: none;
+  border: 1px solid #0891B2;
+  border-radius: 20px;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.7rem;
+  cursor: pointer;
 }
-.scheduled-meta { display: flex; gap: 1rem; font-size: 0.7rem; color: #64748B; }
-.scheduled-meta span { display: inline-flex; align-items: center; gap: 0.2rem; }
-.scheduled-actions { display: flex; gap: 0.5rem; margin-top: 0.8rem; justify-content: flex-end; }
+.scheduled-details {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed #E2E8F0;
+}
+.scheduled-full-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.scheduled-full-content .media-container.small-media {
+  max-width: 300px;
+  flex: 1;
+}
+.scheduled-info-text {
+  flex: 2;
+}
+.scheduled-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.7rem;
+  color: #64748B;
+  margin: 0.5rem 0;
+}
+.scheduled-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  justify-content: flex-end;
+}
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @media (max-width: 768px) {
@@ -1229,7 +1355,7 @@ onUnmounted(() => { document.removeEventListener('click', handleClickOutside); i
   .toast-notification { white-space: normal; text-align: center; max-width: 90%; }
   .modal-header.stylized-header .header-icon { width: 32px; height: 32px; }
   .modal-header.stylized-header h2, .modal-header.stylized-header h3 { font-size: 1.1rem; }
-  .scheduled-content { flex-direction: column; }
-  .media-container.small-media { max-width: 100%; }
+  .scheduled-full-content { flex-direction: column; }
+  .scheduled-full-content .media-container.small-media { max-width: 100%; }
 }
 </style>

@@ -4,7 +4,7 @@
     <!-- Notification Toast -->
     <transition name="notify-slow">
       <div v-if="alert.show" 
-        class="fixed top-6 right-4 left-4 md:left-auto md:right-8 md:w-80 z-[100] flex items-center gap-4 px-5 py-4 rounded-2xl shadow-2xl border border-[#F3EEEA] bg-white/95 backdrop-blur-md"
+        class="fixed top-6 right-4 left-4 md:left-auto md:right-8 md:w-80 z-[100] flex items-center gap-4 px-5 py-4 rounded-2xl shadow-2xl border border-[#D2B48C] bg-white/95 backdrop-blur-md"
       >
         <div class="flex-shrink-0 w-10 h-10 rounded-xl" :class="alert.type === 'success' ? 'bg-emerald-50' : 'bg-red-50'">
           <div class="flex items-center justify-center h-full">
@@ -19,7 +19,7 @@
         
         <div class="flex-grow">
           <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ alert.type === 'success' ? 'Succès' : 'Erreur' }}</p>
-          <p class="text-xs font-bold text-[#3E2C1F]">{{ alert.message }}</p>
+          <p class="text-xs font-bold text-[#2C1810]">{{ alert.message }}</p>
         </div>
 
         <button @click="alert.show = false" class="text-gray-300 hover:text-gray-400 transition-colors">
@@ -35,33 +35,33 @@
         <div class="flex-shrink-0">
           <div 
             @click.stop="toggleUserInfoBox(user, $event)"
-            class="w-12 h-12 rounded-2xl bg-[#FDFBF9] border border-[#EFE9E4] flex items-center justify-center text-[#3E2C1F] font-black text-sm shadow-sm transition-all duration-500 hover:border-[#D2B48C] hover:scale-105 cursor-pointer"
+            class="w-12 h-12 rounded-2xl bg-[#F5EDE4] border border-[#D2B48C] flex items-center justify-center text-[#2C1810] font-black text-sm shadow-sm transition-all duration-500 hover:border-[#8B5A2B] hover:scale-105 cursor-pointer"
           >
             {{ userInitials }}
           </div>
         </div>
 
         <div class="flex-grow">
-          <div class="relative group border-b border-[#F3EEEA] transition-all duration-500" :class="{ 'border-[#D2B48C]': isExpanded }">
+          <div class="relative group border-b border-[#D2B48C] transition-all duration-500" :class="{ 'border-[#8B5A2B]': isExpanded }">
             <textarea 
               v-model="formData.contenu" 
               @focus="isExpanded = true"
               placeholder="Partagez quelque chose..." 
-              class="w-full bg-transparent border-none text-base md:text-lg font-medium text-[#3E2C1F] placeholder-gray-300 outline-none resize-none transition-all py-2"
+              class="w-full bg-transparent border-none text-base md:text-lg font-medium text-[#2C1810] placeholder-gray-300 outline-none resize-none transition-all py-2"
               :class="isExpanded ? 'h-24' : 'h-10'"
             ></textarea>
 
             <!-- Aperçu des fichiers sélectionnés -->
-            <div v-if="imagePreviewUrl || pdfFile" class="mt-2 p-2 bg-[#F8F5F2] rounded-lg flex items-center gap-3">
+            <div v-if="imagePreviewUrl || pdfFile" class="mt-2 p-2 bg-[#F5EDE4] rounded-lg flex items-center gap-3">
               <div v-if="imagePreviewUrl" class="relative">
-                <img :src="imagePreviewUrl" class="h-16 w-16 object-cover rounded-lg border border-[#EFE9E4]">
+                <img :src="imagePreviewUrl" class="h-16 w-16 object-cover rounded-lg border border-[#D2B48C]">
                 <button @click="removeSelectedImage" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600">
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
-              <div v-if="pdfFile" class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#EFE9E4]">
+              <div v-if="pdfFile" class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#D2B48C]">
                 <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
@@ -80,19 +80,19 @@
                 <div class="relative">
                   <div class="md:hidden">
                     <button @click="showUploadMenu = !showUploadMenu" 
-                      class="p-2 rounded-full bg-[#FDFBF9] text-[#3E2C1F] transition-all"
-                      :class="{ 'rotate-45 bg-[#3E2C1F] text-[#D2B48C]': showUploadMenu }"
+                      class="p-2 rounded-full bg-[#F5EDE4] text-[#2C1810] transition-all"
+                      :class="{ 'rotate-45 bg-[#2C1810] text-white': showUploadMenu }"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="2.5"/></svg>
                     </button>
                     <transition name="pop">
-                      <div v-if="showUploadMenu" class="absolute bottom-full left-0 mb-3 bg-white border border-[#F3EEEA] rounded-2xl shadow-xl p-2 z-50 min-w-[140px]">
-                        <button @click="triggerInput('image')" class="flex items-center gap-3 w-full px-3 py-2 hover:bg-emerald-50 rounded-xl transition-colors group">
-                          <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2"/></svg>
+                      <div v-if="showUploadMenu" class="absolute bottom-full left-0 mb-3 bg-white border border-[#D2B48C] rounded-2xl shadow-xl p-2 z-50 min-w-[140px]">
+                        <button @click="triggerInput('image')" class="flex items-center gap-3 w-full px-3 py-2 hover:bg-[#F5EDE4] rounded-xl transition-colors group">
+                          <svg class="w-4 h-4 text-[#8B5A2B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2"/></svg>
                           <span class="text-[10px] font-bold text-gray-500 uppercase">Photo</span>
                         </button>
-                        <button v-if="userRole !== 'parent'" @click="triggerInput('file')" class="flex items-center gap-3 w-full px-3 py-2 hover:bg-blue-50 rounded-xl transition-colors border-t border-[#FDFBF9]">
-                          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-width="2"/></svg>
+                        <button v-if="userRole !== 'parent'" @click="triggerInput('file')" class="flex items-center gap-3 w-full px-3 py-2 hover:bg-[#F5EDE4] rounded-xl transition-colors border-t border-[#D2B48C]">
+                          <svg class="w-4 h-4 text-[#8B5A2B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-width="2"/></svg>
                           <span class="text-[10px] font-bold text-gray-500 uppercase">Document</span>
                         </button>
                       </div>
@@ -100,11 +100,11 @@
                   </div>
 
                   <div class="hidden md:flex items-center gap-3">
-                    <button @click="triggerInput('image')" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-all border border-emerald-100/50 group">
+                    <button @click="triggerInput('image')" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F5EDE4] text-[#8B5A2B] hover:bg-[#D2B48C] transition-all border border-[#D2B48C] group">
                       <svg class="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2"/></svg>
                       <span class="text-[9px] font-black uppercase tracking-widest">Photo</span>
                     </button>
-                    <button v-if="userRole !== 'parent'" @click="triggerInput('file')" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all border border-blue-100/50 group">
+                    <button v-if="userRole !== 'parent'" @click="triggerInput('file')" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F5EDE4] text-[#8B5A2B] hover:bg-[#D2B48C] transition-all border border-[#D2B48C] group">
                       <svg class="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-width="2"/></svg>
                       <span class="text-[9px] font-black uppercase tracking-widest">Doc</span>
                     </button>
@@ -119,12 +119,12 @@
                   <button 
                     @click="handleSubmit" 
                     :disabled="!formData.contenu.trim() || isLoading" 
-                    class="btn-publish relative overflow-hidden bg-[#3E2C1F] text-[#D2B48C] px-8 py-2.5 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-20"
+                    class="btn-publish relative overflow-hidden bg-[#8B5A2B] text-white px-8 py-2.5 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-20"
                   >
                     <span class="relative z-10 text-[10px] font-black uppercase tracking-[0.2em]">
                       {{ isLoading ? 'Envoi...' : (isConfirming ? 'Confirmer ?' : 'Publier') }}
                     </span>
-                    <div class="absolute inset-0 bg-[#543d2c] translate-y-full transition-transform duration-500 ease-out btn-overlay"></div>
+                    <div class="absolute inset-0 bg-[#6F4E37] translate-y-full transition-transform duration-500 ease-out btn-overlay"></div>
                   </button>
                 </div>
               </div>
@@ -137,13 +137,26 @@
     <!-- FIL D'ACTUALITÉ - Tous les posts -->
     <div class="max-w-4xl mx-auto px-4 py-6">
 
-      <!-- Loading -->
-      <div v-if="isLoadingPosts" class="flex justify-center py-12">
-        <div class="w-8 h-8 border-3 border-[#D2B48C] border-t-transparent rounded-full animate-spin"></div>
+      <!-- Skeleton loading amélioré -->
+      <div v-if="isLoadingPosts" class="space-y-6">
+        <div v-for="i in 3" :key="i" class="bg-white rounded-2xl border border-[#D2B48C] overflow-hidden shadow-sm p-4 animate-pulse">
+          <div class="flex gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#D2B48C]"></div>
+            <div class="flex-1">
+              <div class="h-4 bg-[#D2B48C] rounded w-32 mb-2"></div>
+              <div class="h-3 bg-[#D2B48C] rounded w-24"></div>
+            </div>
+          </div>
+          <div class="mt-4 space-y-2">
+            <div class="h-3 bg-[#D2B48C] rounded w-full"></div>
+            <div class="h-3 bg-[#D2B48C] rounded w-5/6"></div>
+          </div>
+          <div class="mt-4 h-40 bg-[#D2B48C] rounded-lg"></div>
+        </div>
       </div>
 
       <!-- Aucun post -->
-      <div v-else-if="posts.length === 0" class="text-center py-12 bg-white rounded-2xl border border-[#EFE9E4]">
+      <div v-else-if="posts.length === 0" class="text-center py-12 bg-white rounded-2xl border border-[#D2B48C]">
         <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
@@ -152,31 +165,31 @@
 
       <!-- Liste des posts -->
       <div v-else class="space-y-6">
-        <div v-for="post in posts" :key="post.id" class="bg-white rounded-2xl border border-[#EFE9E4] overflow-hidden shadow-sm hover:shadow-md transition-all">
+        <div v-for="post in posts" :key="post.id" class="bg-white rounded-2xl border border-[#D2B48C] overflow-hidden shadow-sm hover:shadow-md transition-all">
           
           <!-- En-tête du post -->
           <div class="p-4 flex justify-between items-start">
             <div class="flex gap-3">
               <div 
                 @click.stop="toggleUserInfoBox(post.user, $event)"
-                class="w-10 h-10 rounded-full bg-gradient-to-br from-[#D2B48C] to-[#3E2C1F] flex items-center justify-center text-white font-bold cursor-pointer hover:scale-105 transition-transform"
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-[#8B5A2B] to-[#6F4E37] flex items-center justify-center text-white font-bold cursor-pointer hover:scale-105 transition-transform"
               >
-                {{ post.user?.nom?.charAt(0).toUpperCase() || 'U' }}
+                {{ (post.user?.nom?.charAt(0) || 'U').toUpperCase() }}
               </div>
               <div>
-                <div class="font-bold text-[#3E2C1F] text-sm">{{ post.user?.nom || 'Utilisateur' }}</div>
+                <div class="font-bold text-[#2C1810] text-sm">{{ post.user?.nom || 'Utilisateur inconnu' }}</div>
                 <div class="text-[10px] text-gray-400">{{ formatDate(post.createdAt) }}</div>
               </div>
             </div>
             
             <button 
               @click="startConversation(post.user)" 
-              class="flex items-center gap-2 px-3 py-1.5 bg-[#F8F5F2] rounded-full text-xs text-[#3E2C1F] hover:bg-[#D2B48C] hover:text-white transition-all"
+              class="flex items-center gap-2 px-3 py-1.5 bg-[#F5EDE4] rounded-full text-xs text-[#2C1810] hover:bg-[#8B5A2B] hover:text-white transition-all"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
-              {{ post.user.id === user.id ? 'Mes messages' : 'Message' }}
+              {{ post.user?.id === user.id ? 'Mes messages' : 'Message' }}
             </button>
           </div>
 
@@ -190,9 +203,9 @@
             <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" alt="Publication">
           </div>
 
-          <!-- Fichier PDF avec confirmation personnalisée -->
+          <!-- Fichier PDF -->
           <div v-if="post.fileData" class="px-4 py-2">
-            <button @click="confirmDownload(post)" class="inline-flex items-center gap-2 text-sm text-[#D2B48C] hover:text-[#3E2C1F] transition-colors">
+            <button @click="confirmDownload(post)" class="inline-flex items-center gap-2 text-sm text-[#8B5A2B] hover:text-[#6F4E37] transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
               </svg>
@@ -204,15 +217,15 @@
           </div>
 
           <!-- Actions Like et Commentaire -->
-          <div class="px-4 py-2 flex items-center gap-4 border-t border-[#F8F5F2]">
-            <button @click="toggleLike(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#F8F5F2] rounded-lg transition-all" :class="post.liked ? 'text-red-500' : 'text-gray-500'">
+          <div class="px-4 py-2 flex items-center gap-4 border-t border-[#F5EDE4]">
+            <button @click="toggleLike(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#F5EDE4] rounded-lg transition-all" :class="post.liked ? 'text-red-500' : 'text-gray-500'">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path :fill="post.liked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
               </svg>
               <span class="text-xs font-bold">{{ post.likesCount || 0 }} J'aime</span>
             </button>
             
-            <button @click="toggleComments(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#F8F5F2] rounded-lg transition-all text-gray-500">
+            <button @click="toggleComments(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#F5EDE4] rounded-lg transition-all text-gray-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-width="2"/>
               </svg>
@@ -221,10 +234,10 @@
           </div>
 
           <!-- Section des commentaires -->
-          <div v-if="activeComments === post.id" class="border-t border-[#F8F5F2] p-4 bg-[#FAFAFA]">
+          <div v-if="activeComments === post.id" class="border-t border-[#F5EDE4] p-4 bg-[#FAFAFA]">
             <div class="space-y-3 max-h-60 overflow-y-auto">
               <div v-for="comment in post.comments" :key="comment.id" class="flex gap-2 text-sm">
-                <span class="font-bold text-[#3E2C1F]">{{ comment.user?.nom || 'Utilisateur' }}:</span>
+                <span class="font-bold text-[#2C1810]">{{ comment.user?.nom || 'Utilisateur' }}:</span>
                 <span class="text-gray-600">{{ comment.contenu }}</span>
               </div>
               <div v-if="!post.comments?.length" class="text-center text-gray-400 text-sm">
@@ -234,8 +247,8 @@
             
             <div class="flex gap-2 mt-3">
               <input v-model="newComment[post.id]" type="text" placeholder="Écrire un commentaire..." 
-                class="flex-grow bg-white border border-[#EFE9E4] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#D2B48C]">
-              <button @click="addComment(post.id)" class="bg-[#D2B48C] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#3E2C1F] transition-colors">
+                class="flex-grow bg-white border border-[#D2B48C] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#8B5A2B]">
+              <button @click="addComment(post.id)" class="bg-[#8B5A2B] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#6F4E37] transition-colors">
                 Envoyer
               </button>
             </div>
@@ -250,7 +263,7 @@
         <div v-if="imageViewer.show" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[200] p-4" @click.self="closeImageViewer">
           <div class="relative max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden">
             <img :src="imageViewer.url" class="max-w-full max-h-[80vh] object-contain">
-            <button @click="downloadCurrentImage" class="absolute bottom-4 right-4 bg-[#3E2C1F] text-white p-2 rounded-full hover:bg-[#D2B48C] transition-colors">
+            <button @click="downloadCurrentImage" class="absolute bottom-4 right-4 bg-[#2C1810] text-white p-2 rounded-full hover:bg-[#8B5A2B] transition-colors">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
@@ -265,28 +278,25 @@
       </transition>
     </Teleport>
 
-    <!-- Modale de confirmation personnalisée (style site, icône centrée, boutons aux couleurs de la charte) -->
+    <!-- Modale de confirmation personnalisée -->
     <Teleport to="body">
       <transition name="fade-scale">
         <div v-if="confirmModal.show" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[200] p-4" @click.self="closeConfirmModal">
           <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl text-center">
-            <!-- Icône centrée -->
             <div class="flex justify-center mb-4">
-              <div class="w-16 h-16 rounded-full bg-[#F3EEEA] flex items-center justify-center">
-                <svg class="w-8 h-8 text-[#D2B48C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-16 h-16 rounded-full bg-[#F5EDE4] flex items-center justify-center">
+                <svg class="w-8 h-8 text-[#8B5A2B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
               </div>
             </div>
-            <!-- Titre en dessous -->
-            <h3 class="text-lg font-bold text-[#3E2C1F] mb-2">{{ confirmModal.title }}</h3>
+            <h3 class="text-lg font-bold text-[#2C1810] mb-2">{{ confirmModal.title }}</h3>
             <p class="text-sm text-gray-600 mb-6">{{ confirmModal.message }}</p>
-            <!-- Boutons centrés avec couleurs du site -->
             <div class="flex justify-center gap-3">
               <button @click="closeConfirmModal" class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                 Annuler
               </button>
-              <button @click="confirmModal.onConfirm" class="px-5 py-2 text-sm font-medium text-white bg-[#3E2C1F] rounded-lg hover:bg-[#D2B48C] transition-colors">
+              <button @click="confirmModal.onConfirm" class="px-5 py-2 text-sm font-medium text-white bg-[#8B5A2B] rounded-lg hover:bg-[#6F4E37] transition-colors">
                 Confirmer
               </button>
             </div>
@@ -295,7 +305,7 @@
       </transition>
     </Teleport>
 
-    <!-- Boîte d'information utilisateur (message box stylé) -->
+    <!-- Boîte d'information utilisateur -->
     <Teleport to="body">
       <transition name="user-info">
         <div 
@@ -308,9 +318,9 @@
             <div class="user-info-header" :class="getRoleColorClass(selectedUser.role)">
               <div class="flex items-center gap-3">
                 <div class="user-info-avatar">
-                  {{ selectedUser.nom?.charAt(0).toUpperCase() || 'U' }}
+                  {{ (selectedUser.nom?.charAt(0) || 'U').toUpperCase() }}
                 </div>
-                <span class="user-info-name">{{ selectedUser.nom }}</span>
+                <span class="user-info-name">{{ selectedUser.nom || 'Utilisateur inconnu' }}</span>
               </div>
               <button @click="closeUserInfoBox" class="user-info-close">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -411,7 +421,98 @@ const confirmModal = reactive({
   onConfirm: () => {}
 })
 
-// Fonctions utilitaires
+// ========== GESTION DES LIKES VIA LOCALSTORAGE ==========
+const STORAGE_KEY = `liked_posts_${user.id}`
+
+// Récupérer les IDs des posts likés depuis localStorage
+const getLikedPostIds = (): number[] => {
+  const stored = localStorage.getItem(STORAGE_KEY)
+  return stored ? JSON.parse(stored) : []
+}
+
+// Sauvegarder les IDs dans localStorage
+const saveLikedPostIds = (ids: number[]) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
+}
+
+// Ajouter ou retirer un ID de la liste locale
+const toggleLocalLike = (postId: number): boolean => {
+  let ids = getLikedPostIds()
+  const index = ids.indexOf(postId)
+  let liked = false
+  if (index === -1) {
+    ids.push(postId)
+    liked = true
+  } else {
+    ids.splice(index, 1)
+    liked = false
+  }
+  saveLikedPostIds(ids)
+  return liked
+}
+
+// Initialiser les posts avec l'état liké depuis localStorage
+const initLikesFromStorage = () => {
+  const likedIds = getLikedPostIds()
+  posts.value.forEach(post => {
+    post.liked = likedIds.includes(post.id)
+  })
+}
+
+// Récupérer tous les posts
+const fetchPosts = async () => {
+  isLoadingPosts.value = true
+  try {
+    const response = await axios.get(`${API_BASE_URL}/posts/all-posts`)
+    if (response.data.success) {
+      posts.value = response.data.posts
+      // Appliquer l'état des likes depuis localStorage
+      initLikesFromStorage()
+    }
+  } catch (error) {
+    console.error('Erreur chargement posts:', error)
+    showAlert("Erreur de chargement", 'error')
+  } finally {
+    isLoadingPosts.value = false
+  }
+}
+
+// Toggle like (met à jour localStorage ET le backend)
+const toggleLike = async (postId: number) => {
+  const post = posts.value.find(p => p.id === postId)
+  if (!post) return
+
+  // Optimistic update : mettre à jour l'UI immédiatement
+  const newLikedState = !post.liked
+  const delta = newLikedState ? 1 : -1
+  post.liked = newLikedState
+  post.likesCount = (post.likesCount || 0) + delta
+
+  // Mettre à jour localStorage
+  toggleLocalLike(postId)
+
+  // Envoyer la requête au backend (ne pas attendre la réponse pour l'UI)
+  try {
+    await axios.post(`${API_BASE_URL}/likes/toggle`, null, {
+      params: { userId: user.id, postId: postId }
+    })
+    // Le backend a enregistré ; on pourrait rafraîchir mais pas nécessaire
+  } catch (error) {
+    // En cas d'erreur, annuler la mise à jour locale
+    post.liked = !newLikedState
+    post.likesCount = (post.likesCount || 0) - delta
+    // Restaurer localStorage
+    const ids = getLikedPostIds()
+    const idx = ids.indexOf(postId)
+    if (newLikedState && idx !== -1) ids.splice(idx, 1)
+    if (!newLikedState && idx === -1) ids.push(postId)
+    saveLikedPostIds(ids)
+    showAlert("Erreur lors du like", 'error')
+  }
+}
+// =============================================
+
+// Fonctions utilitaires (inchangées)
 const showAlert = (msg: string, type: 'success' | 'error' = 'success') => {
   alert.message = msg
   alert.type = type
@@ -511,40 +612,6 @@ const handleSubmit = async () => {
   }
 }
 
-// Récupérer tous les posts
-const fetchPosts = async () => {
-  isLoadingPosts.value = true
-  try {
-    const response = await axios.get(`${API_BASE_URL}/posts/all-posts`)
-    if (response.data.success) {
-      posts.value = response.data.posts
-    }
-  } catch (error) {
-    console.error('Erreur chargement posts:', error)
-    showAlert("Erreur de chargement", 'error')
-  } finally {
-    isLoadingPosts.value = false
-  }
-}
-
-// Toggle like
-const toggleLike = async (postId: number) => {
-  const post = posts.value.find(p => p.id === postId)
-  if (!post) return
-  
-  try {
-    const response = await axios.post(`${API_BASE_URL}/likes/toggle`, null, {
-      params: { userId: user.id, postId: postId }
-    })
-    if (response.data.success) {
-      post.liked = response.data.liked
-      post.likesCount = response.data.count
-    }
-  } catch (error) {
-    console.error('Erreur like:', error)
-  }
-}
-
 // Toggle commentaires
 const toggleComments = (postId: number) => {
   activeComments.value = activeComments.value === postId ? null : postId
@@ -584,11 +651,15 @@ const addComment = async (postId: number) => {
 
 // Démarrer une conversation
 const startConversation = (postUser: any) => {
+  if (!postUser || !postUser.id) {
+    showAlert("Impossible d'identifier l'utilisateur", 'error')
+    return
+  }
   if (postUser.id === user.id) {
-    router.push('/parentdiscussions')
+    router.push('/discussionsparent')
   } else {
     localStorage.setItem('selectedChatUser', JSON.stringify(postUser))
-    router.push('/parentdiscussions')
+    router.push('/discussionsparent')
   }
 }
 
@@ -779,13 +850,13 @@ textarea { scrollbar-width: none; }
   transform: scale(0.92);
 }
 
-/* Carte utilisateur */
+/* Carte utilisateur (version café) */
 .user-info-card {
   position: relative;
   width: 280px;
   background: white;
   border-radius: 1.25rem;
-  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(239, 233, 228, 0.5);
+  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(210, 180, 140, 0.5);
   overflow: hidden;
 }
 
@@ -797,17 +868,17 @@ textarea { scrollbar-width: none; }
   color: white;
 }
 .user-info-header.role-admin {
-  background: linear-gradient(135deg, #a0522d, #8b4513);
+  background: linear-gradient(135deg, #8B5A2B, #6F4E37);
 }
 .user-info-header.role-educatrice {
-  background: linear-gradient(135deg, #c19a6b, #a67c52);
+  background: linear-gradient(135deg, #A0522D, #8B5A2B);
 }
 .user-info-header.role-parent {
-  background: linear-gradient(135deg, #d2b48c, #c4a27a);
-  color: #3e2c1f;
+  background: linear-gradient(135deg, #D2B48C, #A0522D);
+  color: #2C1810;
 }
 .user-info-header.role-default {
-  background: linear-gradient(135deg, #5c3d2e, #3e2c1f);
+  background: linear-gradient(135deg, #8B5A2B, #6F4E37);
 }
 
 .user-info-avatar {
@@ -870,14 +941,14 @@ textarea { scrollbar-width: none; }
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #b9a99a;
+  color: #8B5A2B;
   margin-bottom: 0.25rem;
 }
 
 .user-info-value {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #3E2C1F;
+  color: #2C1810;
   word-break: break-word;
   line-height: 1.3;
 }
@@ -889,8 +960,8 @@ textarea { scrollbar-width: none; }
   width: 14px;
   height: 14px;
   background: white;
-  border-left: 1px solid rgba(239, 233, 228, 0.8);
-  border-top: 1px solid rgba(239, 233, 228, 0.8);
+  border-left: 1px solid rgba(210, 180, 140, 0.8);
+  border-top: 1px solid rgba(210, 180, 140, 0.8);
   transform: rotate(45deg);
   z-index: -1;
   border-radius: 3px 0 0 0;
