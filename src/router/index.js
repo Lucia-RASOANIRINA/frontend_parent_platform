@@ -16,7 +16,8 @@ import ParentPub from "../pages/ParentPub.vue";
 import ProfilParent from "../pages/ProfilParent.vue";
 import DiscussionsParent from "../pages/DiscussionsParent.vue";
 import RessourcesParent from "../pages/RessourcesParent.vue";
-import RessourcesEquipe from '../pages/RessourcesEquipe.vue'
+import RessourcesEquipe from '../pages/RessourcesEquipe.vue';
+import HomeAdmin from '../pages/HomeAdmin.vue'
 
 const routes = [
   {
@@ -126,6 +127,12 @@ const routes = [
     name: 'DiscussionsPsy',
     component: DiscussionsPsy,
     meta: { layout: 'psy', showFooter: true }
+  },
+  {
+    path: '/homeadmin',
+    name: 'HomeAdmin',
+    component: HomeAdmin,
+    meta: { layout: 'admin', showFooter: true }
   }
 ]
 

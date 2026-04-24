@@ -20,6 +20,7 @@ import Header from './components/Header.vue'
 import HeaderParent from './components/HeaderParent.vue'
 import HeaderEducatrice from './components/HeaderEducatrice.vue'
 import HeaderPsy from './components/HeaderPsy.vue'
+import HeaderAdmin from './components/HeaderAdmin.vue'
 import Footer from './components/Footer.vue'       
 import FooterPsy from './components/FooterPsy.vue'  
 import FooterTeacher from './components/FooterTeacher.vue'
@@ -33,6 +34,7 @@ const headerMap = {
   parent: HeaderParent,
   educatrice: HeaderEducatrice,
   psy: HeaderPsy,
+  admin: HeaderAdmin,
   auth: null
 }
 
