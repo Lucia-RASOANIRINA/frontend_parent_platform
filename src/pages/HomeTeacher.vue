@@ -18,7 +18,7 @@
         </div>
         
         <div class="flex-grow">
-          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ alert.type === 'success' ? 'Succès' : 'Erreur' }}</p>
+          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ alert.type === 'success' ? t('commun.succes') : t('commun.erreur') }}</p>
           <p class="text-xs font-bold text-[#3C2A21]">{{ alert.message }}</p>
         </div>
 
@@ -46,7 +46,7 @@
             <textarea 
               v-model="formData.contenu" 
               @focus="isExpanded = true"
-              placeholder="Partagez quelque chose..." 
+              :placeholder="t('accueil.partagez')" 
               class="w-full bg-transparent border-none text-base md:text-lg font-medium text-[#3C2A21] placeholder-gray-300 outline-none resize-none transition-all py-2"
               :class="isExpanded ? 'h-24' : 'h-10'"
             ></textarea>
@@ -89,11 +89,11 @@
                       <div v-if="showUploadMenu" class="absolute bottom-full left-0 mb-3 bg-white border border-[#F5F5DC] rounded-2xl shadow-xl p-2 z-50 min-w-[140px]">
                         <button @click="triggerInput('image')" class="flex items-center gap-3 w-full px-3 py-2 hover:bg-[#FAF7F2] rounded-xl transition-colors group">
                           <svg class="w-4 h-4 text-[#6F4E37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2"/></svg>
-                          <span class="text-[10px] font-bold text-gray-500 uppercase">Photo</span>
+                          <span class="text-[10px] font-bold text-gray-500 uppercase">{{ t('accueil.photo') }}</span>
                         </button>
                         <button v-if="userRole !== 'parent'" @click="triggerInput('file')" class="flex items-center gap-3 w-full px-3 py-2 hover:bg-[#FAF7F2] rounded-xl transition-colors border-t border-[#F5F5DC]">
                           <svg class="w-4 h-4 text-[#6F4E37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-width="2"/></svg>
-                          <span class="text-[10px] font-bold text-gray-500 uppercase">Document</span>
+                          <span class="text-[10px] font-bold text-gray-500 uppercase">{{ t('accueil.document') }}</span>
                         </button>
                       </div>
                     </transition>
@@ -102,18 +102,18 @@
                   <div class="hidden md:flex items-center gap-3">
                     <button @click="triggerInput('image')" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF7F2] text-[#6F4E37] hover:bg-[#F5F5DC] transition-all border border-[#F5F5DC] group">
                       <svg class="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2"/></svg>
-                      <span class="text-[9px] font-black uppercase tracking-widest">Photo</span>
+                      <span class="text-[9px] font-black uppercase tracking-widest">{{ t('accueil.photo') }}</span>
                     </button>
                     <button v-if="userRole !== 'parent'" @click="triggerInput('file')" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF7F2] text-[#6F4E37] hover:bg-[#F5F5DC] transition-all border border-[#F5F5DC] group">
                       <svg class="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-width="2"/></svg>
-                      <span class="text-[9px] font-black uppercase tracking-widest">Doc</span>
+                      <span class="text-[9px] font-black uppercase tracking-widest">{{ t('accueil.doc') }}</span>
                     </button>
                   </div>
                 </div>
 
                 <div class="flex items-center gap-5">
                   <button @click="resetForm" class="btn-cancel-clean text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all duration-300">
-                    Annuler
+                    {{ t('accueil.annuler') }}
                   </button>
 
                   <button 
@@ -122,7 +122,7 @@
                     class="btn-publish relative overflow-hidden bg-[#6F4E37] text-white px-8 py-2.5 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-20"
                   >
                     <span class="relative z-10 text-[10px] font-black uppercase tracking-[0.2em]">
-                      {{ isLoading ? 'Envoi...' : (isConfirming ? 'Confirmer ?' : 'Publier') }}
+                      {{ isLoading ? t('accueil.envoi') : (isConfirming ? t('accueil.confirmer') : t('accueil.publier')) }}
                     </span>
                     <div class="absolute inset-0 bg-[#3C2A21] translate-y-full transition-transform duration-500 ease-out btn-overlay"></div>
                   </button>
@@ -160,7 +160,7 @@
         <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
-        <p class="text-gray-400">Aucune publication pour le moment</p>
+        <p class="text-gray-400">{{ t('accueil.aucunePublication') }}</p>
       </div>
 
       <!-- Liste des posts -->
@@ -195,12 +195,12 @@
 
           <!-- Contenu -->
           <div class="px-4 pb-3">
-            <p class="text-sm text-gray-700 leading-relaxed">{{ post.contenu }}</p>
+            <p class="text-sm text-gray-700 leading-relaxed"><TexteTraduit :texte="post.contenu" type="POST" :contenu-id="post.id" /></p>
           </div>
 
           <!-- Image cliquable -->
           <div v-if="post.imageData" class="w-full bg-gray-100 cursor-pointer" @click="openImageViewer(post)">
-            <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" alt="Publication">
+            <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" :alt="t('accueil.publication')">
           </div>
 
           <!-- Fichier PDF -->
@@ -222,36 +222,24 @@
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path :fill="post.liked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
               </svg>
-              <span class="text-xs font-bold">{{ post.likesCount || 0 }} J'aime</span>
+              <span class="text-xs font-bold">{{ post.likesCount || 0 }} {{ t('accueil.jaime') }}</span>
             </button>
             
             <button @click="toggleComments(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#FAF7F2] rounded-lg transition-all text-gray-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-width="2"/>
               </svg>
-              <span class="text-xs font-bold">{{ post.commentsCount || 0 }} Commentaires</span>
+              <span class="text-xs font-bold">{{ post.commentsCount || 0 }} {{ t('accueil.commentaires') }}</span>
             </button>
           </div>
 
           <!-- Section des commentaires -->
           <div v-if="activeComments === post.id" class="border-t border-[#FAF7F2] p-4 bg-[#FAFAFA]">
-            <div class="space-y-3 max-h-60 overflow-y-auto">
-              <div v-for="comment in post.comments" :key="comment.id" class="flex gap-2 text-sm">
-                <span class="font-bold text-[#3C2A21]">{{ comment.user?.nom || 'Utilisateur' }}:</span>
-                <span class="text-gray-600">{{ comment.contenu }}</span>
-              </div>
-              <div v-if="!post.comments?.length" class="text-center text-gray-400 text-sm">
-                Aucun commentaire pour le moment
-              </div>
-            </div>
-            
-            <div class="flex gap-2 mt-3">
-              <input v-model="newComment[post.id]" type="text" placeholder="Écrire un commentaire..." 
-                class="flex-grow bg-white border border-[#F5F5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#6F4E37]">
-              <button @click="addComment(post.id)" class="bg-[#6F4E37] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#3C2A21] transition-colors">
-                Envoyer
-              </button>
-            </div>
+            <!-- Fil complet : répondre, réagir, modifier, supprimer -->
+            <CommentThread
+              :post-id="post.id"
+              :commentaires="post.comments || []"
+              @change="post.commentsCount = $event" />
           </div>
         </div>
       </div>
@@ -294,10 +282,10 @@
             <p class="text-sm text-gray-600 mb-6">{{ confirmModal.message }}</p>
             <div class="flex justify-center gap-3">
               <button @click="closeConfirmModal" class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                Annuler
+                {{ t('accueil.annuler') }}
               </button>
               <button @click="confirmModal.onConfirm" class="px-5 py-2 text-sm font-medium text-white bg-[#6F4E37] rounded-lg hover:bg-[#3C2A21] transition-colors">
-                Confirmer
+                {{ t('accueil.confirmerBouton') }}
               </button>
             </div>
           </div>
@@ -335,7 +323,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                 </svg>
                 <div class="flex-1">
-                  <p class="user-info-label">Email</p>
+                  <p class="user-info-label">{{ t('accueil.email') }}</p>
                   <p class="user-info-value">{{ selectedUser.email || 'Non renseigné' }}</p>
                 </div>
               </div>
@@ -345,7 +333,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div class="flex-1">
-                  <p class="user-info-label">Rôle</p>
+                  <p class="user-info-label">{{ t('accueil.role') }}</p>
                   <p class="user-info-value capitalize">{{ selectedUser.role || 'Non défini' }}</p>
                 </div>
               </div>
@@ -364,11 +352,14 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
+import TexteTraduit from '../components/TexteTraduit.vue'
+import { t } from '../i18n'
+import CommentThread from '../components/CommentThread.vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
-const API_BASE_URL = 'http://localhost:8082/api'
+import { API_BASE_URL } from '../services'
 const user = JSON.parse(localStorage.getItem('user') || '{"nom": "Marie Educ", "role": "educatrice", "id": 1, "email": "marie@example.com"}')
 
 // Computed
@@ -471,7 +462,7 @@ const fetchPosts = async () => {
     }
   } catch (error) {
     console.error('Erreur chargement posts:', error)
-    showAlert("Erreur de chargement", 'error')
+    showAlert(t('accueil.erreurChargement'), 'error')
   } finally {
     isLoadingPosts.value = false
   }
@@ -507,7 +498,7 @@ const toggleLike = async (postId: number) => {
     if (newLikedState && idx !== -1) ids.splice(idx, 1)
     if (!newLikedState && idx === -1) ids.push(postId)
     saveLikedPostIds(ids)
-    showAlert("Erreur lors du like", 'error')
+    showAlert(t('accueil.erreurLike'), 'error')
   }
 }
 // =============================================
@@ -539,7 +530,7 @@ const handleImageUpload = (e: Event) => {
     const reader = new FileReader()
     reader.onload = (ev) => { imagePreviewUrl.value = ev.target?.result as string }
     reader.readAsDataURL(target.files[0])
-    showAlert("Photo ajoutée ✓", 'success')
+    showAlert(t('accueil.photoAjoutee'), 'success')
   } 
 }
 
@@ -547,7 +538,7 @@ const handleFileUpload = (e: Event) => {
   const target = e.target as HTMLInputElement
   if (target.files && target.files[0]) { 
     pdfFile.value = target.files[0]
-    showAlert(`Document pdf ajouté ✓`, 'success')
+    showAlert(t('accueil.documentAjoute'), 'success')
   } 
 }
 
@@ -582,7 +573,7 @@ const handleSubmit = async () => {
     return 
   }
   if (!formData.contenu.trim()) {
-    showAlert("Veuillez écrire un message", 'error')
+    showAlert(t('accueil.ecrireMessage'), 'error')
     return
   }
   
@@ -599,14 +590,14 @@ const handleSubmit = async () => {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     if (response.data.success) {
-      showAlert("Post publié avec succès !", 'success')
+      showAlert(t('accueil.postPublie'), 'success')
       resetForm()
       fetchPosts()
     } else {
-      showAlert(response.data.error || "Erreur lors de l'envoi", 'error')
+      showAlert(response.data.error || t('accueil.erreurEnvoi'), 'error')
     }
   } catch (error) {
-    showAlert("Erreur lors de l'envoi", 'error')
+    showAlert(t('accueil.erreurEnvoi'), 'error')
   } finally {
     isLoading.value = false
   }
@@ -645,14 +636,14 @@ const addComment = async (postId: number) => {
     }
   } catch (error) {
     console.error('Erreur commentaire:', error)
-    showAlert("Erreur lors de l'ajout du commentaire", 'error')
+    showAlert(t('accueil.erreurCommentaire'), 'error')
   }
 }
 
 // Démarrer une conversation
 const startConversation = (postUser: any) => {
   if (!postUser || !postUser.id) {
-    showAlert("Impossible d'identifier l'utilisateur", 'error')
+    showAlert(t('accueil.utilisateurInconnu'), 'error')
     return
   }
   if (postUser.id === user.id) {
@@ -671,9 +662,9 @@ const formatDate = (dateString: string) => {
   const diff = now.getTime() - date.getTime()
   
   if (diff < 3600000) {
-    return `il y a ${Math.floor(diff / 60000)} min`
+    return t('accueil.ilYaMinutes', { n: Math.floor(diff / 60000) })
   } else if (diff < 86400000) {
-    return `aujourd'hui à ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
+    return t('accueil.aujourdhuiA', { heure: date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) })
   } else {
     return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
   }
@@ -698,19 +689,19 @@ const downloadCurrentImage = () => {
   link.href = imageViewer.url
   link.download = 'image.jpg'
   link.click()
-  showAlert("Image téléchargée", 'success')
+  showAlert(t('accueil.imageTelechargee'), 'success')
 }
 
 // Confirmation personnalisée pour téléchargement PDF
 const confirmDownload = (post: any) => {
-  confirmModal.title = "Télécharger le document"
-  confirmModal.message = `Voulez-vous télécharger le fichier "${post.fileName}" ?`
+  confirmModal.title = t('accueil.telechargerDocument')
+  confirmModal.message = t('accueil.confirmTelecharger', { nom: post.fileName })
   confirmModal.onConfirm = () => {
     const link = document.createElement('a')
     link.href = `data:${post.fileType};base64,${post.fileData}`
     link.download = post.fileName
     link.click()
-    showAlert("Téléchargement démarré", 'success')
+    showAlert(t('accueil.telechargementDemarre'), 'success')
     closeConfirmModal()
   }
   confirmModal.show = true

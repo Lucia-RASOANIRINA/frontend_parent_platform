@@ -19,7 +19,7 @@
           </div>
           
           <div class="flex-grow">
-            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ notification.type === 'success' ? 'Succès' : 'Erreur' }}</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ notification.type === 'success' ? t('commun.succes') : t('commun.erreur') }}</p>
             <p class="text-xs font-bold text-[#3C2A21]">{{ notification.message }}</p>
           </div>
 
@@ -40,7 +40,7 @@
             <textarea 
               v-model="formData.contenu" 
               @focus="isExpanded = true"
-              placeholder="Quoi de neuf pour les petits ?" 
+              :placeholder="t('publications.quoiDeNeuf')" 
               class="w-full bg-[#FAF7F2] border-none rounded-2xl py-2.5 px-4 text-sm focus:ring-1 focus:ring-[#6F4E37] transition-all resize-none outline-none text-[#3C2A21]"
               :class="isExpanded ? 'h-24' : 'h-10'"
             ></textarea>
@@ -73,22 +73,22 @@
                 <div class="flex gap-2">
                   <button @click="imageInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#FAF7F2] rounded-lg transition-colors group">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="1.5"/></svg>
-                    <span class="text-xs font-semibold text-gray-600">Photo</span>
+                    <span class="text-xs font-semibold text-gray-600">{{ t('publications.photo') }}</span>
                   </button>
 
                   <button v-if="userRole !== 'parent'" @click="fileInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#FAF7F2] rounded-lg transition-colors">
                     <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                     </svg>
-                    <span class="text-xs font-semibold text-gray-600">Fichier</span>
+                    <span class="text-xs font-semibold text-gray-600">{{ t('publications.fichier') }}</span>
                   </button>
                 </div>
 
                 <div class="flex gap-2">
-                  <button @click="cancelPost" class="text-xs text-gray-400 font-bold px-3">Annuler</button>
+                  <button @click="cancelPost" class="text-xs text-gray-400 font-bold px-3">{{ t('publications.annuler') }}</button>
                   <button @click="handleSubmit" :disabled="!formData.contenu.trim() || isLoading" 
                     class="bg-[#6F4E37] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-[#3C2A21] disabled:opacity-50 transition-all">
-                    {{ isLoading ? 'Publication...' : 'Publier' }}
+                    {{ isLoading ? t('publications.enCoursPublication') : t('publications.publier') }}
                   </button>
                 </div>
               </div>
@@ -109,7 +109,7 @@
                 {{ post.user?.nom?.charAt(0) || 'U' }}
               </div>
               <div>
-                <h4 class="text-sm font-bold text-[#3C2A21]">{{ post.user?.nom || 'Utilisateur' }}</h4>
+                <h4 class="text-sm font-bold text-[#3C2A21]">{{ post.user?.nom || t('publications.utilisateur') }}</h4>
                 <p class="text-[10px] text-gray-400">{{ formatDate(post.createdAt) }}</p>
               </div>
             </div>
@@ -126,25 +126,25 @@
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                   </svg>
-                  Modifier
+                  {{ t('publications.modifier') }}
                 </button>
                 <button @click="confirmDeletePost(post.id)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#FAF7F2] flex items-center gap-2">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                   </svg>
-                  Supprimer
+                  {{ t('publications.supprimer') }}
                 </button>
               </div>
             </div>
           </div>
 
           <div class="px-4 pb-3">
-            <p class="text-sm text-gray-700 leading-relaxed">{{ post.contenu }}</p>
+            <p class="text-sm text-gray-700 leading-relaxed"><TexteTraduit :texte="post.contenu" type="POST" :contenu-id="post.id" /></p>
           </div>
 
           <!-- Image cliquable -->
           <div v-if="post.imageData" class="w-full bg-gray-100 cursor-pointer" @click="openImageViewer(post)">
-            <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" alt="Publication">
+            <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" :alt="t('publications.image')">
           </div>
 
           <!-- PDF avec téléchargement confirmé -->
@@ -166,41 +166,30 @@
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path :fill="post.liked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
               </svg>
-              <span class="text-xs font-bold">{{ post.likesCount || 0 }} J'aime</span>
+              <span class="text-xs font-bold">{{ post.likesCount || 0 }} {{ t('publications.jaime') }}</span>
             </button>
             
             <button @click="toggleComments(post.id)" class="flex items-center gap-2 px-2 py-1.5 hover:bg-[#FAF7F2] rounded-lg transition-all text-gray-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-width="2"/>
               </svg>
-              <span class="text-xs font-bold">{{ post.commentsCount || 0 }} Commentaires</span>
+              <span class="text-xs font-bold">{{ post.commentsCount || 0 }} {{ t('publications.commentaires') }}</span>
             </button>
           </div>
 
           <!-- Section des commentaires -->
           <div v-if="activeComments === post.id" class="border-t border-[#FAF7F2] p-4 bg-[#FAF7F2]">
-            <div class="space-y-3 max-h-60 overflow-y-auto">
-              <div v-for="comment in post.comments" :key="comment.id" class="flex gap-2 text-sm">
-                <span class="font-bold text-[#3C2A21]">{{ comment.user?.nom || 'Utilisateur' }}:</span>
-                <span class="text-gray-600">{{ comment.contenu }}</span>
-              </div>
-              <div v-if="!post.comments?.length" class="text-center text-gray-400 text-sm">
-                Aucun commentaire pour le moment
-              </div>
-            </div>
-            
-            <div class="flex gap-2 mt-3">
-              <input v-model="newComment[post.id]" type="text" placeholder="Écrire un commentaire..." 
-                class="flex-grow bg-white border border-[#F5F5DC] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#6F4E37]">
-              <button @click="addComment(post.id)" class="bg-[#6F4E37] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#3C2A21] transition-colors">
-                Envoyer
-              </button>
-            </div>
+            <!-- Fil complet : répondre, réagir, modifier, supprimer -->
+            <CommentThread
+              :post-id="post.id"
+              :commentaires="post.comments || []"
+              @change="post.commentsCount = $event" />
           </div>
         </div>
         
-        <div v-if="posts.length === 0 && !isLoading" class="text-center py-10 text-gray-400">
-          Aucune publication pour le moment
+        <Chargement v-if="chargementListe" :nombre="2" />
+        <div v-else-if="posts.length === 0" class="text-center py-10 text-gray-400">
+          {{ t('publications.aucunePublication') }}
         </div>
       </div>
     </div>
@@ -208,14 +197,14 @@
     <!-- Modal de modification -->
     <div v-if="editModal.open" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" @click.self="closeEditModal">
       <div class="bg-white rounded-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-        <h3 class="text-lg font-bold text-[#3C2A21] mb-4">Modifier le post</h3>
+        <h3 class="text-lg font-bold text-[#3C2A21] mb-4">{{ t('publications.modifierPost') }}</h3>
         
         <textarea 
           v-model="editModal.contenu" 
           ref="editTextarea"
           class="w-full bg-[#FAF7F2] rounded-xl p-3 text-sm focus:ring-1 focus:ring-[#6F4E37] outline-none resize-none overflow-hidden text-[#3C2A21]"
           rows="3"
-          placeholder="Votre message..."
+          :placeholder="t('publications.votreMessage')"
           @input="autoResizeTextarea"
         ></textarea>
         
@@ -225,7 +214,7 @@
             <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span class="text-xs font-bold text-gray-600">Image</span>
+            <span class="text-xs font-bold text-gray-600">{{ t('publications.image') }}</span>
           </div>
           
           <div v-if="editModal.currentImageUrl && !editModal.newImagePreview" class="relative inline-block mb-3">
@@ -247,7 +236,7 @@
           
           <button @click="editImageInput?.click()" type="button" class="flex items-center gap-2 px-3 py-1.5 bg-[#FAF7F2] rounded-lg hover:bg-[#F5F5DC] transition-colors">
             <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="1.5"/></svg>
-            <span class="text-xs font-semibold text-gray-700">Changer l'image</span>
+            <span class="text-xs font-semibold text-gray-700">{{ t('publications.changerImage') }}</span>
           </button>
           <input type="file" accept="image/*" ref="editImageInput" class="hidden" @change="handleEditImageUpload">
         </div>
@@ -258,7 +247,7 @@
             <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
-            <span class="text-xs font-bold text-gray-600">Document PDF</span>
+            <span class="text-xs font-bold text-gray-600">{{ t('publications.documentPdf') }}</span>
           </div>
           
           <div v-if="editModal.currentFileName && !editModal.newPdfFile" class="flex items-center justify-between bg-gray-50 p-2 rounded-lg mb-3">
@@ -292,15 +281,15 @@
             <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
-            <span class="text-xs font-semibold text-gray-700">Changer le document</span>
+            <span class="text-xs font-semibold text-gray-700">{{ t('publications.changerDocument') }}</span>
           </button>
           <input type="file" accept=".pdf" ref="editFileInput" class="hidden" @change="handleEditFileUpload">
         </div>
         
         <div class="flex justify-end gap-3 mt-6">
-          <button @click="closeEditModal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Annuler</button>
+          <button @click="closeEditModal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">{{ t('publications.annuler') }}</button>
           <button @click="updatePost" :disabled="isUpdating" class="px-4 py-2 bg-[#6F4E37] text-white rounded-lg hover:bg-[#3C2A21] disabled:opacity-50">
-            {{ isUpdating ? 'Enregistrement...' : 'Enregistrer' }}
+            {{ isUpdating ? t('publications.enregistrement') : t('publications.enregistrer') }}
           </button>
         </div>
       </div>
@@ -329,10 +318,10 @@
         <!-- Boutons centrés avec couleurs du site -->
         <div class="flex justify-center gap-3">
           <button @click="closeConfirmModal" class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-            Annuler
+            {{ t('publications.annuler') }}
           </button>
           <button @click="confirmModal.onConfirm" class="px-5 py-2 text-sm font-medium text-white bg-[#6F4E37] rounded-lg hover:bg-[#3C2A21] transition-colors">
-            Confirmer
+            {{ t('publications.confirmer') }}
           </button>
         </div>
       </div>
@@ -362,6 +351,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, nextTick } from 'vue'
+import { t } from '../i18n'
+import CommentThread from '../components/CommentThread.vue'
+import Chargement from '../components/Chargement.vue'
+import TexteTraduit from '../components/TexteTraduit.vue'
 import axios from 'axios'
 
 const user = JSON.parse(localStorage.getItem('user') || '{"nom": "Utilisateur", "role": "parent", "id": 1}')
@@ -371,6 +364,7 @@ const userRole = user.role
 // États UI
 const isExpanded = ref(false)
 const isLoading = ref(false)
+const chargementListe = ref(true)
 const isUpdating = ref(false)
 const activeMenu = ref<number | null>(null)
 const activeComments = ref<number | null>(null)
@@ -430,7 +424,7 @@ const imageViewer = reactive({
   fileData: ''
 })
 
-const API_BASE_URL = 'http://localhost:8082/api'
+import { API_BASE_URL } from '../services'
 
 // Helpers
 const formatFileSize = (bytes: number): string => {
@@ -480,7 +474,7 @@ const downloadCurrentImage = () => {
   link.href = imageViewer.url
   link.download = 'image.jpg'
   link.click()
-  showNotification('Image téléchargée', 'success')
+  showNotification(t('publications.imageTelechargee'), 'success')
 }
 
 // API
@@ -492,19 +486,20 @@ const fetchPosts = async () => {
       posts.value = response.data.posts
     }
   } catch (error) {
-    showNotification('Erreur de chargement des publications', 'error')
+    showNotification(t('publications.erreurChargement'), 'error')
   } finally {
     isLoading.value = false
+    chargementListe.value = false
   }
 }
 
 const formatDate = (dateString: string) => {
-  if (!dateString) return 'Date inconnue'
+  if (!dateString) return t('publications.dateInconnue')
   try {
     const date = new Date(dateString)
     return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   } catch {
-    return 'Date inconnue'
+    return t('publications.dateInconnue')
   }
 }
 
@@ -517,7 +512,7 @@ const handleImageUpload = (e: Event) => {
     const reader = new FileReader()
     reader.onload = (ev) => { imagePreviewUrl.value = ev.target?.result as string }
     reader.readAsDataURL(file)
-    showNotification('Image ajoutée ✓', 'success')
+    showNotification(t('publications.imageAjoutee'), 'success')
   }
 }
 
@@ -526,7 +521,7 @@ const handleFileUpload = (e: Event) => {
   const file = target.files?.[0]
   if (file) {
     pdfFile.value = file
-    showNotification(`Document "${file.name}" ajouté ✓`, 'success')
+    showNotification(t('publications.documentAjoute', { nom: file.name }), 'success')
   }
 }
 
@@ -553,7 +548,7 @@ const cancelPost = () => {
 
 const handleSubmit = async () => {
   if (!formData.contenu.trim()) {
-    showNotification('Veuillez écrire un message', 'error')
+    showNotification(t('publications.ecrireMessage'), 'error')
     return
   }
   isLoading.value = true
@@ -565,14 +560,14 @@ const handleSubmit = async () => {
   try {
     const response = await axios.post(`${API_BASE_URL}/posts/create`, submitData, { headers: { 'Content-Type': 'multipart/form-data' } })
     if (response.data.success) {
-      showNotification('Post publié avec succès !', 'success')
+      showNotification(t('publications.postPublie'), 'success')
       cancelPost()
       await fetchPosts()
     } else {
-      showNotification(response.data.error || 'Erreur lors de la publication', 'error')
+      showNotification(response.data.error || t('publications.erreurPublication'), 'error')
     }
   } catch (error) {
-    showNotification('Erreur lors de la publication', 'error')
+    showNotification(t('publications.erreurPublication'), 'error')
   } finally {
     isLoading.value = false
   }
@@ -580,18 +575,18 @@ const handleSubmit = async () => {
 
 // Suppression avec confirmation (icône poubelle)
 const confirmDeletePost = (postId: number) => {
-  showConfirm('Supprimer le post', 'Voulez-vous vraiment supprimer cette publication ? Cette action est irréversible.', () => deletePost(postId), 'delete')
+  showConfirm(t('publications.supprimerPost'), t('publications.confirmSupprimer'), () => deletePost(postId), 'delete')
 }
 
 const deletePost = async (postId: number) => {
   try {
     const response = await axios.delete(`${API_BASE_URL}/posts/delete/${postId}`)
     if (response.data.success) {
-      showNotification('Post supprimé avec succès', 'success')
+      showNotification(t('publications.postSupprime'), 'success')
       await fetchPosts()
     }
   } catch (error) {
-    showNotification('Erreur lors de la suppression', 'error')
+    showNotification(t('publications.erreurSuppression'), 'error')
   }
   activeMenu.value = null
 }
@@ -645,7 +640,7 @@ const handleEditImageUpload = (e: Event) => {
     reader.onload = (ev) => { editModal.newImagePreview = ev.target?.result as string }
     reader.readAsDataURL(file)
     editModal.removeImage = false
-    showNotification('Nouvelle image sélectionnée', 'success')
+    showNotification(t('publications.nouvelleImage'), 'success')
   }
 }
 
@@ -655,7 +650,7 @@ const handleEditFileUpload = (e: Event) => {
   if (file) {
     editModal.newPdfFile = file
     editModal.removeFile = false
-    showNotification(`Nouveau document sélectionné : ${file.name}`, 'success')
+    showNotification(t('publications.nouveauDocument', { nom: file.name }), 'success')
   }
 }
 
@@ -698,14 +693,14 @@ const updatePost = async () => {
   try {
     const response = await axios.put(`${API_BASE_URL}/posts/update/${editModal.id}`, formDataUpdate, { headers: { 'Content-Type': 'multipart/form-data' } })
     if (response.data.success) {
-      showNotification('Post modifié avec succès', 'success')
+      showNotification(t('publications.postModifie'), 'success')
       await fetchPosts()
       closeEditModal()
     } else {
-      showNotification(response.data.error || 'Erreur lors de la modification', 'error')
+      showNotification(response.data.error || t('publications.erreurModification'), 'error')
     }
   } catch (error) {
-    showNotification('Erreur lors de la modification', 'error')
+    showNotification(t('publications.erreurModification'), 'error')
   } finally {
     isUpdating.value = false
   }
@@ -713,12 +708,12 @@ const updatePost = async () => {
 
 // Téléchargement PDF avec confirmation (icône téléchargement)
 const confirmDownload = (post: any) => {
-  showConfirm('Télécharger le document', `Voulez-vous télécharger le fichier "${post.fileName}" ?`, () => {
+  showConfirm(t('publications.telechargerDocument'), t('publications.confirmTelecharger', { nom: post.fileName }), () => {
     const link = document.createElement('a')
     link.href = `data:${post.fileType};base64,${post.fileData}`
     link.download = post.fileName
     link.click()
-    showNotification('Téléchargement démarré', 'success')
+    showNotification(t('publications.telechargementDemarre'), 'success')
   }, 'download')
 }
 
@@ -773,7 +768,7 @@ const addComment = async (postId: number) => {
       }
     }
   } catch (error) {
-    showNotification('Erreur lors de l\'ajout du commentaire', 'error')
+    showNotification(t('publications.erreurAjoutCommentaire'), 'error')
   }
 }
 

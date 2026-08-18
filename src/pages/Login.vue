@@ -46,14 +46,17 @@
           
           <div class="message-box-footer">
             <button @click="closeMessageBox" class="message-box-button" :style="getButtonStyle()">
-              Continuer
+              {{ t('connexion.continuer') }}
             </button>
           </div>
         </div>
       </div>
     </div>
     
-    <div class="relative z-8 w-full max-w-[420px] custom-border shadow-[0_25px_70px_-15px_rgba(62,44,31,0.15)] bg-white/90 backdrop-blur-lg rounded-[40px] h-[500px]">
+    <!-- Fond d'origine conservé ; seule la hauteur s'adapte au formulaire affiché,
+         l'inscription ayant plus de champs que la connexion. -->
+    <div class="relative z-8 w-full max-w-[420px] custom-border shadow-[0_25px_70px_-15px_rgba(62,44,31,0.15)] bg-white/90 backdrop-blur-lg rounded-[40px]"
+         :class="isLoginMode ? 'h-[500px]' : 'h-[660px]'">
       <div class="absolute inset-0 flex flex-col overflow-hidden rounded-[27px]">
         
         <div class="pt-7 pb-4 flex flex-col items-center flex-none">
@@ -70,12 +73,12 @@
             <button @click="switchToLogin" 
               :class="isLoginMode ? 'text-[#3E2C1F]' : 'text-[#3E2C1F]/40'"
               class="relative z-10 px-6 py-2 rounded-full text-[11px] font-bold tracking-widest uppercase transition-colors duration-300">
-              Connexion
+              {{ t('connexion.connexion') }}
             </button>
             <button @click="switchToRegister" 
               :class="!isLoginMode ? 'text-[#3E2C1F]' : 'text-[#3E2C1F]/40'"
               class="relative z-10 px-6 py-2 rounded-full text-[11px] font-bold tracking-widest uppercase transition-colors duration-300">
-              Inscription
+              {{ t('connexion.inscription') }}
             </button>
           </div>
         </div>
@@ -95,7 +98,7 @@
                   <input 
                     v-model="loginForm.email" 
                     type="email" 
-                    placeholder="Adresse email" 
+                    :placeholder="t('connexion.adresseEmail')" 
                     :disabled="isLoading || messageBox.show"
                     @input="validateLoginEmailInput"
                     @blur="validateLoginEmailOnBlur"
@@ -124,7 +127,7 @@
                   <input 
                     v-model="loginForm.password" 
                     :type="showPassword ? 'text' : 'password'" 
-                    placeholder="Mot de passe" 
+                    :placeholder="t('connexion.motDePasse')" 
                     :disabled="isLoading || messageBox.show"
                     @blur="validateLoginPasswordOnBlur"
                     @focus="clearLoginPasswordError"
@@ -157,9 +160,9 @@
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Connexion...
+                    {{ t('connexion.enCoursConnexion') }}
                   </span>
-                  <span v-else>Se connecter</span>
+                  <span v-else>{{ t('connexion.seConnecter') }}</span>
                 </button>
               </div>
             </form>
@@ -172,7 +175,7 @@
                 <input 
                   v-model="registerForm.nom" 
                   type="text" 
-                  placeholder="Nom complet" 
+                  :placeholder="t('connexion.nomComplet')" 
                   :disabled="isLoading || messageBox.show"
                   @input="validateNameInput"
                   @blur="validateNameOnBlur"
@@ -201,7 +204,7 @@
                 <input 
                   v-model="registerForm.email" 
                   type="email" 
-                  placeholder="Email" 
+                  :placeholder="t('connexion.email')" 
                   :disabled="isLoading || messageBox.show"
                   @input="validateEmailInput"
                   @blur="validateEmailOnBlur"
@@ -229,7 +232,7 @@
                     <input 
                       v-model="registerForm.password" 
                       :type="showPassword ? 'text' : 'password'" 
-                      placeholder="Mot de passe" 
+                      :placeholder="t('connexion.motDePasse')" 
                       :disabled="isLoading || messageBox.show"
                       @blur="validatePasswordOnBlur"
                       @focus="clearPasswordError"
@@ -252,7 +255,7 @@
                     <input 
                       v-model="registerForm.confirmPassword" 
                       :type="showPassword ? 'text' : 'password'" 
-                      placeholder="Confirmer" 
+                      :placeholder="t('connexion.confirmer')" 
                       :disabled="isLoading || messageBox.show"
                       @blur="validateConfirmPasswordOnBlur"
                       @focus="clearConfirmPasswordError"
@@ -273,7 +276,7 @@
                   </div>
                 </div>
                 <button type="button" @click="showPassword = !showPassword" class="text-right text-[10px] text-gray-400 hover:text-[#D2B48C] uppercase tracking-wider pr-2">
-                  {{ showPassword ? 'Masquer' : 'Afficher' }}
+                  {{ showPassword ? t('connexion.masquer') : t('connexion.afficher') }}
                 </button>
               </div>
 
@@ -282,37 +285,37 @@
                   <button
                     type="button"
                     @click="registerForm.role = 'PARENT'"
-                    class="flex-1 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden group"
+                    class="flex-1 py-2 rounded-xl transition-all duration-300 relative group"
                     :class="registerForm.role === 'PARENT' ? 'bg-gradient-to-r from-[#A78B7A] to-[#8B7355] text-white shadow-lg' : 'text-white/70 hover:bg-white/10'">
-                    <div class="flex items-center justify-center gap-2">
+                    <div class="flex flex-col items-center justify-center gap-1 px-1">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      <span class="text-xs font-semibold">Parent</span>
+                      <span class="text-[11px] font-semibold leading-tight text-center whitespace-nowrap">{{ t('roles.parent') }}</span>
                     </div>
                   </button>
                   <button
                     type="button"
                     @click="registerForm.role = 'EDUCATEUR'"
-                    class="flex-1 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden group"
+                    class="flex-1 py-2 rounded-xl transition-all duration-300 relative group"
                     :class="registerForm.role === 'EDUCATEUR' ? 'bg-gradient-to-r from-[#D2B48C] to-[#B8A070] text-white shadow-lg' : 'text-white/70 hover:bg-white/10'">
-                    <div class="flex items-center justify-center gap-2">
+                    <div class="flex flex-col items-center justify-center gap-1 px-1">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14.5c-1.5 0-3-1-3-3s1.5-3 3-3 3 1 3 3-1.5 3-3 3zm0 0v4m-6-4h12M9 21h6" />
                       </svg>
-                      <span class="text-xs font-semibold">Éducatrice</span>
+                      <span class="text-[11px] font-semibold leading-tight text-center whitespace-nowrap">{{ t('roles.educatrice') }}</span>
                     </div>
                   </button>
                   <button
                     type="button"
                     @click="registerForm.role = 'PSY'"
-                    class="flex-1 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden group"
+                    class="flex-1 py-2 rounded-xl transition-all duration-300 relative group"
                     :class="registerForm.role === 'PSY' ? 'bg-gradient-to-r from-[#8B7355] to-[#6B5335] text-white shadow-lg' : 'text-white/70 hover:bg-white/10'">
-                    <div class="flex items-center justify-center gap-2">
+                    <div class="flex flex-col items-center justify-center gap-1 px-1">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      <span class="text-xs font-semibold">Psychologue</span>
+                      <span class="text-[11px] font-semibold leading-tight text-center whitespace-nowrap">{{ t('roles.psychologue') }}</span>
                     </div>
                   </button>
                 </div>
@@ -325,10 +328,10 @@
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Inscription...
+                    {{ t('connexion.enCoursInscription') }}
                   </span>
                   <span v-else>
-                    S'inscrire
+                    {{ t('connexion.sInscrire') }}
                   </span>
                 </button>
               </div>
@@ -341,8 +344,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'      // ✅ onMounted depuis 'vue'
-import { useRoute } from 'vue-router'             // ✅ useRoute depuis 'vue-router'
+import { t } from '../i18n'
+import { ref, reactive, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 // État du formulaire
@@ -382,7 +386,7 @@ const registerForm = reactive({
 })
 
 // Constantes
-const API_BASE_URL = 'http://localhost:8082/api'
+import { API_BASE_URL } from '../services'
 
 // Variables pour stocker la dernière valeur valide
 let lastValidName = ''
@@ -397,6 +401,11 @@ const initMode = () => {
     isLoginMode.value = true    // Affiche l'onglet Connexion
   }
 }
+
+// La page reste montée quand on passe de ?mode=login à ?mode=register
+// (clic sur « Inscription » depuis l'en-tête alors qu'on est déjà ici) :
+// il faut donc suivre le paramètre, pas seulement le lire au montage.
+watch(() => route.query.mode, initMode)
 
 // Appel au montage du composant
 onMounted(() => {
@@ -735,7 +744,7 @@ const handleLogin = async () => {
     
   } catch (error: any) {
     const message = error.response?.data?.message || error.message || 'Échec de la connexion'
-    showMessageBox('error', 'Erreur de connexion', message)
+    showMessageBox('error', t('connexion.erreurConnexion'), message)
   } finally {
     isLoading.value = false
   }
@@ -760,7 +769,7 @@ const handleRegister = async () => {
       PSY: 'Votre compte psychologue a été créé avec succès !'
     }
     
-    showMessageBox('success', 'Inscription réussie', roleMessages[registerForm.role as keyof typeof roleMessages])
+    showMessageBox('success', t('connexion.inscriptionReussie'), roleMessages[registerForm.role as keyof typeof roleMessages])
     
     // Reset form
     Object.assign(registerForm, { nom: '', email: '', password: '', confirmPassword: '', role: 'EDUCATEUR' })
@@ -769,13 +778,13 @@ const handleRegister = async () => {
       closeMessageBox()
       isLoginMode.value = true
       loginForm.email = registerForm.email
-      showMessageBox('info', 'Connexion', 'Vous pouvez maintenant vous connecter')
+      showMessageBox('info', t('connexion.connexion'), t('connexion.peutSeConnecter'))
     }, 2000)
     
   } catch (error: any) {
     const errorMsg = error.response?.data?.message || error.message
     const isEmailError = typeof errorMsg === 'string' && errorMsg.toLowerCase().includes('email')
-    showMessageBox('error', isEmailError ? 'Email déjà utilisé' : 'Erreur', isEmailError ? 'Cet email est déjà enregistré' : errorMsg || 'Inscription échouée')
+    showMessageBox('error', isEmailError ? t('connexion.emailDejaUtilise') : t('commun.erreur'), isEmailError ? t('connexion.emailDejaEnregistre') : errorMsg || t('connexion.inscriptionEchouee'))
   } finally {
     isLoading.value = false
   }
@@ -968,12 +977,14 @@ const handleRegister = async () => {
 .message-box-button:active { transform: translateY(0); }
 
 /* Bordure bicolore personnalisée */
+/* Bordure dégradée en diagonale ; la hauteur vient de la classe utilitaire
+   posée sur l'élément, pour s'adapter au formulaire affiché. */
 .custom-border {
   padding: 3px;
   background: linear-gradient(135deg, #D2B48C 0%, #D2B48C 50%, #3E2C1F 50%, #3E2C1F 100%);
   border-radius: 40px;
   position: relative;
-  height: 500px;
+  transition: height .35s cubic-bezier(.2, .8, .3, 1);
 }
 
 /* Animation Shatter - Effet de fragmentation */

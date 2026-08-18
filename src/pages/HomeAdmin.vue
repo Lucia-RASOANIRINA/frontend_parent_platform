@@ -2,14 +2,14 @@
   <div class="admin-dashboard">
     <header class="dash-head">
       <div>
-        <h1>Tableau de bord</h1>
-        <p>Vue d'ensemble de la communauté Parentia.</p>
+        <h1>{{ t('admin.tableauBord') }}</h1>
+        <p>{{ t('admin.vueEnsemble') }}</p>
       </div>
       <button class="refresh" @click="load" :disabled="loading">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" :class="{ spin: loading }">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        Actualiser
+        {{ t('admin.actualiser') }}
       </button>
     </header>
 
@@ -28,7 +28,7 @@
 
     <!-- Répartition par rôle -->
     <section class="role-section">
-      <h2>Utilisateurs par rôle</h2>
+      <h2>{{ t('admin.utilisateursParRole') }}</h2>
       <div class="role-grid">
         <div class="role-card" v-for="r in roleCards" :key="r.key">
           <div class="role-top">
@@ -41,16 +41,24 @@
       </div>
     </section>
 
-    <section class="quick">
-      <router-link to="/admin/utilisateurs" class="quick-link">Gérer les utilisateurs →</router-link>
-      <router-link to="/admin/evenements" class="quick-link">Gérer les évènements →</router-link>
-      <router-link to="/admin/contenu" class="quick-link">Modérer le contenu (publications & ressources) →</router-link>
+    <section class="raccourcis">
+      <router-link v-for="r in raccourcis" :key="r.to" :to="r.to" class="raccourci">
+        <span class="raccourci-icone" v-html="r.icone" aria-hidden="true"></span>
+        <span class="raccourci-texte">
+          <strong>{{ r.titre }}</strong>
+          <small>{{ r.detail }}</small>
+        </span>
+        <svg class="fleche" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6l6 6-6 6" />
+        </svg>
+      </router-link>
     </section>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { t } from '../i18n'
 import { fetchStats } from '../services/adminService'
 
 const stats = ref(null)
@@ -65,19 +73,19 @@ const ICONS = {
 }
 
 const ROLES = [
-  { key: 'PARENT', label: 'Parents', color: '#6F4E37' },
-  { key: 'EDUCATEUR', label: 'Éducatrices', color: '#6F4E37' },
-  { key: 'PSY', label: 'Psychologues', color: '#C19A6B' },
-  { key: 'ADMIN', label: 'Admins', color: '#6F4E37' }
+  { key: 'PARENT', cle: 'roles.parents', color: '#6F4E37' },
+  { key: 'EDUCATEUR', cle: 'roles.educatrices', color: '#C19A6B' },
+  { key: 'PSY', cle: 'roles.psychologues', color: '#4C9A57' },
+  { key: 'ADMIN', cle: 'roles.admins', color: '#8a6d4b' }
 ]
 
 const mainCards = computed(() => {
   const s = stats.value || {}
   return [
-    { label: 'Utilisateurs', value: s.totalUtilisateurs ?? '—', icon: ICONS.users, bg: '#FAF7F2', color: '#6F4E37' },
-    { label: 'Évènements', value: s.totalEvenements ?? '—', icon: ICONS.events, bg: '#FEF3F2', color: '#D2B48C' },
-    { label: 'Publications', value: s.totalPosts ?? '—', icon: ICONS.posts, bg: '#ECFDF5', color: '#059669' },
-    { label: 'Ressources', value: s.totalRessources ?? '—', icon: ICONS.resources, bg: '#FFF7ED', color: '#EA580C' }
+    { label: t('admin.utilisateurs'), value: s.totalUtilisateurs ?? '—', icon: ICONS.users, bg: '#FAF7F2', color: '#6F4E37' },
+    { label: t('admin.evenements'), value: s.totalEvenements ?? '—', icon: ICONS.events, bg: '#FEF3F2', color: '#D2B48C' },
+    { label: t('admin.publications'), value: s.totalPosts ?? '—', icon: ICONS.posts, bg: '#ECFDF5', color: '#059669' },
+    { label: t('admin.ressources'), value: s.totalRessources ?? '—', icon: ICONS.resources, bg: '#FFF7ED', color: '#EA580C' }
   ]
 })
 
@@ -86,9 +94,18 @@ const roleCards = computed(() => {
   const total = stats.value?.totalUtilisateurs || 0
   return ROLES.map(r => {
     const count = par[r.key] || 0
-    return { ...r, count, pct: total ? Math.round((count / total) * 100) : 0 }
+    return { ...r, label: t(r.cle), count, pct: total ? Math.round((count / total) * 100) : 0 }
   })
 })
+
+const raccourcis = computed(() => [
+  { to: '/admin/utilisateurs', titre: t('admin.utilisateurs'), detail: t('admin.detailUtilisateurs'),
+    icone: ICONS.users },
+  { to: '/admin/evenements', titre: t('admin.evenements'), detail: t('admin.detailEvenements'),
+    icone: ICONS.events },
+  { to: '/admin/contenu', titre: t('admin.moderation'), detail: t('admin.detailModeration'),
+    icone: ICONS.posts },
+])
 
 async function load() {
   loading.value = true
@@ -96,7 +113,7 @@ async function load() {
   try {
     stats.value = await fetchStats()
   } catch (e) {
-    error.value = "Impossible de charger les statistiques. Vérifiez que le backend est démarré (port 8082)."
+    error.value = t('admin.statsIndisponibles')
   } finally {
     loading.value = false
   }
@@ -106,39 +123,98 @@ onMounted(load)
 </script>
 
 <style scoped>
-.admin-dashboard { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
-.dash-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
-.dash-head h1 { font-size: 2rem; font-weight: 800; color: #1e293b; margin: 0; }
-.dash-head p { color: #64748b; margin: 6px 0 0; }
-.refresh { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #e2e8f0; background: #fff;
-  color: #6F4E37; font-weight: 600; padding: 9px 18px; border-radius: 30px; cursor: pointer; }
-.refresh:hover { border-color: #6F4E37; }
+/* Palette alignée sur l'identité Parentia : le tableau de bord utilisait
+   des gris bleutés qui juraient avec le reste de la plateforme. */
+.admin-dashboard {
+  --sable: #C19A6B; --brun: #6F4E37; --brun-fonce: #3E2C1F;
+  --creme: #FBF7F1; --bord: #EFE7DC; --doux: #6b5d4f; --discret: #a99e90;
+  max-width: 1120px; margin: 0 auto; padding: 12px 20px 48px;
+}
+
+/* En-tête */
+.dash-head {
+  position: relative; overflow: hidden;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  flex-wrap: wrap; gap: 18px; margin-bottom: 26px;
+  padding: 34px 30px; border-radius: 28px; border: 1px solid var(--bord);
+  background: radial-gradient(120% 130% at 15% 0%, #FFFDFA 0%, #F8F1E7 55%, #F2E7D8 100%);
+}
+.dash-head h1 { font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 800; letter-spacing: -.02em; color: var(--brun-fonce); margin: 0; }
+.dash-head p { color: var(--doux); margin: 8px 0 0; font-size: .93rem; }
+.refresh {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--bord); background: #fff; color: var(--brun);
+  font-weight: 700; font-size: .84rem; padding: 10px 20px; border-radius: 30px; cursor: pointer;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.refresh:hover:not(:disabled) { border-color: var(--sable); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(111,78,55,.14); }
+.refresh:disabled { opacity: .6; cursor: progress; }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.error-banner { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 12px 18px;
-  border-radius: 14px; margin-bottom: 20px; font-size: .9rem; }
+.error-banner {
+  background: #FBEDE9; color: #a8482f; border: 1px solid #F0D6CD;
+  padding: 13px 18px; border-radius: 16px; margin-bottom: 20px; font-size: .88rem;
+}
 
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 32px; }
-.card { background: #fff; border: 1px solid #eef0f4; border-radius: 22px; padding: 22px;
-  display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 14px rgba(15,23,42,.04); }
-.card-icon { width: 54px; height: 54px; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
-.card-icon :deep(svg) { width: 26px; height: 26px; }
-.card-info { display: flex; flex-direction: column; }
-.card-value { font-size: 1.8rem; font-weight: 800; color: #1e293b; line-height: 1; }
-.card-label { font-size: .82rem; color: #64748b; margin-top: 4px; }
+/* Chiffres clés */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(212px, 1fr)); gap: 18px; margin-bottom: 26px; }
+.card {
+  position: relative; overflow: hidden;
+  background: #fff; border: 1px solid var(--bord); border-radius: 22px; padding: 22px;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: 0 2px 6px rgba(62,44,31,.04);
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+.card::after {
+  content: ''; position: absolute; inset: 0 auto auto 0; width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--sable), var(--brun)); opacity: .85;
+}
+.card:hover { transform: translateY(-4px); border-color: rgba(193,154,107,.5); box-shadow: 0 16px 32px rgba(62,44,31,.12); }
+.card-icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; flex-shrink: 0; }
+.card-icon :deep(svg) { width: 24px; height: 24px; }
+.card-info { display: flex; flex-direction: column; min-width: 0; }
+.card-value { font-size: 1.85rem; font-weight: 800; color: var(--brun-fonce); line-height: 1; }
+.card-label { font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--discret); margin-top: 6px; }
 
-.role-section { background: #fff; border: 1px solid #eef0f4; border-radius: 22px; padding: 24px; margin-bottom: 24px; }
-.role-section h2 { font-size: 1.1rem; color: #1e293b; margin: 0 0 18px; }
-.role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
-.role-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.role-dot { width: 10px; height: 10px; border-radius: 50%; }
-.role-name { font-size: .9rem; color: #334155; font-weight: 600; }
-.role-count { margin-left: auto; font-weight: 800; color: #1e293b; }
-.bar { height: 8px; background: #f1f5f9; border-radius: 8px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 8px; transition: width .5s; }
+/* Répartition par rôle */
+.role-section { background: #fff; border: 1px solid var(--bord); border-radius: 24px; padding: 26px; margin-bottom: 26px; }
+.role-section h2 { font-size: 1.02rem; font-weight: 700; color: var(--brun-fonce); margin: 0 0 20px; }
+.role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); gap: 20px; }
+.role-top { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+.role-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.role-name { font-size: .87rem; color: var(--doux); font-weight: 600; }
+.role-count { margin-left: auto; font-weight: 800; color: var(--brun-fonce); font-size: 1.02rem; }
+.bar { height: 7px; background: #F3EDE5; border-radius: 7px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 7px; transition: width .6s ease; }
 
-.quick { display: flex; gap: 18px; flex-wrap: wrap; }
-.quick-link { color: #6F4E37; font-weight: 600; text-decoration: none; }
-.quick-link:hover { text-decoration: underline; }
+/* Raccourcis : de vraies cartes cliquables */
+.raccourcis { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); gap: 16px; }
+.raccourci {
+  display: flex; align-items: center; gap: 14px; text-decoration: none;
+  background: #fff; border: 1px solid var(--bord); border-radius: 20px; padding: 18px 20px;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+.raccourci:hover { transform: translateY(-3px); border-color: rgba(193,154,107,.55); box-shadow: 0 14px 28px rgba(62,44,31,.12); }
+.raccourci:focus-visible { outline: 3px solid rgba(193,154,107,.5); outline-offset: 3px; }
+.raccourci-icone {
+  width: 44px; height: 44px; border-radius: 14px; flex-shrink: 0;
+  display: grid; place-items: center; color: var(--brun);
+  background: linear-gradient(135deg, #F7EFE4, #EADCC7);
+}
+.raccourci-icone :deep(svg) { width: 21px; height: 21px; }
+.raccourci-texte { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.raccourci-texte strong { font-size: .92rem; color: var(--brun-fonce); }
+.raccourci-texte small { font-size: .75rem; color: var(--discret); }
+.fleche { margin-left: auto; color: var(--sable); flex-shrink: 0; transition: transform .25s; }
+.raccourci:hover .fleche { transform: translateX(4px); }
+
+@media (max-width: 640px) {
+  .admin-dashboard { padding: 8px 14px 36px; }
+  .dash-head { padding: 26px 20px; border-radius: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card, .raccourci, .fleche, .refresh, .bar-fill { transition: none; }
+  .spin { animation: none; }
+}
 </style>

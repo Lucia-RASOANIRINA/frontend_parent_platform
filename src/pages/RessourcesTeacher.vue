@@ -4,18 +4,18 @@
     <div class="resources-header">
       <button :class="['tab-btn', { active: activeTab === 'mine' }]" @click="switchTab('mine')">
         <svg class="icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2m0 7c2.67 0 8 1.34 8 4v3H4v-3c0-2.66 5.33-4 8-4m0 2c-2.46 0-6 1.1-6 2v1h12v-1c0-.9-3.54-2-6-2z"/></svg>
-        Mes ressources
+        {{ t('ressources.mesRessources') }}
       </button>
       <button :class="['tab-btn', { active: activeTab === 'shared' }]" @click="switchTab('shared')">
         <svg class="icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-1 .05 1.16.84 2 1.87 2 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-        Ressources de l'équipe
+        {{ t('ressources.equipe') }}
       </button>
     </div>
 
     <!-- Filtres -->
     <div class="filters-bar">
       <div class="filter-group">
-        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M5.5 7A1.5 1.5 0 0 1 7 5.5h10A1.5 1.5 0 0 1 18.5 7 1.5 1.5 0 0 1 17 8.5H7A1.5 1.5 0 0 1 5.5 7zm2 5a1.5 1.5 0 0 1 1.5-1.5h6a1.5 1.5 0 0 1 0 3H9a1.5 1.5 0 0 1-1.5-1.5zm2 5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 0 3h-2a1.5 1.5 0 0 1-1.5-1.5z"/></svg> Type :</span>
+        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M5.5 7A1.5 1.5 0 0 1 7 5.5h10A1.5 1.5 0 0 1 18.5 7 1.5 1.5 0 0 1 17 8.5H7A1.5 1.5 0 0 1 5.5 7zm2 5a1.5 1.5 0 0 1 1.5-1.5h6a1.5 1.5 0 0 1 0 3H9a1.5 1.5 0 0 1-1.5-1.5zm2 5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 0 3h-2a1.5 1.5 0 0 1-1.5-1.5z"/></svg> {{ t('ressources.type') }}</span>
         <div class="filter-pills">
           <button v-for="opt in typeOptions" :key="opt.value" :class="['pill', { active: filters.type === opt.value }]" @click="filters.type = opt.value; resetPagination()">
             <svg class="icon-small" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" :d="opt.iconPath"/></svg>
@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="filter-group">
-        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Âge cible :</span>
+        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.ageCible') }}</span>
         <div class="filter-pills">
           <button v-for="opt in ageOptions" :key="opt.value" :class="['pill', { active: filters.age === opt.value }]" @click="filters.age = opt.value; resetPagination()">
             <svg class="icon-small" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg>
@@ -36,10 +36,7 @@
 
     <!-- Message de chargement stylisé -->
     <div v-if="loading && allResources.length === 0" class="loading-message">
-      <div class="loading-spinner-box">
-        <svg class="spin" viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>
-        <p>Chargement des ressources...</p>
-      </div>
+      <Chargement />
     </div>
 
     <!-- Grille de ressources -->
@@ -51,8 +48,8 @@
             <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
           </button>
           <div v-if="menuResourceId === res.id" class="menu-popup">
-            <button @click="openEditModal(res)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> Modifier</button>
-            <button @click="confirmDeleteResource(res)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Supprimer</button>
+            <button @click="openEditModal(res)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> {{ t('ressources.modifier') }}</button>
+            <button @click="confirmDeleteResource(res)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> {{ t('ressources.supprimer') }}</button>
           </div>
         </div>
 
@@ -65,12 +62,12 @@
           <div class="meta">
             <span class="meta-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> {{ res.age }}</span>
             <span class="meta-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ formatDate(res.createdAt) }}</span>
-            <span v-if="res.scheduledAt" class="meta-item scheduled-badge"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmé le {{ formatDate(res.scheduledAt) }}</span>
+            <span v-if="res.scheduledAt" class="meta-item scheduled-badge"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.programmeLe') }} {{ formatDate(res.scheduledAt) }}</span>
           </div>
           <div class="media-container">
             <div v-if="!res.mediaLoaded" class="media-placeholder" @click="loadMedia(res)">
               <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-              <span>Charger l'aperçu</span>
+              <span>{{ t('ressources.chargerApercu') }}</span>
             </div>
             <template v-else>
               <video v-if="res.type === 'video' && res.fileType" controls :src="getFileUrl(res.id, res.updatedAt)" class="media-content" preload="metadata"></video>
@@ -78,7 +75,7 @@
                 <iframe v-if="isYouTubeUrl(res.videoUrl)" :src="getYouTubeEmbedUrl(res.videoUrl)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="media-content" loading="lazy"></iframe>
                 <iframe v-else-if="isVimeoUrl(res.videoUrl)" :src="getVimeoEmbedUrl(res.videoUrl)" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen class="media-content" loading="lazy"></iframe>
                 <div v-else class="video-link-container">
-                  <a :href="res.videoUrl" target="_blank" class="video-link">Voir la vidéo</a>
+                  <a :href="res.videoUrl" target="_blank" class="video-link">{{ t('ressources.voirVideo') }}</a>
                 </div>
               </div>
               <embed v-else-if="res.type === 'pdf' && res.fileType" :src="getFileUrl(res.id, res.updatedAt)" type="application/pdf" class="media-content" />
@@ -91,19 +88,19 @@
               </div>
               <div v-else class="no-media-preview">
                 <svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
-                <span>Aucun aperçu</span>
+                <span>{{ t('ressources.aucunApercu') }}</span>
               </div>
             </template>
           </div>
           <div v-if="res.type === 'pdf' && res.fileType" class="pdf-link">
-            <a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> Ouvrir le PDF</a>
+            <a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> {{ t('ressources.ouvrirPdf') }}</a>
           </div>
         </div>
 
         <div class="card-actions">
-          <button @click="previewResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg> Aperçu</button>
-          <button v-if="activeTab === 'mine'" @click="openScheduleModal(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmer</button>
-          <button @click="exportResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Export ZIP</button>
+          <button @click="previewResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg> {{ t('ressources.apercu') }}</button>
+          <button v-if="activeTab === 'mine'" @click="openScheduleModal(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.programmer') }}</button>
+          <button @click="exportResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> {{ t('ressources.exportZip') }}</button>
           <div class="feedback-stats">
             <span class="stat-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> {{ res.likes }}</span>
             <span class="stat-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg> {{ (res.averageRating || 0).toFixed(1) }} ({{ res.totalRatings || 0 }})</span>
@@ -114,16 +111,16 @@
           <button @click="sendLike(res.id)" class="fb-like" :disabled="likingInProgress === res.id">
             <svg v-if="!res.liked" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-            J'ai adoré
+            {{ t('ressources.jaiAdore') }}
           </button>
           <button v-if="activeTab === 'shared'" @click="openRatingModal(res)" class="fb-star" :disabled="ratingSubmitting === res.id">
             <svg v-if="!res.userRated" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-            {{ res.userRated ? 'Noté' : 'Noter' }}
+            {{ res.userRated ? t('ressources.note') : t('ressources.noter') }}
           </button>
           <button @click="toggleComments(res.id)" class="fb-comment">
             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
-            Commentaires ({{ res.commentsCount || 0 }})
+            {{ t('ressources.commentaires') }} ({{ res.commentsCount || 0 }})
           </button>
         </div>
 
@@ -136,14 +133,14 @@
               <small>{{ formatDate(c.createdAt) }}</small>
               <button v-if="c.userId === currentUserId" @click="confirmDeleteComment(res.id, c.id)" class="delete-comment"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
             </div>
-            <div v-if="!res.comments || res.comments.length === 0" class="no-comments">Aucun commentaire.</div>
+            <div v-if="!res.comments || res.comments.length === 0" class="no-comments">{{ t('ressources.aucunCommentaire') }}</div>
           </div>
           <div class="add-comment">
-            <textarea v-model="newCommentText[res.id]" placeholder="Ajouter un commentaire..."></textarea>
+            <textarea v-model="newCommentText[res.id]" :placeholder="t('ressources.ajouterCommentaire')"></textarea>
             <button @click="addComment(res.id)" class="primary small" :disabled="commentSubmitting[res.id]">
               <svg v-if="!commentSubmitting[res.id]" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
               <svg v-else class="spin" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>
-              Envoyer
+              {{ t('ressources.envoyer') }}
             </button>
           </div>
         </div>
@@ -152,9 +149,9 @@
 
     <!-- Bouton charger plus -->
     <div v-if="hasMore && !loading" class="load-more-container">
-      <button @click="loadMore" class="load-more-btn">Charger plus de ressources</button>
+      <button @click="loadMore" class="load-more-btn">{{ t('ressources.chargerPlus') }}</button>
     </div>
-    <div v-if="loading && allResources.length > 0" class="loading-more"><svg class="spin" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Chargement...</div>
+    <Chargement v-if="loading && allResources.length > 0" compact />
 
     <!-- Boutons flottants -->
     <button class="fab" @click="openCreateModal"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
@@ -168,14 +165,14 @@
       <div class="modal-content small">
         <div class="modal-header stylized-header">
           <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg></div>
-          <h3>Programmer "{{ selectedResource?.title }}"</h3>
+          <h3>{{ t('ressources.programmer') }} "{{ selectedResource?.title }}"</h3>
           <button class="close-modal" @click="scheduleModalOpen = false"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         </div>
         <div class="form-group">
-          <label>Date et heure de programmation</label>
+          <label>{{ t('ressources.dateProgrammation') }}</label>
           <input type="datetime-local" v-model="scheduleDate" :min="minDateTime" />
         </div>
-        <div class="modal-footer"><button @click="scheduleModalOpen = false">Annuler</button><button class="primary" @click="submitSchedule" :disabled="scheduling || !isScheduleValid()"><svg v-if="!scheduling" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Programmer</button></div>
+        <div class="modal-footer"><button @click="scheduleModalOpen = false">{{ t('ressources.annuler') }}</button><button class="primary" @click="submitSchedule" :disabled="scheduling || !isScheduleValid()"><svg v-if="!scheduling" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> {{ t('ressources.programmer') }}</button></div>
       </div>
     </div>
 
@@ -184,22 +181,22 @@
       <div class="modal-content large">
         <div class="modal-header stylized-header">
           <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg></div>
-          <h2>Ressources programmées</h2>
+          <h2>{{ t('ressources.ressourcesProgrammees') }}</h2>
           <button class="close-modal" @click="scheduledListModalOpen = false"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         </div>
-        <div v-if="scheduledResourcesList.length === 0" class="empty-state">Aucune ressource programmée.</div>
+        <div v-if="scheduledResourcesList.length === 0" class="empty-state">{{ t('ressources.aucuneProgrammee') }}</div>
         <div v-else class="scheduled-list">
           <div v-for="res in scheduledResourcesList" :key="res.id" class="scheduled-item">
             <div class="scheduled-header">
               <h3>{{ res.title }}</h3>
               <div class="scheduled-meta-line">
-                <span class="scheduled-date"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmé le {{ formatDate(res.scheduledAt) }}</span>
-                <span class="scheduled-created"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Créé le {{ formatDate(res.createdAt) }}</span>
+                <span class="scheduled-date"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.programmeLe') }} {{ formatDate(res.scheduledAt) }}</span>
+                <span class="scheduled-created"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.creeLe') }} {{ formatDate(res.createdAt) }}</span>
               </div>
             </div>
             <div class="scheduled-actions">
-              <button @click="toggleScheduledDetails(res.id)" class="action-btn details-btn">{{ expandedDetails[res.id] ? 'Masquer détails' : 'Voir détails' }}</button>
-              <button @click="removeSchedule(res.id)" class="action-btn cancel-btn">Annuler programmation</button>
+              <button @click="toggleScheduledDetails(res.id)" class="action-btn details-btn">{{ expandedDetails[res.id] ? t('ressources.masquerDetails') : t('ressources.voirDetails') }}</button>
+              <button @click="removeSchedule(res.id)" class="action-btn cancel-btn">{{ t('ressources.annulerProgrammation') }}</button>
             </div>
             <div v-if="expandedDetails[res.id]" class="scheduled-details">
               <div class="scheduled-full-content">
@@ -209,7 +206,7 @@
                     <div v-else-if="res.type === 'video' && res.videoUrl" class="video-embed-container">
                       <iframe v-if="isYouTubeUrl(res.videoUrl)" :src="getYouTubeEmbedUrl(res.videoUrl)" frameborder="0" allowfullscreen class="media-content"></iframe>
                       <iframe v-else-if="isVimeoUrl(res.videoUrl)" :src="getVimeoEmbedUrl(res.videoUrl)" frameborder="0" allowfullscreen class="media-content"></iframe>
-                      <div v-else class="video-link-container"><a :href="res.videoUrl" target="_blank" class="video-link">Voir la vidéo</a></div>
+                      <div v-else class="video-link-container"><a :href="res.videoUrl" target="_blank" class="video-link">{{ t('ressources.voirVideo') }}</a></div>
                     </div>
                     <embed v-else-if="res.type === 'pdf' && res.fileType" :src="getFileUrl(res.id, res.updatedAt)" type="application/pdf" class="media-content" />
                     <div v-else-if="res.type === 'fiche' || res.type === 'bloc'" class="description-container">
@@ -219,17 +216,17 @@
                       </div>
                       <p class="description-text">{{ res.description }}</p>
                     </div>
-                    <div v-else class="no-media-preview"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg><span>Aucun aperçu</span></div>
+                    <div v-else class="no-media-preview"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg><span>{{ t('ressources.aucunApercu') }}</span></div>
                   </div>
                 </div>
                 <div class="info-preview">
-                  <p class="full-description"><strong>Description :</strong> {{ res.description }}</p>
+                  <p class="full-description"><strong>{{ t('ressources.description') }}</strong> {{ res.description }}</p>
                   <div class="scheduled-meta">
-                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> Âge : {{ res.age }}</span>
-                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Type : {{ getTypeLabel(res.type) }}</span>
+                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> {{ t('ressources.age') }} : {{ res.age }}</span>
+                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.type') }} {{ getTypeLabel(res.type) }}</span>
                     <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> {{ res.likes || 0 }}</span>
                   </div>
-                  <div v-if="res.type === 'pdf' && res.fileType" class="pdf-link"><a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> Ouvrir le PDF</a></div>
+                  <div v-if="res.type === 'pdf' && res.fileType" class="pdf-link"><a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> {{ t('ressources.ouvrirPdf') }}</a></div>
                 </div>
               </div>
             </div>
@@ -242,15 +239,15 @@
     <div v-if="confirmCommentDelete.show" class="modal-overlay blur-bg" @click.self="confirmCommentDelete.show = false">
       <div class="modal-content confirm-modal">
         <div class="confirm-icon"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
-        <p>Voulez-vous vraiment supprimer ce commentaire ? Cette action est irréversible.</p>
-        <div class="modal-footer centered"><button @click="confirmCommentDelete.show = false">Annuler</button><button class="primary" @click="executeDeleteComment">Supprimer</button></div>
+        <p>{{ t('ressources.supprCommentaire') }}</p>
+        <div class="modal-footer centered"><button @click="confirmCommentDelete.show = false">{{ t('ressources.annuler') }}</button><button class="primary" @click="executeDeleteComment">{{ t('ressources.supprimer') }}</button></div>
       </div>
     </div>
     <div v-if="deleteConfirm.show" class="modal-overlay blur-bg" @click.self="deleteConfirm.show = false">
       <div class="modal-content confirm-modal">
         <div class="confirm-icon"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
-        <p>Voulez-vous vraiment supprimer la ressource <strong>“{{ deleteConfirm.resource?.title }}”</strong> ? Cette action est irréversible.</p>
-        <div class="modal-footer centered"><button @click="deleteConfirm.show = false">Annuler</button><button class="primary" @click="performDelete">Supprimer</button></div>
+        <p>{{ t('ressources.supprRessource') }} <strong>“{{ deleteConfirm.resource?.title }}”</strong> {{ t('ressources.irreversible') }}</p>
+        <div class="modal-footer centered"><button @click="deleteConfirm.show = false">{{ t('ressources.annuler') }}</button><button class="primary" @click="performDelete">{{ t('ressources.supprimer') }}</button></div>
       </div>
     </div>
 
@@ -261,12 +258,15 @@
 
 <script setup>
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
+import { t } from '../i18n'
+import { notify } from '../services/notify'
+import Chargement from '../components/Chargement.vue'
 import axios from 'axios'
 
 const user = JSON.parse(localStorage.getItem('user') || '{"id": 1, "nom": "Utilisateur"}')
 const currentUserId = ref(user.id)
 const currentUserName = ref(user.nom)
-const API_BASE_URL = 'http://localhost:8082/api'
+import { API_BASE_URL } from '../services'
 
 const activeTab = ref('mine')
 const filters = ref({ type: '', age: '' })
@@ -307,25 +307,30 @@ const commentSubmitting = ref({})
 const confirmCommentDelete = ref({ show: false, resourceId: null, commentId: null })
 const expandedDetails = ref({})
 
-const typeOptions = [
-  { value: '', label: 'Tous', iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
-  { value: 'fiche', label: 'Fiche', iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
-  { value: 'video', label: 'Vidéo', iconPath: 'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z' },
-  { value: 'pdf', label: 'PDF', iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
-  { value: 'bloc', label: 'Bloc', iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' }
-]
-const ageOptions = [
-  { value: '', label: 'Tous âges', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '1-3', label: '1-3 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '3-5', label: '3-5 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '5-7', label: '5-7 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: 'Professionnel', label: 'Professionnel', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' }
-]
+const typeOptions = computed(() => [
+  { value: '', label: t('ressources.tous'), iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
+  { value: 'fiche', label: t('ressources.fiche'), iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
+  { value: 'video', label: t('ressources.video'), iconPath: 'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z' },
+  { value: 'pdf', label: t('ressources.pdf'), iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
+  { value: 'bloc', label: t('ressources.bloc'), iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
+])
+const ageOptions = computed(() => [
+  { value: '', label: t('ressources.tousAges'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '1-3', label: t('ressources.ans13'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '3-5', label: t('ressources.ans35'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '5-7', label: t('ressources.ans57'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: 'Professionnel', label: t('ressources.professionnel'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+])
 
 const formatFileSize = (bytes) => { if (bytes < 1024) return bytes + ' o'; if (bytes < 1024*1024) return (bytes/1024).toFixed(1)+' Ko'; return (bytes/(1024*1024)).toFixed(1)+' Mo' }
 const getFileUrl = (id, updatedAt=null) => `${API_BASE_URL}/resources/${id}/file?t=${updatedAt ? new Date(updatedAt).getTime() : Date.now()}`
 const badgeIconPath = (type) => ({ fiche:'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z', video:'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z', pdf:'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z', bloc:'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' }[type] || 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z')
-const getTypeLabel = (type) => ({ fiche:'Fiche activité', video:'Vidéo', pdf:'PDF', bloc:'Blocs' }[type] || type)
+const getTypeLabel = (type) => ({
+  fiche: t('ressources.ficheActivite'),
+  video: t('ressources.video'),
+  pdf: t('ressources.pdf'),
+  bloc: t('ressources.blocPedagogique'),
+}[type] || type)
 const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('fr-FR') : ''
 const showToast = (msg) => { if (toastTimeout) clearTimeout(toastTimeout); toastMessage.value = msg; toastVisible.value = true; toastTimeout = setTimeout(() => toastVisible.value = false, 3000) }
 
@@ -371,7 +376,7 @@ const fetchAllResources = async () => {
     }))
     resetPagination()
   } catch (error) {
-    showToast('Erreur de chargement')
+    showToast(t('ressources.erreurChargement'))
   } finally {
     loading.value = false
   }
@@ -413,19 +418,19 @@ const loadMedia = (res) => { res.mediaLoaded = true }
 
 const sendLike = async (id) => {
   const resource = allResources.value.find(r => r.id === id)
-  if (!resource || resource.liked) { if (resource?.liked) showToast('Vous avez déjà aimé cette ressource'); return }
+  if (!resource || resource.liked) { if (resource?.liked) showToast(t('ressources.dejaAime')); return }
   likingInProgress.value = id
   try {
     await axios.post(`${API_BASE_URL}/resources/${id}/like`, {}, { headers: { 'X-User-Id': currentUserId.value } })
     resource.liked = true
     resource.likes = (resource.likes || 0) + 1
-    showToast('Merci pour votre soutien !')
-  } catch (error) { showToast('Erreur like') }
+    showToast(t('ressources.merci'))
+  } catch (error) { showToast(t('ressources.erreurLike')) }
   finally { likingInProgress.value = null }
 }
 
 const openRatingModal = (res) => {
-  if (res.userRated) { showToast('Vous avez déjà noté cette ressource'); return }
+  if (res.userRated) { showToast(t('ressources.dejaNote')); return }
   selectedRatingResource.value = res
   ratingValue.value = 0
   ratingModalOpen.value = true
@@ -445,8 +450,8 @@ const submitRating = async () => {
       res.userRated = true
     }
     ratingModalOpen.value = false
-    showToast('Note enregistrée ✓')
-  } catch (error) { showToast('Erreur notation') }
+    showToast(t('ressources.noteEnregistree'))
+  } catch (error) { showToast(t('ressources.erreurNotation')) }
   finally { ratingSubmitting.value = null }
 }
 
@@ -464,8 +469,8 @@ const addComment = async (resourceId) => {
     const res = allResources.value.find(r => r.id === resourceId)
     if (res) { res.comments = commentsRes.data; res.commentsCount = commentsRes.data.length }
     newCommentText.value[resourceId] = ''
-    showToast('Commentaire ajouté ✓')
-  } catch (error) { showToast('Erreur ajout commentaire') }
+    showToast(t('ressources.commentaireAjoute'))
+  } catch (error) { showToast(t('ressources.erreurAjoutCommentaire')) }
   finally { commentSubmitting.value[resourceId] = false }
 }
 
@@ -477,8 +482,8 @@ const executeDeleteComment = async () => {
     await axios.delete(`${API_BASE_URL}/resources/comments/${commentId}`, { headers: { 'X-User-Id': currentUserId.value } })
     const res = allResources.value.find(r => r.id === resourceId)
     if (res) res.comments = res.comments.filter(c => c.id !== commentId)
-    showToast('Commentaire supprimé')
-  } catch (error) { showToast('Erreur suppression commentaire') }
+    showToast(t('ressources.commentaireSupprime'))
+  } catch (error) { showToast(t('ressources.erreurSuppressionCommentaire')) }
 }
 
 const minDateTime = computed(() => {
@@ -499,23 +504,27 @@ const isScheduleValid = () => {
 
 const openScheduleModal = (res) => { selectedResource.value = res; scheduleDate.value = ''; scheduleModalOpen.value = true }
 const submitSchedule = async () => {
-  if (!isScheduleValid()) { showToast('La date doit être postérieure à maintenant', 'error'); return }
+  if (!isScheduleValid()) { showToast(t('ressources.datePosterieure'), 'error'); return }
   scheduling.value = true
   try {
     await axios.post(`${API_BASE_URL}/resources/${selectedResource.value.id}/schedule`, { scheduledAt: scheduleDate.value }, { headers: { 'X-User-Id': currentUserId.value } })
     await fetchAllResources()
-    showToast('Programmation enregistrée ✓')
+    showToast(t('ressources.programmationEnregistree'))
     scheduleModalOpen.value = false
-  } catch (error) { showToast('Erreur programmation') }
+  } catch (error) { showToast(t('ressources.erreurProgrammation')) }
   finally { scheduling.value = false }
 }
 
-const removeSchedule = async (resourceId) => {
+const removeSchedule = (resourceId) => {
+  notify.confirmDelete(t('notif.cetteProgrammation'), () => retirerProgrammation(resourceId))
+}
+
+const retirerProgrammation = async (resourceId) => {
   try {
     await axios.delete(`${API_BASE_URL}/resources/${resourceId}/schedule`, { headers: { 'X-User-Id': currentUserId.value } })
     await fetchAllResources()
-    showToast('Programmation annulée')
-  } catch (error) { showToast('Erreur annulation') }
+    showToast(t('ressources.programmationAnnulee'))
+  } catch (error) { showToast(t('ressources.erreurAnnulationProg')) }
 }
 
 const exportResource = async (res) => {
@@ -529,8 +538,8 @@ const exportResource = async (res) => {
     link.click()
     link.remove()
     window.URL.revokeObjectURL(url)
-    showToast('Export ZIP démarré')
-  } catch (error) { showToast('Erreur export') }
+    showToast(t('ressources.exportDemarre'))
+  } catch (error) { showToast(t('ressources.erreurExport')) }
 }
 
 const previewResource = (res) => { selectedResource.value = res; modalOpen.value = true }
@@ -544,7 +553,7 @@ const toggleScheduledDetails = (id) => { expandedDetails.value[id] = !expandedDe
 const handleFile = (e) => {
   const file = e.target.files[0]
   if (file && newResource.value.type === 'video' && file.size > 80 * 1024 * 1024) {
-    showToast('La vidéo ne doit pas dépasser 80 Mo', 'error')
+    showToast(t('ressources.videoMax'), 'error')
     e.target.value = ''
     return
   }
@@ -553,7 +562,7 @@ const handleFile = (e) => {
 const removeSelectedFile = () => { selectedFile = null; if (document.querySelector('input[type="file"]')) document.querySelector('input[type="file"]').value = '' }
 const createResource = async () => {
   if (selectedFile && newResource.value.type === 'video' && selectedFile.size > 80 * 1024 * 1024) {
-    showToast('Vidéo trop volumineuse (max 80 Mo)', 'error')
+    showToast(t('ressources.videoTropVolumineuse'), 'error')
     return
   }
   creating.value = true
@@ -570,8 +579,8 @@ const createResource = async () => {
     createModalOpen.value = false
     newResource.value = { title: '', description: '', age: '', type: 'fiche', videoUrl: '' }
     selectedFile = null
-    showToast('Ressource créée ✓')
-  } catch (error) { showToast('Erreur création') }
+    showToast(t('ressources.ressourceCreee'))
+  } catch (error) { showToast(t('ressources.erreurCreation')) }
   finally { creating.value = false }
 }
 
@@ -598,8 +607,8 @@ const updateResource = async () => {
     await axios.put(`${API_BASE_URL}/resources/${editResource.value.id}`, fd, { headers: { 'X-User-Id': currentUserId.value, 'Content-Type': 'multipart/form-data' } })
     await fetchAllResources()
     editModalOpen.value = false
-    showToast('Ressource mise à jour ✓')
-  } catch (error) { showToast('Erreur mise à jour') }
+    showToast(t('ressources.ressourceMiseAJour'))
+  } catch (error) { showToast(t('ressources.erreurMiseAJour')) }
   finally { updating.value = false }
 }
 
@@ -610,8 +619,8 @@ const performDelete = async () => {
   try {
     await axios.delete(`${API_BASE_URL}/resources/${id}`, { headers: { 'X-User-Id': currentUserId.value } })
     await fetchAllResources()
-    showToast('Ressource supprimée ✓')
-  } catch (error) { showToast('Erreur suppression') }
+    showToast(t('ressources.ressourceSupprimee'))
+  } catch (error) { showToast(t('ressources.erreurSuppression')) }
 }
 
 onMounted(() => {

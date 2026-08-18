@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Parentia">
+  <defs>
+    <linearGradient id="cafeM" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C19A6B"/>
+      <stop offset="1" stop-color="#3E2C1F"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#cafeM)"/>
+  <!-- Zone de sécurité : le motif reste dans les 80% centraux -->
+  <circle cx="212" cy="196" r="44" fill="#FBF7F1"/>
+  <path d="M144 344c0-42 30-74 68-74s68 32 68 74z" fill="#FBF7F1"/>
+  <circle cx="322" cy="230" r="32" fill="#F0D9BC"/>
+  <path d="M274 344c0-32 22-56 48-56s48 24 48 56z" fill="#F0D9BC"/>
+</svg>

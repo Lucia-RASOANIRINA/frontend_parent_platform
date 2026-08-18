@@ -33,7 +33,7 @@
             <h1 class="text-2xl font-bold tracking-tight text-coffee-800 group-hover:text-coffee-600 transition-colors duration-300">
               <span class="text-coffee-500">'</span>Parentia
             </h1>
-            <p class="text-[10px] font-bold text-coffee-400/80 tracking-[0.3em] uppercase">L'art de grandir</p>
+            <p class="text-[10px] font-bold text-coffee-400/80 tracking-[0.3em] uppercase">{{ t('pied.tagline') }}</p>
           </div>
         </router-link>
         
@@ -65,39 +65,40 @@
           </router-link>
         </nav>
 
-        <!-- Bouton Connexion/Inscription - Même design mais même page -->
-        <div class="hidden md:block">
-          <div class="group relative flex items-center bg-gradient-to-r from-coffee-600 via-coffee-700 to-coffee-600 bg-[length:200%_100%] animate-gradient rounded-full shadow-md hover:shadow-coffee-200/30 transition-all duration-500 transform hover:-translate-y-0.5">
+        <!-- Connexion / Inscription, puis le drapeau à l'extrémité droite -->
+        <div class="flex items-center gap-3">
+          <div class="hidden md:flex group relative items-center bg-gradient-to-r from-coffee-600 via-coffee-700 to-coffee-600 bg-[length:200%_100%] animate-gradient rounded-full shadow-md hover:shadow-coffee-200/30 transition-all duration-500 transform hover:-translate-y-0.5">
             <div class="absolute inset-0 rounded-full overflow-hidden">
               <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             </div>
             
             <router-link 
-              to="/connexion"
+              to="/connexion?mode=login"
               class="relative px-4 py-2.5 text-cream font-bold text-sm tracking-wide transition-all duration-300 hover:scale-105 rounded-l-full"
             >
               <span class="flex items-center space-x-1.5">
                 <svg class="w-3.5 h-3.5 transition-transform duration-500 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span>Connexion</span>
+                <span>{{ t('nav.connexion') }}</span>
               </span>
             </router-link>
             
             <span class="relative text-cream/50 font-light text-xs">|</span>
             
             <router-link 
-              to="/connexion"
+              to="/connexion?mode=register"
               class="relative px-4 py-2.5 text-cream font-bold text-sm tracking-wide transition-all duration-300 hover:scale-105 rounded-r-full"
             >
               <span class="flex items-center space-x-1.5">
                 <svg class="w-3.5 h-3.5 transition-transform duration-500 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
-                <span>Inscription</span>
+                <span>{{ t('pied.creerCompte') }}</span>
               </span>
             </router-link>
           </div>
+          <LanguageSwitcher />
         </div>
 
         <!-- Bouton Menu Mobile -->
@@ -171,7 +172,7 @@
           <!-- Menu Mobile : Connexion et Inscription vers la même page -->
           <div class="flex items-center justify-center">
             <router-link 
-              to="/connexion" 
+              to="/connexion?mode=login"
               class="group relative flex-1 flex items-center justify-center py-3.5 rounded-l-2xl overflow-hidden shadow-md hover:shadow-coffee-200/30 transition-all duration-300"
               @click="mobileMenuOpen = false"
             >
@@ -181,14 +182,14 @@
                 <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span>Connexion</span>
+                <span>{{ t('nav.connexion') }}</span>
               </span>
             </router-link>
             
             <div class="w-px h-8 bg-coffee-300/50"></div>
             
             <router-link 
-              to="/connexion" 
+              to="/connexion?mode=register"
               class="group relative flex-1 flex items-center justify-center py-3.5 rounded-r-2xl overflow-hidden shadow-md hover:shadow-coffee-200/30 transition-all duration-300"
               @click="mobileMenuOpen = false"
             >
@@ -198,7 +199,7 @@
                 <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
-                <span>Inscription</span>
+                <span>{{ t('pied.creerCompte') }}</span>
               </span>
             </router-link>
           </div>
@@ -209,28 +210,35 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { t } from '../i18n'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 
 const scrolled = ref(false)
 const mobileMenuOpen = ref(false)
 
-const navItems = [
+const navItems = computed(() => [
   { 
-    name: 'Découvrir', 
+    name: t('nav.decouvrir'), 
     path: '/', 
     icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' 
   },
-  { 
-    name: 'Ateliers', 
-    path: '/evenements', 
-    icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' 
+  {
+    name: t('nav.ateliers'),
+    path: '/evenements',
+    icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
+  },
+  {
+    name: t('nav.conferences'),
+    path: '/conferences',
+    icon: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z'
   },
   { 
-    name: 'À propos', 
+    name: t('nav.apropos'), 
     path: '/apropos', 
     icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' 
   }
-]
+])
 
 const handleScroll = () => { 
   scrolled.value = window.scrollY > 20 

@@ -2,16 +2,13 @@
   <div class="feed-container">
     <!-- En-tête supprimé -->
 
-    <div v-if="isLoading" class="loading-container">
-      <div class="spinner"></div>
-      <p>Chargement des publications...</p>
-    </div>
+    <Chargement v-if="isLoading" />
 
     <div v-else-if="posts.length === 0" class="no-posts">
       <svg class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
       </svg>
-      <p>Aucune publication pour le moment</p>
+      <p>{{ t('filPublic.aucunePublication') }}</p>
     </div>
 
     <div v-else class="posts-list">
@@ -32,18 +29,18 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            <span>Message</span>
+            <span>{{ t('filPublic.message') }}</span>
           </button>
         </div>
 
         <!-- Contenu -->
         <div class="post-content">
-          <p>{{ post.contenu }}</p>
+          <p><TexteTraduit :texte="post.contenu" type="POST" :contenu-id="post.id" /></p>
         </div>
 
         <!-- Image -->
         <div v-if="post.imageData" class="post-image">
-          <img :src="`data:${post.imageType};base64,${post.imageData}`" alt="Image du post">
+          <img :src="`data:${post.imageType};base64,${post.imageData}`" :alt="t('filPublic.imageDuPost')">
         </div>
 
         <!-- Fichier -->
@@ -62,14 +59,14 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke="currentColor" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
             </svg>
-            <span>{{ post.likesCount || 0 }} J'aime</span>
+            <span>{{ post.likesCount || 0 }} {{ t('filPublic.jaime') }}</span>
           </button>
           
           <button @click="showAuthRequiredMessage('comment')" class="action-btn">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
             </svg>
-            <span>{{ post.commentsCount || 0 }} Commentaires</span>
+            <span>{{ post.commentsCount || 0 }} {{ t('filPublic.commentaires') }}</span>
           </button>
         </div>
 
@@ -87,7 +84,7 @@
               </div>
             </div>
             <div v-if="!post.comments?.length" class="no-comments">
-              Aucun commentaire.
+              {{ t('filPublic.aucunCommentaire') }}
             </div>
           </div>
           
@@ -97,7 +94,7 @@
             </div>
             <input 
               type="text"
-              placeholder="Connectez-vous pour commenter..."
+              :placeholder="t('filPublic.connectezVous')"
               class="comment-input disabled"
               disabled
             >
@@ -119,11 +116,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
-        <h3>Connexion requise</h3>
+        <h3>{{ t('filPublic.connexionRequise') }}</h3>
         <p>{{ authMessage }}</p>
         <div class="auth-modal-buttons">
-          <button @click="closeAuthModal" class="cancel-btn">Annuler</button>
-          <button @click="goToLogin" class="confirm-btn">Se connecter</button>
+          <button @click="closeAuthModal" class="cancel-btn">{{ t('filPublic.annuler') }}</button>
+          <button @click="goToLogin" class="confirm-btn">{{ t('filPublic.seConnecter') }}</button>
         </div>
       </div>
     </div>
@@ -132,6 +129,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { t } from '../i18n'
+import Chargement from '../components/Chargement.vue'
+import TexteTraduit from '../components/TexteTraduit.vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -145,29 +145,23 @@ const showAuthModal = ref(false)
 const authMessage = ref('')
 const pendingAction = ref('')
 
-// API
-const api = axios.create({
-  baseURL: 'http://localhost:8082/api',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
-})
+// API — instance partagée : bascule automatique entre serveur local et en ligne
+import { api } from '../services'
 
 // Afficher le message d'authentification requise
 const showAuthRequiredMessage = (action: string) => {
   switch(action) {
     case 'like':
-      authMessage.value = 'Vous devez être connecté pour aimer une publication.'
+      authMessage.value = t('notif.aimerRequis')
       break
     case 'comment':
-      authMessage.value = 'Vous devez être connecté pour commenter une publication.'
+      authMessage.value = t('notif.commenterRequis')
       break
     case 'message':
-      authMessage.value = 'Vous devez être connecté pour envoyer un message.'
+      authMessage.value = t('notif.messageRequis')
       break
     default:
-      authMessage.value = 'Vous devez être connecté pour effectuer cette action.'
+      authMessage.value = t('notif.actionRequise')
   }
   pendingAction.value = action
   showAuthModal.value = true

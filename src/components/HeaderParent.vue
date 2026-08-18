@@ -6,29 +6,29 @@
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
       <div class="flex justify-between items-center h-20">
         
-        <router-link to="/homeparent" class="flex items-center space-x-3 group">
+        <router-link to="/homeparent" class="flex items-center space-x-3 group shrink-0">
           <div class="w-10 h-10 rounded-xl bg-[#6F4E37] flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:rotate-3">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
             </svg>
           </div>
           <span class="text-2xl font-extralight text-[#3C2A21] tracking-tighter">
-            Parent<span class="font-semibold">'Lien</span>
+            <span class="font-semibold">'</span>Parentia
           </span>
         </router-link>
 
-        <div class="hidden md:flex items-center space-x-4 lg:space-x-8">
+        <div class="hidden xl:flex items-center gap-5 2xl:gap-7 min-w-0">
           <router-link 
             v-for="link in navLinks" 
             :key="link.path" 
             :to="link.path" 
-            class="relative py-2 flex items-center gap-2 text-[#5D4037] transition-all duration-300 group"
+            class="relative py-2 flex items-center gap-2 text-[#5D4037] transition-all duration-300 group shrink-0"
             v-slot="{ isActive }"
           >
             <span class="w-4 h-4 text-[#C19A6B] group-hover:text-[#6F4E37] transition-colors" v-html="link.icon"></span>
             
             <div class="flex items-center gap-1.5">
-              <span class="text-[12px] font-bold uppercase tracking-[0.1em] group-hover:text-[#6F4E37] transition-colors">
+              <span class="text-[11px] xl:text-[12px] font-bold uppercase tracking-[0.08em] whitespace-nowrap group-hover:text-[#6F4E37] transition-colors">
                 {{ link.name }}
               </span>
               <transition name="star-fade">
@@ -42,9 +42,11 @@
           </router-link>
         </div>
 
-        <div class="flex items-center space-x-4">
-          <div class="relative">
-            <button @click="toggleMenu" class="focus:outline-none group p-1 rounded-full hover:bg-[#FAF7F2] transition-all">
+        <div class="flex items-center space-x-3 shrink-0">
+          <NotificationsBell />
+          <div class="relative menu-compte">
+            <button @click="toggleMenu" :aria-expanded="menuOpen" :aria-label="t('entete.menuCompte')"
+                    class="focus:outline-none group p-1 rounded-full hover:bg-[#FAF7F2] transition-all">
               <div class="w-10 h-10 rounded-full bg-[#C19A6B] flex items-center justify-center text-white font-bold text-base shadow-sm ring-2 ring-transparent group-hover:ring-[#F5F5DC]">
                 {{ userInitial }}
               </div>
@@ -60,20 +62,24 @@
                   <span class="w-8 h-8 rounded-lg bg-[#FAF7F2] flex items-center justify-center mr-3 group-hover:bg-white transition-colors">
                     <svg class="w-4 h-4 text-[#C19A6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-width="1.5"></path></svg>
                   </span>
-                  <span class="text-sm font-medium">Mon Profil</span>
+                  <span class="text-sm font-medium">{{ t('entete.monProfil') }}</span>
                 </router-link>
 
                 <button @click="openLogoutModal" class="group flex items-center w-full px-5 py-3 text-[#A0522D] hover:bg-[#FFF5F5] transition-colors">
                   <span class="w-8 h-8 rounded-lg bg-[#FFF5F5] flex items-center justify-center mr-3 group-hover:bg-white transition-colors">
                     <svg class="w-4 h-4 text-[#A0522D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="1.5"></path></svg>
                   </span>
-                  <span class="text-sm font-medium">Déconnexion</span>
+                  <span class="text-sm font-medium">{{ t('entete.deconnexion') }}</span>
                 </button>
               </div>
             </transition>
           </div>
+          <LanguageSwitcher />
 
-          <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-[#3C2A21] p-2 hover:bg-[#FAF7F2] rounded-full transition-colors relative z-50">
+
+          <button @click="mobileMenuOpen = !mobileMenuOpen" :aria-expanded="mobileMenuOpen"
+                  :aria-label="t('entete.menuNavigation')"
+                  class="xl:hidden text-[#3C2A21] p-2 hover:bg-[#FAF7F2] rounded-full transition-colors relative z-50">
             <svg v-if="!mobileMenuOpen" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path></svg>
             <svg v-else class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
@@ -81,7 +87,7 @@
       </div>
 
       <transition name="mobile-slide">
-        <div v-if="mobileMenuOpen" class="md:hidden absolute top-24 left-4 right-4 bg-white rounded-[2.5rem] shadow-2xl border border-[#F5F5DC] p-6 z-40">
+        <div v-if="mobileMenuOpen" class="xl:hidden absolute top-24 left-4 right-4 bg-white rounded-[2.5rem] shadow-2xl border border-[#F5F5DC] p-6 z-40">
           <div class="space-y-2">
             <router-link v-for="link in navLinks" :key="link.path" :to="link.path" @click="mobileMenuOpen = false"
               class="flex items-center justify-between px-6 py-4 text-[#5D4037] font-bold uppercase text-xs tracking-widest hover:bg-[#FAF7F2] rounded-2xl transition-all"
@@ -107,17 +113,17 @@
           <div class="mx-auto w-20 h-20 rounded-full bg-[#FAF7F2] flex items-center justify-center mb-8 border-4 border-white shadow-md">
             <svg class="w-10 h-10 text-[#C19A6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 21l-8.228-9.96a5 5 0 117.75-6.6l.478.572.478-.572a5 5 0 117.75 6.6L12 21z" stroke-width="1"></path></svg>
           </div>
-          <h3 class="text-3xl font-extralight text-[#3C2A21] mb-4">À très vite !</h3>
-          <p class="text-[#6F4E37] text-sm leading-relaxed mb-10 italic">"Le bien-être des enfants commence par le soutien mutuel des parents."</p>
+          <h3 class="text-3xl font-extralight text-[#3C2A21] mb-4">{{ t('entete.aTresVite') }}</h3>
+          <p class="text-[#6F4E37] text-sm leading-relaxed mb-10 italic">{{ t('entete.citationParent') }}</p>
           
           <div class="flex flex-col space-y-4">
             <button @click="confirmLogout" class="w-full py-4 rounded-2xl bg-[#6F4E37] text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-[#3C2A21] hover:scale-[1.02] transition-all shadow-lg active:scale-95">
-              Confirmer la pause
+              {{ t('entete.confirmerPause') }}
             </button>
             
             <button @click="closeLogoutModal" class="group flex items-center justify-center w-full py-2 text-[#A67B5B] text-[10px] font-bold uppercase tracking-widest transition-all">
               <span class="mr-2 transition-transform duration-300 group-hover:-translate-x-2">←</span>
-              <span class="group-hover:text-[#6F4E37] transition-colors">Revenir au partage</span>
+              <span class="group-hover:text-[#6F4E37] transition-colors">{{ t('entete.revenirPartage') }}</span>
             </button>
           </div>
         </div>
@@ -128,7 +134,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { t } from '../i18n'
 import { useRouter } from 'vue-router'
+import NotificationsBell from './NotificationsBell.vue'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 
 const router = useRouter()
 const menuOpen = ref(false)
@@ -136,13 +145,14 @@ const mobileMenuOpen = ref(false)
 const showLogoutConfirm = ref(false)
 const isScrolled = ref(false)
 
-const navLinks = [
-  { name: 'Actu', path: '/homeparent', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2zM7 8h4m-4 4h8m-8 4h8"></path></svg>' },
-  { name: 'Mes pub', path: '/parentpub', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>' },
-  { name: 'Ressources', path: '/ressourcesparent', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>' },
-  { name: 'Événements', path: '/parent/evenements', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>' },
-  { name: 'Discussions', path: '/parentdiscussions', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>' }
-]
+const navLinks = computed(() => [
+  { name: t('nav.actu'), path: '/homeparent', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2zM7 8h4m-4 4h8m-8 4h8"></path></svg>' },
+  { name: t('nav.mesPublications'), path: '/parentpub', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>' },
+  { name: t('nav.ressources'), path: '/ressourcesparent', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>' },
+  { name: t('nav.evenements'), path: '/parent/evenements', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>' },
+  { name: t('nav.conferences'), path: '/parent/conferences', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>' },
+  { name: t('nav.discussions'), path: '/parentdiscussions', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>' }
+])
 
 const user = JSON.parse(localStorage.getItem('user') || '{}')
 const userInitial = computed(() => user.nom ? user.nom.charAt(0).toUpperCase() : 'P')
@@ -154,13 +164,23 @@ const closeLogoutModal = () => { showLogoutConfirm.value = false }
 const confirmLogout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
+  localStorage.removeItem('adminReal')
   router.push('/connexion')
 }
 
 const handleScroll = () => { isScrolled.value = window.scrollY > 20 }
 
-onMounted(() => { window.addEventListener('scroll', handleScroll) })
-onUnmounted(() => { window.removeEventListener('scroll', handleScroll) })
+// Le menu du compte se referme dès qu'on clique ailleurs dans la page
+const fermerMenuCompte = (e) => {
+  if (!e.target.closest?.('.menu-compte')) menuOpen.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('click', fermerMenuCompte)
+  window.addEventListener('scroll', handleScroll) })
+onUnmounted(() => {
+  document.removeEventListener('click', fermerMenuCompte)
+  window.removeEventListener('scroll', handleScroll) })
 </script>
 
 <style scoped>

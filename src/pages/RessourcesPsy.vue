@@ -4,18 +4,18 @@
     <div class="resources-header">
       <button :class="['tab-btn', { active: activeTab === 'mine' }]" @click="activeTab = 'mine'; fetchResources()">
         <svg class="icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2m0 7c2.67 0 8 1.34 8 4v3H4v-3c0-2.66 5.33-4 8-4m0 2c-2.46 0-6 1.1-6 2v1h12v-1c0-.9-3.54-2-6-2z"/></svg>
-        Mes ressources
+        {{ t('ressources.mesRessources') }}
       </button>
       <button :class="['tab-btn', { active: activeTab === 'shared' }]" @click="activeTab = 'shared'; fetchResources()">
         <svg class="icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-1 .05 1.16.84 2 1.87 2 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-        Ressources de l'équipe
+        {{ t('ressources.equipe') }}
       </button>
     </div>
 
     <!-- Filtres -->
     <div class="filters-bar">
       <div class="filter-group">
-        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M5.5 7A1.5 1.5 0 0 1 7 5.5h10A1.5 1.5 0 0 1 18.5 7 1.5 1.5 0 0 1 17 8.5H7A1.5 1.5 0 0 1 5.5 7zm2 5a1.5 1.5 0 0 1 1.5-1.5h6a1.5 1.5 0 0 1 0 3H9a1.5 1.5 0 0 1-1.5-1.5zm2 5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 0 3h-2a1.5 1.5 0 0 1-1.5-1.5z"/></svg> Type :</span>
+        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M5.5 7A1.5 1.5 0 0 1 7 5.5h10A1.5 1.5 0 0 1 18.5 7 1.5 1.5 0 0 1 17 8.5H7A1.5 1.5 0 0 1 5.5 7zm2 5a1.5 1.5 0 0 1 1.5-1.5h6a1.5 1.5 0 0 1 0 3H9a1.5 1.5 0 0 1-1.5-1.5zm2 5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 0 3h-2a1.5 1.5 0 0 1-1.5-1.5z"/></svg> {{ t('ressources.type') }}</span>
         <div class="filter-pills">
           <button v-for="opt in typeOptions" :key="opt.value" :class="['pill', { active: filters.type === opt.value }]" @click="filters.type = opt.value">
             <svg class="icon-small" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" :d="opt.iconPath"/></svg>
@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="filter-group">
-        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Âge cible :</span>
+        <span class="filter-label"><svg class="icon-small" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.ageCible') }}</span>
         <div class="filter-pills">
           <button v-for="opt in ageOptions" :key="opt.value" :class="['pill', { active: filters.age === opt.value }]" @click="filters.age = opt.value">
             <svg class="icon-small" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg>
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Grille de ressources -->
-    <div v-if="loading" class="loading-spinner"><svg class="spin" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Chargement...</div>
+    <Chargement v-if="loading" />
     <div v-else class="resources-grid">
       <div v-for="res in filteredResources" :key="res.id" class="resource-card">
         <!-- Menu contextuel -->
@@ -44,8 +44,8 @@
             <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
           </button>
           <div v-if="menuResourceId === res.id" class="menu-popup">
-            <button @click="openEditModal(res)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> Modifier</button>
-            <button @click="confirmDeleteResource(res)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Supprimer</button>
+            <button @click="openEditModal(res)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> {{ t('ressources.modifier') }}</button>
+            <button @click="confirmDeleteResource(res)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> {{ t('ressources.supprimer') }}</button>
           </div>
         </div>
 
@@ -58,7 +58,7 @@
           <div class="meta">
             <span class="meta-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> {{ res.age }}</span>
             <span class="meta-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ formatDate(res.createdAt) }}</span>
-            <span v-if="res.scheduledAt" class="meta-item scheduled-badge"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmé le {{ formatDate(res.scheduledAt) }}</span>
+            <span v-if="res.scheduledAt" class="meta-item scheduled-badge"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.programmeLe') }} {{ formatDate(res.scheduledAt) }}</span>
           </div>
           <div class="media-container">
             <video v-if="res.type === 'video' && res.fileType" controls :src="getFileUrl(res.id, res.updatedAt)" class="media-content"></video>
@@ -67,23 +67,23 @@
               <VideoEmbed :url="res.videoUrl" />
             </div>
             <div v-else-if="res.type === 'fiche' || res.type === 'bloc'" class="fiche-preview">
-              <span class="fiche-label">{{ res.type === 'fiche' ? 'Fiche activité' : 'Bloc pédagogique' }}</span>
+              <span class="fiche-label">{{ res.type === 'fiche' ? t('ressources.ficheActivite') : t('ressources.blocPedagogique') }}</span>
               <p class="fiche-text">{{ res.description }}</p>
             </div>
             <div v-else class="no-media-preview">
               <svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
-              <span>Aucun aperçu</span>
+              <span>{{ t('ressources.aucunApercu') }}</span>
             </div>
           </div>
           <div v-if="res.type === 'pdf' && res.fileType" class="pdf-link">
-            <a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> Ouvrir le PDF</a>
+            <a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> {{ t('ressources.ouvrirPdf') }}</a>
           </div>
         </div>
 
         <div class="card-actions">
-          <button @click="previewResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg> Aperçu</button>
-          <button v-if="activeTab === 'mine'" @click="openScheduleModal(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmer</button>
-          <button @click="exportResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Export ZIP</button>
+          <button @click="previewResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg> {{ t('ressources.apercu') }}</button>
+          <button v-if="activeTab === 'mine'" @click="openScheduleModal(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.programmer') }}</button>
+          <button @click="exportResource(res)" class="action-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> {{ t('ressources.exportZip') }}</button>
           <div class="feedback-stats">
             <span class="stat-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> {{ res.likes }}</span>
             <span class="stat-item"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg> {{ (res.averageRating || 0).toFixed(1) }} ({{ res.totalRatings || 0 }})</span>
@@ -98,7 +98,7 @@
             <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
-            J’ai adoré
+            {{ t('ressources.jaiAdore') }}
           </button>
           <button v-if="activeTab === 'shared'" @click="openRatingModal(res)" class="fb-star" :disabled="ratingSubmitting === res.id">
             <svg v-if="!res.userRated" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -107,15 +107,15 @@
             <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
             </svg>
-            {{ res.userRated ? 'Noté' : 'Noter' }}
+            {{ res.userRated ? t('ressources.note') : t('ressources.noter') }}
           </button>
-          <button v-if="res.userRated" @click="confirmCancelRating(res)" class="fb-cancel" title="Annuler ma note">
+          <button v-if="res.userRated" @click="confirmCancelRating(res)" class="fb-cancel" :title="t('ressources.annulerNote')">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            Annuler ma note
+            {{ t('ressources.annulerNote') }}
           </button>
           <button @click="toggleComments(res.id)" class="fb-comment">
             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
-            Commentaires ({{ res.comments?.length || 0 }})
+            {{ t('ressources.commentaires') }} ({{ res.comments?.length || 0 }})
           </button>
           <!-- Bouton Message SUPPRIMÉ -->
         </div>
@@ -128,19 +128,19 @@
               <small><svg viewBox="0 0 24 24" width="10" height="10"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ formatDate(c.createdAt) }}</small>
               <button v-if="c.userId === currentUserId" @click="confirmDeleteComment(res.id, c.id)" class="delete-comment"><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
             </div>
-            <div v-if="!res.comments || res.comments.length === 0" class="no-comments">Aucun commentaire.</div>
+            <div v-if="!res.comments || res.comments.length === 0" class="no-comments">{{ t('ressources.aucunCommentaire') }}</div>
           </div>
           <div class="add-comment">
-            <textarea v-model="newCommentText[res.id]" placeholder="Ajouter un commentaire..."></textarea>
+            <textarea v-model="newCommentText[res.id]" :placeholder="t('ressources.ajouterCommentaire')"></textarea>
             <button @click="addComment(res.id)" class="primary small" :disabled="commentSubmitting[res.id]">
               <svg v-if="!commentSubmitting[res.id]" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
               <svg v-else class="spin" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>
-              Envoyer
+              {{ t('ressources.envoyer') }}
             </button>
           </div>
         </div>
       </div>
-      <div v-if="filteredResources.length === 0" class="empty-state"><svg viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg> Aucune ressource trouvée.</div>
+      <div v-if="filteredResources.length === 0" class="empty-state"><svg viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg> {{ t('ressources.aucuneRessource') }}</div>
     </div>
 
     <!-- Boutons flottants -->
@@ -154,23 +154,23 @@
       <div class="modal-content large">
         <div class="modal-header stylized-header">
           <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div>
-          <h2>Créer une ressource</h2>
+          <h2>{{ t('ressources.creerRessource') }}</h2>
           <button class="close-modal" @click="createModalOpen = false"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         </div>
         <form @submit.prevent="createResource">
-          <div class="form-group"><label>Titre *</label><input v-model="newResource.title" placeholder="Ex: Découverte des couleurs" required /></div>
-          <div class="form-group"><label>Description *</label><textarea v-model="newResource.description" placeholder="Décrivez votre ressource..." required></textarea></div>
+          <div class="form-group"><label>{{ t('ressources.champTitre') }}</label><input v-model="newResource.title" :placeholder="t('ressources.phTitre')" required /></div>
+          <div class="form-group"><label>{{ t('ressources.champDescription') }}</label><textarea v-model="newResource.description" :placeholder="t('ressources.phDescription')" required></textarea></div>
           <div class="form-row">
-            <div class="form-group"><label>Âge cible *</label><select v-model="newResource.age" required><option value="">Sélectionner</option><option value="1-3">1-3 ans</option><option value="3-5">3-5 ans</option><option value="5-7">5-7 ans</option><option value="Professionnel">Professionnel</option></select></div>
-            <div class="form-group"><label>Type *</label><select v-model="newResource.type" required><option value="fiche">Fiche activité</option><option value="video">Vidéo</option><option value="pdf">PDF / Document</option><option value="bloc">Bloc pédagogique</option></select></div>
+            <div class="form-group"><label>{{ t('ressources.champAge') }}</label><select v-model="newResource.age" required><option value="">{{ t('ressources.selectionner') }}</option><option value="1-3">{{ t('ressources.ans13') }}</option><option value="3-5">{{ t('ressources.ans35') }}</option><option value="5-7">{{ t('ressources.ans57') }}</option><option value="Professionnel">{{ t('ressources.professionnel') }}</option></select></div>
+            <div class="form-group"><label>{{ t('ressources.champType') }}</label><select v-model="newResource.type" required><option value="fiche">{{ t('ressources.ficheActivite') }}</option><option value="video">{{ t('ressources.video') }}</option><option value="pdf">{{ t('ressources.pdfDocument') }}</option><option value="bloc">{{ t('ressources.blocPedagogique') }}</option></select></div>
           </div>
           <div v-if="newResource.type === 'video' || newResource.type === 'pdf'" class="form-group file-upload">
-            <label>Fichier</label>
-            <label class="file-label"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg> Choisir un fichier <input type="file" @change="handleFile" :accept="newResource.type === 'video' ? 'video/*' : 'application/pdf'" hidden /></label>
+            <label>{{ t('ressources.fichier') }}</label>
+            <label class="file-label"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg> {{ t('ressources.choisirFichier') }} <input type="file" @change="handleFile" :accept="newResource.type === 'video' ? 'video/*' : 'application/pdf'" hidden /></label>
             <div v-if="selectedFile" class="file-preview"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6z"/></svg> {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }}) <button type="button" @click="removeSelectedFile" class="remove-file"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
           </div>
-          <div v-if="newResource.type === 'video'" class="form-group"><label>URL de la vidéo (alternative)</label><div class="or-divider">— ou —</div><input v-model="newResource.videoUrl" placeholder="https://..." /></div>
-          <div class="modal-footer"><button type="button" @click="createModalOpen = false">Annuler</button><button type="submit" class="primary" :disabled="creating"><svg v-if="!creating" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> {{ creating ? 'Création...' : 'Créer' }}</button></div>
+          <div v-if="newResource.type === 'video'" class="form-group"><label>{{ t('ressources.urlVideo') }}</label><div class="or-divider">{{ t('ressources.ou') }}</div><input v-model="newResource.videoUrl" placeholder="https://..." /></div>
+          <div class="modal-footer"><button type="button" @click="createModalOpen = false">{{ t('ressources.annuler') }}</button><button type="submit" class="primary" :disabled="creating"><svg v-if="!creating" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> {{ creating ? t('ressources.creation') : t('ressources.creer') }}</button></div>
         </form>
       </div>
     </div>
@@ -180,24 +180,24 @@
       <div class="modal-content large">
         <div class="modal-header stylized-header">
           <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
-          <h2>Modifier la ressource</h2>
+          <h2>{{ t('ressources.modifierRessource') }}</h2>
           <button class="close-modal" @click="editModalOpen = false"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         </div>
         <form @submit.prevent="updateResource">
-          <div class="form-group"><label>Titre *</label><input v-model="editResource.title" placeholder="Titre" required /></div>
-          <div class="form-group"><label>Description *</label><textarea v-model="editResource.description" placeholder="Description" required></textarea></div>
+          <div class="form-group"><label>{{ t('ressources.champTitre') }}</label><input v-model="editResource.title" :placeholder="t('ressources.phTitreSimple')" required /></div>
+          <div class="form-group"><label>{{ t('ressources.champDescription') }}</label><textarea v-model="editResource.description" :placeholder="t('ressources.phDescriptionSimple')" required></textarea></div>
           <div class="form-row">
-            <div class="form-group"><label>Âge cible *</label><select v-model="editResource.age" required><option value="">Sélectionner</option><option value="1-3">1-3 ans</option><option value="3-5">3-5 ans</option><option value="5-7">5-7 ans</option><option value="Professionnel">Professionnel</option></select></div>
-            <div class="form-group"><label>Type *</label><select v-model="editResource.type" required><option value="fiche">Fiche activité</option><option value="video">Vidéo</option><option value="pdf">PDF / Document</option><option value="bloc">Bloc pédagogique</option></select></div>
+            <div class="form-group"><label>{{ t('ressources.champAge') }}</label><select v-model="editResource.age" required><option value="">{{ t('ressources.selectionner') }}</option><option value="1-3">{{ t('ressources.ans13') }}</option><option value="3-5">{{ t('ressources.ans35') }}</option><option value="5-7">{{ t('ressources.ans57') }}</option><option value="Professionnel">{{ t('ressources.professionnel') }}</option></select></div>
+            <div class="form-group"><label>{{ t('ressources.champType') }}</label><select v-model="editResource.type" required><option value="fiche">{{ t('ressources.ficheActivite') }}</option><option value="video">{{ t('ressources.video') }}</option><option value="pdf">{{ t('ressources.pdfDocument') }}</option><option value="bloc">{{ t('ressources.blocPedagogique') }}</option></select></div>
           </div>
           <div v-if="editResource.type === 'video' || editResource.type === 'pdf'" class="form-group file-upload">
-            <label>Fichier</label>
-            <label class="file-label"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg> Changer le fichier <input type="file" @change="handleEditFile" :accept="editResource.type === 'video' ? 'video/*' : 'application/pdf'" hidden /></label>
+            <label>{{ t('ressources.fichier') }}</label>
+            <label class="file-label"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg> {{ t('ressources.changerFichier') }} <input type="file" @change="handleEditFile" :accept="editResource.type === 'video' ? 'video/*' : 'application/pdf'" hidden /></label>
             <div v-if="editSelectedFile" class="file-preview"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6z"/></svg> {{ editSelectedFile.name }} ({{ formatFileSize(editSelectedFile.size) }}) <button type="button" @click="removeEditSelectedFile" class="remove-file"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
-            <div v-else-if="editResource.currentFileName" class="file-preview existing"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6z"/></svg> Fichier actuel : {{ editResource.currentFileName }} <button type="button" @click="removeCurrentFile" class="remove-file"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
+            <div v-else-if="editResource.currentFileName" class="file-preview existing"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6z"/></svg> {{ t('ressources.fichierActuel') }} {{ editResource.currentFileName }} <button type="button" @click="removeCurrentFile" class="remove-file"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
           </div>
-          <div v-if="editResource.type === 'video'" class="form-group"><label>URL de la vidéo (alternative)</label><div class="or-divider">— ou —</div><input v-model="editResource.videoUrl" placeholder="https://..." /></div>
-          <div class="modal-footer"><button type="button" @click="editModalOpen = false">Annuler</button><button type="submit" class="primary" :disabled="updating"><svg v-if="!updating" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> {{ updating ? 'Enregistrement...' : 'Mettre à jour' }}</button></div>
+          <div v-if="editResource.type === 'video'" class="form-group"><label>{{ t('ressources.urlVideo') }}</label><div class="or-divider">{{ t('ressources.ou') }}</div><input v-model="editResource.videoUrl" placeholder="https://..." /></div>
+          <div class="modal-footer"><button type="button" @click="editModalOpen = false">{{ t('ressources.annuler') }}</button><button type="submit" class="primary" :disabled="updating"><svg v-if="!updating" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> {{ updating ? t('ressources.enregistrement') : t('ressources.mettreAJour') }}</button></div>
         </form>
       </div>
     </div>
@@ -212,12 +212,12 @@
         </div>
         <div class="preview-body">
           <div class="preview-meta">
-            <span class="meta-item"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> Âge : {{ selectedResource?.age }}</span>
-            <span class="meta-item"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Créé le : {{ formatDate(selectedResource?.createdAt) }}</span>
+            <span class="meta-item"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> {{ t('ressources.age') }} : {{ selectedResource?.age }}</span>
+            <span class="meta-item"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.creeLe') }} : {{ formatDate(selectedResource?.createdAt) }}</span>
           </div>
-          <div class="preview-description" v-html="selectedResource?.description || 'Aucune description'"></div>
+          <div class="preview-description" v-html="selectedResource?.description || t('ressources.aucuneDescription')"></div>
         </div>
-        <div class="modal-footer"><button v-if="activeTab === 'mine'" class="primary" @click="openScheduleModal(selectedResource)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmer</button></div>
+        <div class="modal-footer"><button v-if="activeTab === 'mine'" class="primary" @click="openScheduleModal(selectedResource)"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.programmer') }}</button></div>
       </div>
     </div>
 
@@ -226,11 +226,11 @@
       <div class="modal-content small">
         <div class="modal-header stylized-header">
           <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
-          <h3>Noter "{{ selectedRatingResource?.title }}"</h3>
+          <h3>{{ t('ressources.noter') }} "{{ selectedRatingResource?.title }}"</h3>
           <button class="close-modal" @click="ratingModalOpen = false"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         </div>
         <div class="rating-stars"><span v-for="star in 5" :key="star" @click="ratingValue = star" :class="{ active: star <= ratingValue }"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span></div>
-        <div class="modal-footer"><button @click="ratingModalOpen = false">Annuler</button><button class="primary" @click="submitRating" :disabled="ratingSubmitting === selectedRatingResource?.id"><svg v-if="ratingSubmitting !== selectedRatingResource?.id" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Valider</button></div>
+        <div class="modal-footer"><button @click="ratingModalOpen = false">{{ t('ressources.annuler') }}</button><button class="primary" @click="submitRating" :disabled="ratingSubmitting === selectedRatingResource?.id"><svg v-if="ratingSubmitting !== selectedRatingResource?.id" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> {{ t('ressources.valider') }}</button></div>
       </div>
     </div>
 
@@ -239,11 +239,11 @@
       <div class="modal-content small">
         <div class="modal-header stylized-header">
           <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg></div>
-          <h3>Programmer "{{ selectedResource?.title }}"</h3>
+          <h3>{{ t('ressources.programmer') }} "{{ selectedResource?.title }}"</h3>
           <button class="close-modal" @click="scheduleModalOpen = false"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         </div>
-        <div class="form-group"><label>Date et heure de programmation</label><input type="datetime-local" v-model="scheduleDate" /></div>
-        <div class="modal-footer"><button @click="scheduleModalOpen = false">Annuler</button><button class="primary" @click="submitSchedule" :disabled="scheduling"><svg v-if="!scheduling" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Programmer</button></div>
+        <div class="form-group"><label>{{ t('ressources.dateProgrammation') }}</label><input type="datetime-local" v-model="scheduleDate" /></div>
+        <div class="modal-footer"><button @click="scheduleModalOpen = false">{{ t('ressources.annuler') }}</button><button class="primary" @click="submitSchedule" :disabled="scheduling"><svg v-if="!scheduling" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> {{ t('ressources.programmer') }}</button></div>
       </div>
     </div>
 
@@ -252,20 +252,20 @@
       <div class="modal-content large">
         <div class="modal-header stylized-header">
           <div class="header-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg></div>
-          <h2>Ressources programmées</h2>
+          <h2>{{ t('ressources.ressourcesProgrammees') }}</h2>
           <button class="close-modal" @click="scheduledModalOpen = false"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         </div>
-        <div v-if="scheduledResources.length === 0" class="empty-state">Aucune ressource programmée.</div>
+        <div v-if="scheduledResources.length === 0" class="empty-state">{{ t('ressources.aucuneProgrammee') }}</div>
         <div v-else class="scheduled-list">
           <div v-for="res in scheduledResources" :key="res.id" class="scheduled-item">
             <div class="scheduled-header">
               <h3>{{ res.title }}</h3>
               <div class="scheduled-meta-line">
-                <span class="scheduled-date"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Programmé le {{ formatDate(res.scheduledAt) }}</span>
-                <span class="scheduled-created"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Créé le {{ formatDate(res.createdAt) }}</span>
+                <span class="scheduled-date"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.programmeLe') }} {{ formatDate(res.scheduledAt) }}</span>
+                <span class="scheduled-created"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.creeLe') }} {{ formatDate(res.createdAt) }}</span>
               </div>
               <button @click="toggleScheduledDetails(res.id)" class="action-btn details-btn">
-                {{ expandedDetails[res.id] ? 'Masquer détails' : 'Voir détails' }}
+                {{ expandedDetails[res.id] ? t('ressources.masquerDetails') : t('ressources.voirDetails') }}
               </button>
             </div>
             <div v-if="expandedDetails[res.id]" class="scheduled-details">
@@ -288,19 +288,19 @@
                   </div>
                 </div>
                 <div class="scheduled-info-text">
-                  <p><strong>Description :</strong> {{ res.description }}</p>
+                  <p><strong>{{ t('ressources.description') }}</strong> {{ res.description }}</p>
                   <div class="scheduled-meta">
-                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> Âge : {{ res.age }}</span>
-                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> Type : {{ getTypeLabel(res.type) }}</span>
+                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg> {{ t('ressources.age') }} : {{ res.age }}</span>
+                    <span><svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> {{ t('ressources.type') }} {{ getTypeLabel(res.type) }}</span>
                   </div>
                   <div v-if="res.type === 'pdf' && res.fileType" class="pdf-link">
-                    <a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> Ouvrir le PDF</a>
+                    <a :href="getFileUrl(res.id, res.updatedAt)" target="_blank"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg> {{ t('ressources.ouvrirPdf') }}</a>
                   </div>
                 </div>
               </div>
             </div>
             <div class="scheduled-actions">
-              <button @click="removeSchedule(res.id)" class="action-btn">Annuler programmation</button>
+              <button @click="removeSchedule(res.id)" class="action-btn">{{ t('ressources.annulerProgrammation') }}</button>
             </div>
           </div>
         </div>
@@ -311,8 +311,8 @@
     <div v-if="confirmCommentDelete.show" class="modal-overlay blur-bg" @click.self="confirmCommentDelete.show = false">
       <div class="modal-content confirm-modal">
         <div class="confirm-icon"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
-        <p>Voulez-vous vraiment supprimer ce commentaire ? Cette action est irréversible.</p>
-        <div class="modal-footer centered"><button @click="confirmCommentDelete.show = false">Annuler</button><button class="primary" @click="executeDeleteComment">Supprimer</button></div>
+        <p>{{ t('ressources.supprCommentaire') }}</p>
+        <div class="modal-footer centered"><button @click="confirmCommentDelete.show = false">{{ t('ressources.annuler') }}</button><button class="primary" @click="executeDeleteComment">{{ t('ressources.supprimer') }}</button></div>
       </div>
     </div>
 
@@ -320,8 +320,8 @@
     <div v-if="deleteConfirm.show" class="modal-overlay blur-bg" @click.self="deleteConfirm.show = false">
       <div class="modal-content confirm-modal">
         <div class="confirm-icon"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
-        <p>Voulez-vous vraiment supprimer la ressource <strong>“{{ deleteConfirm.resource?.title }}”</strong> ? Cette action est irréversible.</p>
-        <div class="modal-footer centered"><button @click="deleteConfirm.show = false">Annuler</button><button class="primary" @click="performDelete">Supprimer</button></div>
+        <p>{{ t('ressources.supprRessource') }} <strong>“{{ deleteConfirm.resource?.title }}”</strong> {{ t('ressources.irreversible') }}</p>
+        <div class="modal-footer centered"><button @click="deleteConfirm.show = false">{{ t('ressources.annuler') }}</button><button class="primary" @click="performDelete">{{ t('ressources.supprimer') }}</button></div>
       </div>
     </div>
 
@@ -332,6 +332,8 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
+import { t } from '../i18n'
+import Chargement from '../components/Chargement.vue'
 import axios from 'axios'
 import VideoEmbed from '../components/VideoEmbed.vue'
 import { notify } from '../services/notify'
@@ -340,7 +342,7 @@ const user = JSON.parse(localStorage.getItem('user') || '{"id": 1, "nom": "Utili
 const currentUserId = ref(user.id)
 const currentUserName = ref(user.nom)
 
-const API_BASE_URL = 'http://localhost:8082/api'
+import { API_BASE_URL } from '../services'
 
 // États
 const resources = ref([])
@@ -393,25 +395,30 @@ const filteredResources = computed(() => {
 
 const scheduledResources = computed(() => resources.value.filter(r => r.scheduledAt))
 
-const typeOptions = [
-  { value: '', label: 'Tous', iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
-  { value: 'fiche', label: 'Fiche', iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
-  { value: 'video', label: 'Vidéo', iconPath: 'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z' },
-  { value: 'pdf', label: 'PDF', iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
-  { value: 'bloc', label: 'Bloc', iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' }
-]
-const ageOptions = [
-  { value: '', label: 'Tous âges', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '1-3', label: '1-3 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '3-5', label: '3-5 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '5-7', label: '5-7 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: 'Professionnel', label: 'Professionnel', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' }
-]
+const typeOptions = computed(() => [
+  { value: '', label: t('ressources.tous'), iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
+  { value: 'fiche', label: t('ressources.fiche'), iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
+  { value: 'video', label: t('ressources.video'), iconPath: 'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z' },
+  { value: 'pdf', label: t('ressources.pdf'), iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
+  { value: 'bloc', label: t('ressources.bloc'), iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
+])
+const ageOptions = computed(() => [
+  { value: '', label: t('ressources.tousAges'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '1-3', label: t('ressources.ans13'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '3-5', label: t('ressources.ans35'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '5-7', label: t('ressources.ans57'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: 'Professionnel', label: t('ressources.professionnel'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+])
 
 const formatFileSize = (bytes) => { if (bytes < 1024) return bytes + ' o'; if (bytes < 1024*1024) return (bytes/1024).toFixed(1)+' Ko'; return (bytes/(1024*1024)).toFixed(1)+' Mo' }
 const getFileUrl = (id, updatedAt=null) => `${API_BASE_URL}/resources/${id}/file?t=${updatedAt ? new Date(updatedAt).getTime() : Date.now()}`
 const badgeIconPath = (type) => ({ fiche:'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z', video:'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z', pdf:'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z', bloc:'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' }[type] || 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z')
-const getTypeLabel = (type) => ({ fiche:'Fiche activité', video:'Vidéo', pdf:'PDF', bloc:'Blocs' }[type] || type)
+const getTypeLabel = (type) => ({
+  fiche: t('ressources.ficheActivite'),
+  video: t('ressources.video'),
+  pdf: t('ressources.pdf'),
+  bloc: t('ressources.blocPedagogique'),
+}[type] || type)
 const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('fr-FR') : ''
 const showToast = (msg) => { if (toastTimeout) clearTimeout(toastTimeout); toastMessage.value = msg; toastVisible.value = true; toastTimeout = setTimeout(() => toastVisible.value = false, 3000) }
 
@@ -431,7 +438,7 @@ const fetchResources = async () => {
       comments: r.comments || []
     }))
   } catch (error) {
-    showToast('Erreur de chargement des ressources')
+    showToast(t('ressources.erreurChargement'))
   } finally {
     loading.value = false
   }
@@ -457,9 +464,9 @@ const createResource = async () => {
     createModalOpen.value = false
     newResource.value = { title: '', description: '', age: '', type: 'fiche', videoUrl: '' }
     selectedFile = null
-    showToast('Ressource créée ✓')
+    showToast(t('ressources.ressourceCreee'))
   } catch (error) {
-    showToast('Erreur création')
+    showToast(t('ressources.erreurCreation'))
   } finally {
     creating.value = false
   }
@@ -491,9 +498,9 @@ const updateResource = async () => {
     })
     await fetchResources()
     editModalOpen.value = false
-    showToast('Ressource mise à jour ✓')
+    showToast(t('ressources.ressourceMiseAJour'))
   } catch (error) {
-    showToast('Erreur mise à jour')
+    showToast(t('ressources.erreurMiseAJour'))
   } finally {
     updating.value = false
   }
@@ -509,9 +516,9 @@ const performDelete = async () => {
       headers: { 'X-User-Id': currentUserId.value }
     })
     await fetchResources()
-    showToast('Ressource supprimée ✓')
+    showToast(t('ressources.ressourceSupprimee'))
   } catch (error) {
-    showToast('Erreur suppression')
+    showToast(t('ressources.erreurSuppression'))
   }
 }
 
@@ -519,7 +526,7 @@ const performDelete = async () => {
 const sendLike = async (id) => {
   const resource = resources.value.find(r => r.id === id)
   if (!resource || resource.liked) {
-    if (resource?.liked) showToast('Vous avez déjà aimé cette ressource')
+    if (resource?.liked) showToast(t('ressources.dejaAime'))
     return
   }
   likingInProgress.value = id
@@ -528,9 +535,9 @@ const sendLike = async (id) => {
       headers: { 'X-User-Id': currentUserId.value }
     })
     await fetchResources()
-    showToast('Merci pour votre soutien !')
+    showToast(t('ressources.merci'))
   } catch (error) {
-    showToast('Erreur like')
+    showToast(t('ressources.erreurLike'))
   } finally {
     likingInProgress.value = null
   }
@@ -538,7 +545,7 @@ const sendLike = async (id) => {
 
 // Notation unique
 const openRatingModal = (res) => {
-  if (res.userRated) { showToast('Vous avez déjà noté cette ressource'); return }
+  if (res.userRated) { showToast(t('ressources.dejaNote')); return }
   selectedRatingResource.value = res
   ratingValue.value = 0
   ratingModalOpen.value = true
@@ -553,9 +560,9 @@ const submitRating = async () => {
     })
     await fetchResources()
     ratingModalOpen.value = false
-    showToast('Note enregistrée ✓')
+    showToast(t('ressources.noteEnregistree'))
   } catch (error) {
-    showToast('Erreur notation')
+    showToast(t('ressources.erreurNotation'))
   } finally {
     ratingSubmitting.value = null
   }
@@ -563,9 +570,9 @@ const submitRating = async () => {
 
 // Annulation de note avec confirmation
 const confirmCancelRating = (res) => {
-  notify.custom('info', 'Annuler votre note ?', `Voulez-vous vraiment retirer votre note de « ${res.title} » ?`, [
-    { label: 'Oui, annuler ma note', primary: true, onClick: () => cancelRating(res.id) },
-    { label: 'Non, garder ma note' },
+  notify.custom('info', t('ressources.retirerNoteTitre'), t('ressources.retirerNoteTexte', { titre: res.title }), [
+    { label: t('ressources.ouiAnnulerNote'), primary: true, onClick: () => cancelRating(res.id) },
+    { label: t('ressources.nonGarderNote') },
   ])
 }
 const cancelRating = async (id) => {
@@ -574,9 +581,9 @@ const cancelRating = async (id) => {
       headers: { 'X-User-Id': currentUserId.value }
     })
     await fetchResources()
-    showToast('Note annulée')
+    showToast(t('ressources.noteAnnulee'))
   } catch (error) {
-    showToast('Erreur lors de l\'annulation')
+    showToast(t('ressources.erreurAnnulation'))
   }
 }
 
@@ -605,9 +612,9 @@ const addComment = async (resourceId) => {
     })
     await fetchComments(resourceId)
     newCommentText.value[resourceId] = ''
-    showToast('Commentaire ajouté ✓')
+    showToast(t('ressources.commentaireAjoute'))
   } catch (error) {
-    showToast('Erreur ajout commentaire')
+    showToast(t('ressources.erreurAjoutCommentaire'))
   } finally {
     commentSubmitting.value[resourceId] = false
   }
@@ -624,9 +631,9 @@ const executeDeleteComment = async () => {
     })
     const res = resources.value.find(r => r.id === resourceId)
     if (res) res.comments = res.comments.filter(c => c.id !== commentId)
-    showToast('Commentaire supprimé')
+    showToast(t('ressources.commentaireSupprime'))
   } catch (error) {
-    showToast('Erreur suppression commentaire')
+    showToast(t('ressources.erreurSuppressionCommentaire'))
   }
 }
 
@@ -640,26 +647,30 @@ const submitSchedule = async () => {
       headers: { 'X-User-Id': currentUserId.value }
     })
     await fetchResources()
-    showToast('Programmation enregistrée ✓')
+    showToast(t('ressources.programmationEnregistree'))
     scheduleModalOpen.value = false
   } catch (error) {
-    showToast('Erreur programmation')
+    showToast(t('ressources.erreurProgrammation'))
   } finally {
     scheduling.value = false
   }
 }
 
 // Annulation programmation
-const removeSchedule = async (resourceId) => {
+const removeSchedule = (resourceId) => {
+  notify.confirmDelete(t('notif.cetteProgrammation'), () => retirerProgrammation(resourceId))
+}
+
+const retirerProgrammation = async (resourceId) => {
   try {
     await axios.delete(`${API_BASE_URL}/resources/${resourceId}/schedule`, {
       headers: { 'X-User-Id': currentUserId.value }
     })
     await fetchResources()
     if (scheduledModalOpen.value) await fetchResources()
-    showToast('Programmation annulée')
+    showToast(t('ressources.programmationAnnulee'))
   } catch (error) {
-    showToast('Erreur annulation')
+    showToast(t('ressources.erreurAnnulationProg'))
   }
 }
 
@@ -678,9 +689,9 @@ const exportResource = async (res) => {
     link.click()
     link.remove()
     window.URL.revokeObjectURL(url)
-    showToast('Export ZIP démarré')
+    showToast(t('ressources.exportDemarre'))
   } catch (error) {
-    showToast('Erreur export')
+    showToast(t('ressources.erreurExport'))
   }
 }
 

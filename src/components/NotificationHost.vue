@@ -41,7 +41,7 @@
               {{ a.label }}
             </button>
           </template>
-          <button v-else class="notif-btn" @click="close">Continuer</button>
+          <button v-else class="notif-btn" @click="close">{{ t('entete.continuer') }}</button>
         </div>
       </div>
     </div>
@@ -49,6 +49,7 @@
 </template>
 
 <script setup>
+import { t } from '../i18n'
 import { useRouter } from 'vue-router'
 import { notifyState, closeNotify } from '../services/notify'
 

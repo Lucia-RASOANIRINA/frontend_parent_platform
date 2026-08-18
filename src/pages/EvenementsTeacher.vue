@@ -1,10 +1,11 @@
 <template>
   <EventsBoard
-    title="Événements & conférences"
-    subtitle="Inscrivez-vous aux ateliers et conférences. En tant qu'éducatrice, vous pouvez planifier une conférence en réunion en ligne (visio, 4 participants max)."
+    :title="t('evenements.titre')"
+    :subtitle="t('evenements.sousTitreEducatrice')"
   />
 </template>
 
 <script setup>
 import EventsBoard from '../components/EventsBoard.vue'
+import { t } from '../i18n'
 </script>

@@ -18,7 +18,7 @@
             </div>
           </div>
           <div class="flex-grow">
-            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ notification.type === 'success' ? 'Succès' : 'Erreur' }}</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{{ notification.type === 'success' ? t('commun.succes') : t('commun.erreur') }}</p>
             <p class="text-xs font-bold text-[#3E2C1F]">{{ notification.message }}</p>
           </div>
           <button @click="notification.show = false" class="text-gray-300 hover:text-gray-400 transition-colors">
@@ -35,26 +35,26 @@
         <div class="profile-info">
           <h1>{{ user.nom }}</h1>
           <p class="role-badge">{{ formattedRole }}</p>
-          <p class="member-since">Membre depuis {{ memberSince }}</p>
+          <p class="member-since">{{ t('profil.membreDepuis', { date: memberSince }) }}</p>
         </div>
         <button class="edit-profile-btn" @click="openEditProfileModal">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
-          Modifier mon profil
+          {{ t('profil.modifierProfil') }}
         </button>
       </div>
 
       <!-- Cartes statistiques -->
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div class="stat-value">{{ stats.posts }}</div><div class="stat-label">Publications</div></div>
-        <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div><div class="stat-value">{{ stats.likesReceived }}</div><div class="stat-label">Likes reçus</div></div>
-        <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><div class="stat-value">{{ stats.commentsReceived }}</div><div class="stat-label">Commentaires reçus</div></div>
+        <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div class="stat-value">{{ stats.posts }}</div><div class="stat-label">{{ t('profil.publications') }}</div></div>
+        <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div><div class="stat-value">{{ stats.likesReceived }}</div><div class="stat-label">{{ t('profil.likesRecus') }}</div></div>
+        <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><div class="stat-value">{{ stats.commentsReceived }}</div><div class="stat-label">{{ t('profil.commentairesRecus') }}</div></div>
       </div>
 
       <!-- Liste des publications de l'utilisateur (lecture seule) -->
       <div class="section-title">
-        <h2>Mes publications</h2>
+        <h2><Icone nom="crayon" :taille="18" />{{ t('profil.mesPublications') }}</h2>
       </div>
       <div class="space-y-4">
         <div v-for="post in posts" :key="post.id" class="bg-white rounded-xl shadow-sm border border-[#EFE9E4] overflow-hidden">
@@ -63,7 +63,7 @@
               {{ post.user?.nom?.charAt(0) || 'U' }}
             </div>
             <div>
-              <h4 class="text-sm font-bold text-[#3E2C1F]">{{ post.user?.nom || 'Utilisateur' }}</h4>
+              <h4 class="text-sm font-bold text-[#3E2C1F]">{{ post.user?.nom || t('profil.utilisateur') }}</h4>
               <p class="text-[10px] text-gray-400">{{ formatDate(post.createdAt) }}</p>
             </div>
           </div>
@@ -71,7 +71,7 @@
             <p class="text-sm text-gray-700 leading-relaxed">{{ post.contenu }}</p>
           </div>
           <div v-if="post.imageData" class="w-full bg-gray-100">
-            <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" alt="Publication">
+            <img :src="`data:${post.imageType};base64,${post.imageData}`" class="w-full max-h-96 object-cover" :alt="t('profil.publications')">
           </div>
           <div v-if="post.fileData" class="px-4 py-2">
             <a :href="`data:${post.fileType};base64,${post.fileData}`" :download="post.fileName" class="inline-flex items-center gap-2 text-sm text-[#D2B48C] hover:text-[#3E2C1F] transition-colors">
@@ -82,20 +82,25 @@
           <div class="px-4 py-2 flex items-center gap-4 border-t border-[#F8F5F2]">
             <div class="flex items-center gap-2 text-gray-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-              <span class="text-xs font-bold">{{ post.likesCount || 0 }} J'aime</span>
+              <span class="text-xs font-bold">{{ post.likesCount || 0 }} {{ t('profil.jaime') }}</span>
             </div>
             <div class="flex items-center gap-2 text-gray-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-width="2"/></svg>
-              <span class="text-xs font-bold">{{ post.commentsCount || 0 }} Commentaires</span>
+              <span class="text-xs font-bold">{{ post.commentsCount || 0 }} {{ t('profil.commentaires') }}</span>
             </div>
           </div>
         </div>
-        <div v-if="posts.length === 0 && !loadingPosts" class="text-center py-10 text-gray-400">Aucune publication</div>
+        <Chargement v-if="loadingPosts" :nombre="2" />
+        <div v-if="posts.length === 0 && !loadingPosts" class="etat-vide">
+          <span class="etat-vide-rond" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></span>
+          <strong>{{ t('profil.aucunePublication') }}</strong>
+          <span>{{ t('profil.partagezPremiere') }}</span>
+        </div>
       </div>
 
       <!-- Utilisateurs qui ont aimé mes publications -->
       <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="display:inline;vertical-align:-3px;margin-right:6px;color:#e0556b"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>Utilisateurs qui ont aimé mes publications</h2>
+        <h2><Icone nom="coeur" :taille="18" style="color:#e0556b" />{{ t('profil.utilisateursAime') }}</h2>
       </div>
       <div class="users-grid">
         <div v-for="u in usersWhoLiked" :key="u.id" class="user-card">
@@ -103,12 +108,17 @@
           <div class="user-name">{{ u.nom }}</div>
           <div class="user-role">{{ formatRole(u.role) }}</div>
         </div>
-        <div v-if="usersWhoLiked.length === 0 && !loadingUsers" class="text-center py-6 text-gray-400 col-span-full">Personne n'a encore aimé vos publications</div>
+        <Chargement v-if="loadingUsers" :nombre="1" />
+        <div v-if="usersWhoLiked.length === 0 && !loadingUsers" class="etat-vide pleine">
+          <span class="etat-vide-rond" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></span>
+          <strong>{{ t('profil.pasEncoreJaime') }}</strong>
+          <span>{{ t('profil.reactionsIci') }}</span>
+        </div>
       </div>
 
       <!-- Utilisateurs qui ont commenté mes publications -->
       <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-3px;margin-right:6px;color:#8a6d4b"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Utilisateurs qui ont commenté mes publications</h2>
+        <h2><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-3px;margin-right:6px;color:#8a6d4b"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>{{ t('profil.utilisateursCommente') }}</h2>
       </div>
       <div class="users-grid">
         <div v-for="u in usersWhoCommented" :key="u.id" class="user-card">
@@ -116,12 +126,17 @@
           <div class="user-name">{{ u.nom }}</div>
           <div class="user-role">{{ formatRole(u.role) }}</div>
         </div>
-        <div v-if="usersWhoCommented.length === 0 && !loadingUsers" class="text-center py-6 text-gray-400 col-span-full">Personne n'a encore commenté vos publications</div>
+        <Chargement v-if="loadingUsers" :nombre="1" />
+        <div v-if="usersWhoCommented.length === 0 && !loadingUsers" class="etat-vide pleine">
+          <span class="etat-vide-rond" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></span>
+          <strong>{{ t('profil.pasEncoreCommentaire') }}</strong>
+          <span>{{ t('profil.echangesIci') }}</span>
+        </div>
       </div>
 
       <!-- Publications que j'ai likées -->
       <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-3px;margin-right:6px;color:#8a6d4b"><path stroke-linecap="round" stroke-linejoin="round" d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>Publications que j'ai aimées</h2>
+        <h2><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-3px;margin-right:6px;color:#8a6d4b"><path stroke-linecap="round" stroke-linejoin="round" d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>{{ t('profil.publicationsAimees') }}</h2>
       </div>
       <div class="space-y-4">
         <div v-for="likedPost in likedPosts" :key="likedPost.id" class="bg-white rounded-xl shadow-sm border border-[#EFE9E4] overflow-hidden">
@@ -130,7 +145,7 @@
               {{ likedPost.user?.nom?.charAt(0) || 'U' }}
             </div>
             <div>
-              <h4 class="text-sm font-bold text-[#3E2C1F]">{{ likedPost.user?.nom || 'Utilisateur' }}</h4>
+              <h4 class="text-sm font-bold text-[#3E2C1F]">{{ likedPost.user?.nom || t('profil.utilisateur') }}</h4>
               <p class="text-[10px] text-gray-400">{{ formatDate(likedPost.createdAt) }}</p>
             </div>
           </div>
@@ -141,44 +156,49 @@
             <img :src="`data:${likedPost.imageType};base64,${likedPost.imageData}`" class="w-full max-h-96 object-cover">
           </div>
         </div>
-        <div v-if="likedPosts.length === 0 && !loadingLiked" class="text-center py-10 text-gray-400">Vous n'avez encore aimé aucune publication</div>
+        <Chargement v-if="loadingLiked" :nombre="2" />
+        <div v-if="likedPosts.length === 0 && !loadingLiked" class="etat-vide">
+          <span class="etat-vide-rond" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></span>
+          <strong>{{ t('profil.aucunePublicationAimee') }}</strong>
+          <span>{{ t('profil.parcourezFil') }}</span>
+        </div>
       </div>
     </div>
 
     <!-- Modale modification profil (inchangée) -->
     <div v-if="editProfileModal.open" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" @click.self="closeEditProfileModal">
       <div class="bg-white rounded-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-        <h3 class="text-lg font-bold text-[#3E2C1F] mb-4">Modifier mon profil</h3>
+        <h3 class="text-lg font-bold text-[#3E2C1F] mb-4">{{ t('profil.modifierProfil') }}</h3>
         <form @submit.prevent="updateProfile">
           <div class="mb-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Nom complet</label>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">{{ t('profil.nomComplet') }}</label>
             <input v-model="editProfileForm.nom" type="text" @blur="validateName" :class="{ 'border-red-500': nameError }" class="w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-[#D2B48C] outline-none">
             <p v-if="nameError" class="text-xs text-red-500 mt-1">{{ nameError }}</p>
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">{{ t('profil.email') }}</label>
             <input v-model="editProfileForm.email" type="email" @blur="validateEmail" :class="{ 'border-red-500': emailError }" class="w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-[#D2B48C] outline-none">
             <p v-if="emailError" class="text-xs text-red-500 mt-1">{{ emailError }}</p>
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Nouveau mot de passe (optionnel)</label>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">{{ t('profil.nouveauMotDePasse') }}</label>
             <div class="relative">
               <input v-model="editProfileForm.password" :type="showPassword ? 'text' : 'password'" @blur="validatePassword" class="w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-[#D2B48C] outline-none">
               <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                {{ showPassword ? '🙈' : '👁️' }}
+                <Icone :nom="showPassword ? 'oeilBarre' : 'oeil'" :taille="18" />
               </button>
             </div>
             <p v-if="passwordError" class="text-xs text-red-500 mt-1">{{ passwordError }}</p>
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Confirmer le mot de passe</label>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">{{ t('profil.confirmerMotDePasse') }}</label>
             <input v-model="editProfileForm.confirmPassword" type="password" @blur="validateConfirmPassword" class="w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-[#D2B48C] outline-none">
             <p v-if="confirmPasswordError" class="text-xs text-red-500 mt-1">{{ confirmPasswordError }}</p>
           </div>
           <div class="flex justify-end gap-3 mt-6">
-            <button type="button" @click="closeEditProfileModal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Annuler</button>
+            <button type="button" @click="closeEditProfileModal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">{{ t('profil.annuler') }}</button>
             <button type="submit" :disabled="profileUpdating" class="px-4 py-2 bg-[#3E2C1F] text-white rounded-lg hover:bg-[#D2B48C] disabled:opacity-50">
-              {{ profileUpdating ? 'Enregistrement...' : 'Enregistrer' }}
+              {{ profileUpdating ? t('profil.enregistrement') : t('profil.enregistrer') }}
             </button>
           </div>
         </form>
@@ -189,9 +209,12 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import Chargement from '../components/Chargement.vue'
+import Icone from '../components/Icone.vue'
+import { t, langue } from '../i18n'
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:8082/api'
+import { API_BASE_URL } from '../services'
 const user = JSON.parse(localStorage.getItem('user') || '{"nom": "Utilisateur", "role": "parent", "id": 1, "email": "user@example.com", "createdAt": "2024-01-01"}')
 
 // Computed
@@ -202,15 +225,18 @@ const userInitials = computed(() => {
 })
 const formattedRole = computed(() => {
   const role = user.role?.toUpperCase()
-  if (role === 'PARENT') return 'Parent'
-  if (role === 'EDUCATEUR') return 'Éducatrice'
-  if (role === 'PSY') return 'Psychologue'
-  return user.role || 'Membre'
+  if (role === 'PARENT') return t('roles.parent')
+  if (role === 'EDUCATEUR') return t('roles.educatrice')
+  if (role === 'PSY') return t('roles.psychologue')
+  return user.role || t('roles.membre')
 })
 const memberSince = computed(() => {
-  if (!user.createdAt) return 'récemment'
+  if (!user.createdAt) return t('profil.recemment')
   const date = new Date(user.createdAt)
-  return date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' })
+  // Le nom du mois suit la langue choisie ; le malagasy n'existe pas dans Intl,
+  // on retombe alors sur le français, langue de référence de la plateforme.
+  const locale = langue.value === 'en' ? 'en-GB' : 'fr-FR'
+  return date.toLocaleDateString(locale, { year: 'numeric', month: 'long' })
 })
 
 // États
@@ -260,7 +286,7 @@ const fetchUserPosts = async () => {
       stats.commentsReceived = totalComments
     }
   } catch (error) {
-    showNotification('Erreur chargement publications', 'error')
+    showNotification(t('profil.erreurPublications'), 'error')
   } finally {
     loadingPosts.value = false
   }
@@ -316,30 +342,30 @@ const formatDate = (dateString) => {
 }
 
 const formatRole = (role) => {
-  if (role === 'PARENT') return 'Parent'
-  if (role === 'EDUCATEUR') return 'Éducatrice'
-  if (role === 'PSY') return 'Psychologue'
+  if (role === 'PARENT') return t('roles.parent')
+  if (role === 'EDUCATEUR') return t('roles.educatrice')
+  if (role === 'PSY') return t('roles.psychologue')
   return role
 }
 
 // Validation profil
 const validateName = () => {
-  if (!editProfileForm.nom.trim()) nameError.value = 'Le nom est requis'
-  else if (editProfileForm.nom.length < 2) nameError.value = 'Minimum 2 caractères'
+  if (!editProfileForm.nom.trim()) nameError.value = t('profil.nomRequis')
+  else if (editProfileForm.nom.length < 2) nameError.value = t('profil.minimum2')
   else nameError.value = ''
 }
 const validateEmail = () => {
   const email = editProfileForm.email.trim()
-  if (!email) emailError.value = 'L\'email est requis'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) emailError.value = 'Email invalide'
+  if (!email) emailError.value = t('profil.emailRequis')
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) emailError.value = t('profil.emailInvalide')
   else emailError.value = ''
 }
 const validatePassword = () => {
-  if (editProfileForm.password && editProfileForm.password.length < 6) passwordError.value = '6 caractères minimum'
+  if (editProfileForm.password && editProfileForm.password.length < 6) passwordError.value = t('profil.minimum6')
   else passwordError.value = ''
 }
 const validateConfirmPassword = () => {
-  if (editProfileForm.password !== editProfileForm.confirmPassword) confirmPasswordError.value = 'Mots de passe différents'
+  if (editProfileForm.password !== editProfileForm.confirmPassword) confirmPasswordError.value = t('profil.motsDePasseDifferents')
   else confirmPasswordError.value = ''
 }
 const openEditProfileModal = () => {
@@ -365,7 +391,7 @@ const updateProfile = async () => {
     const updatedUser = response.data.user
     localStorage.setItem('user', JSON.stringify(updatedUser))
     Object.assign(user, updatedUser)
-    showNotification('Profil mis à jour', 'success')
+    showNotification(t('profil.profilMisAJour'), 'success')
     closeEditProfileModal()
     window.location.reload()
   } catch (err) {
@@ -459,14 +485,68 @@ onMounted(() => {
 .stat-value { font-size: 1.5rem; font-weight: bold; color: #3E2C1F; }
 .stat-label { font-size: 0.7rem; text-transform: uppercase; color: #8b8b8b; }
 
+/* Intitulé de section : filet doré, puis un trait fin qui occupe la largeur
+   restante — la page respire sans paraître vide. */
 .section-title {
-  margin: 2rem 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 2.4rem 0 1.1rem;
 }
+.section-title h2 > .icone { margin-right: 8px; }
 .section-title h2 {
-  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: #3E2C1F;
-  border-left: 4px solid #D2B48C;
-  padding-left: 0.75rem;
+  border-left: 3px solid #D2B48C;
+  padding-left: 0.7rem;
+  margin: 0;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #EFE5DB, transparent);
+}
+
+/* État vide : une vraie carte plutôt qu'un texte gris perdu dans le blanc. */
+.etat-vide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 2.4rem 1.5rem;
+  text-align: center;
+  background: linear-gradient(160deg, #FDFBF8, #F8F2EA);
+  border: 1px dashed #E7DACB;
+  border-radius: 1.25rem;
+}
+.etat-vide.pleine { grid-column: 1 / -1; }
+.etat-vide-rond {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 0.35rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #EFE5DB;
+  color: #C19A6B;
+}
+.etat-vide strong {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #3E2C1F;
+}
+.etat-vide > span:last-child {
+  font-size: 0.8rem;
+  color: #8a7c6d;
+  max-width: 320px;
+  line-height: 1.55;
 }
 
 .users-grid {

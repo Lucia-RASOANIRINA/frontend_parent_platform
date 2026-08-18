@@ -7,12 +7,13 @@
     </header>
     <div class="legal-card">
       <slot />
-      <p class="updated">Dernière mise à jour : juillet 2026</p>
+      <p class="updated">{{ t('entete.derniereMaj') }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
+import { t } from '../i18n'
 defineProps({ title: String, subtitle: String })
 </script>
 

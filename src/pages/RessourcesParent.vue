@@ -3,8 +3,8 @@
     <!-- En-tête avec titre et description -->
     <div class="resources-header">
       <div class="header-text">
-        <h1>Ressources de l'équipe</h1>
-        <p>Découvrez et partagez des contenus pédagogiques, fiches activités, vidéos et documents</p>
+        <h1>{{ t('ressources.equipe') }}</h1>
+        <p>{{ t('ressources.sousTitre') }}</p>
       </div>
     </div>
 
@@ -15,7 +15,7 @@
           <svg class="icon-small" viewBox="0 0 24 24" width="16" height="16">
             <path fill="currentColor" d="M5.5 7A1.5 1.5 0 0 1 7 5.5h10A1.5 1.5 0 0 1 18.5 7 1.5 1.5 0 0 1 17 8.5H7A1.5 1.5 0 0 1 5.5 7zm2 5a1.5 1.5 0 0 1 1.5-1.5h6a1.5 1.5 0 0 1 0 3H9a1.5 1.5 0 0 1-1.5-1.5zm2 5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 0 3h-2a1.5 1.5 0 0 1-1.5-1.5z"/>
           </svg>
-          Type :
+          {{ t('ressources.type') }}
         </span>
         <div class="filter-pills">
           <button 
@@ -33,7 +33,7 @@
           <svg class="icon-small" viewBox="0 0 24 24" width="16" height="16">
             <path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/>
           </svg>
-          Âge cible :
+          {{ t('ressources.ageCible') }}
         </span>
         <div class="filter-pills">
           <button 
@@ -49,10 +49,7 @@
     </div>
 
     <!-- Grille de ressources -->
-    <div v-if="loading" class="loading-spinner">
-      <svg class="spin" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>
-      Chargement des ressources...
-    </div>
+    <Chargement v-if="loading" variante="silhouettes" />
     <div v-else class="resources-grid">
       <div v-for="res in filteredResources" :key="res.id" class="resource-card">
         <!-- Badge type -->
@@ -82,12 +79,12 @@
               <VideoEmbed :url="res.videoUrl" />
             </div>
             <div v-else-if="res.type === 'fiche' || res.type === 'bloc'" class="fiche-preview">
-              <span class="fiche-label">{{ res.type === 'fiche' ? 'Fiche activité' : 'Bloc pédagogique' }}</span>
+              <span class="fiche-label">{{ res.type === 'fiche' ? t('ressources.ficheActivite') : t('ressources.blocPedagogique') }}</span>
               <p class="fiche-text">{{ res.description }}</p>
             </div>
             <div v-else class="no-media-preview">
               <svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
-              <span>Aucun aperçu</span>
+              <span>{{ t('ressources.aucunApercu') }}</span>
             </div>
           </div>
 
@@ -95,7 +92,7 @@
           <div v-if="res.type === 'pdf' && res.fileType" class="pdf-link">
             <a :href="getFileUrl(res.id, res.updatedAt)" target="_blank">
               <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
-              Ouvrir le PDF
+              {{ t('ressources.ouvrirPdf') }}
             </a>
           </div>
         </div>
@@ -104,11 +101,11 @@
         <div class="card-actions">
           <button @click="previewResource(res)" class="action-btn">
             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-            Aperçu
+            {{ t('ressources.apercu') }}
           </button>
           <button @click="exportResource(res)" class="action-btn">
             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Export ZIP
+            {{ t('ressources.exportZip') }}
           </button>
           <div class="feedback-stats">
             <span class="stat-item">
@@ -130,7 +127,7 @@
             <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
-            J’ai adoré
+            {{ t('ressources.jaiAdore') }}
           </button>
           <button @click="openRatingModal(res)" class="fb-star" :disabled="ratingSubmitting === res.id">
             <svg v-if="!res.userRated" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -139,15 +136,15 @@
             <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
             </svg>
-            {{ res.userRated ? 'Noté' : 'Noter' }}
+            {{ res.userRated ? t('ressources.note') : t('ressources.noter') }}
           </button>
-          <button v-if="res.userRated" @click="confirmCancelRating(res)" class="fb-cancel" title="Annuler ma note">
+          <button v-if="res.userRated" @click="confirmCancelRating(res)" class="fb-cancel" :title="t('ressources.annulerNote')">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            Annuler ma note
+            {{ t('ressources.annulerNote') }}
           </button>
           <button @click="toggleComments(res.id)" class="fb-comment">
             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
-            Commentaires ({{ res.comments?.length || 0 }})
+            {{ t('ressources.commentaires') }} ({{ res.comments?.length || 0 }})
           </button>
         </div>
 
@@ -168,14 +165,14 @@
                 <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
               </button>
             </div>
-            <div v-if="!res.comments || res.comments.length === 0" class="no-comments">Aucun commentaire.</div>
+            <div v-if="!res.comments || res.comments.length === 0" class="no-comments">{{ t('ressources.aucunCommentaire') }}</div>
           </div>
           <div class="add-comment">
-            <textarea v-model="newCommentText[res.id]" placeholder="Ajouter un commentaire..."></textarea>
+            <textarea v-model="newCommentText[res.id]" :placeholder="t('ressources.ajouterCommentaire')"></textarea>
             <button @click="addComment(res.id)" class="primary small" :disabled="commentSubmitting[res.id]">
               <svg v-if="!commentSubmitting[res.id]" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
               <svg v-else class="spin" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>
-              Envoyer
+              {{ t('ressources.envoyer') }}
             </button>
           </div>
         </div>
@@ -183,7 +180,7 @@
 
       <div v-if="filteredResources.length === 0" class="empty-state">
         <svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
-        <p>Aucune ressource trouvée.</p>
+        <p>{{ t('ressources.aucuneRessource') }}</p>
       </div>
     </div>
 
@@ -203,14 +200,14 @@
           <div class="preview-meta">
             <span class="meta-item">
               <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z"/></svg>
-              Âge : {{ selectedResource?.age }}
+              {{ t('ressources.age') }} : {{ selectedResource?.age }}
             </span>
             <span class="meta-item">
               <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
-              Créé le : {{ formatDate(selectedResource?.createdAt) }}
+              {{ t('ressources.creeLe') }} : {{ formatDate(selectedResource?.createdAt) }}
             </span>
           </div>
-          <div class="preview-description" v-html="selectedResource?.description || 'Aucune description'"></div>
+          <div class="preview-description" v-html="selectedResource?.description || t('ressources.aucuneDescription')"></div>
         </div>
       </div>
     </div>
@@ -222,7 +219,7 @@
           <div class="header-icon">
             <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
           </div>
-          <h3>Noter "{{ selectedRatingResource?.title }}"</h3>
+          <h3>{{ t('ressources.noter') }} "{{ selectedRatingResource?.title }}"</h3>
           <button class="close-modal" @click="ratingModalOpen = false">
             <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
           </button>
@@ -233,11 +230,11 @@
           </span>
         </div>
         <div class="modal-footer">
-          <button @click="ratingModalOpen = false">Annuler</button>
+          <button @click="ratingModalOpen = false">{{ t('ressources.annuler') }}</button>
           <button class="primary" @click="submitRating" :disabled="ratingSubmitting === selectedRatingResource?.id">
             <svg v-if="ratingSubmitting !== selectedRatingResource?.id" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
             <svg v-else class="spin" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>
-            Valider
+            {{ t('ressources.valider') }}
           </button>
         </div>
       </div>
@@ -249,10 +246,10 @@
         <div class="confirm-icon">
           <svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
         </div>
-        <p>Voulez-vous vraiment supprimer ce commentaire ? Cette action est irréversible.</p>
+        <p>{{ t('ressources.supprCommentaire') }}</p>
         <div class="modal-footer centered">
-          <button @click="confirmCommentDelete.show = false">Annuler</button>
-          <button class="primary" @click="executeDeleteComment">Supprimer</button>
+          <button @click="confirmCommentDelete.show = false">{{ t('ressources.annuler') }}</button>
+          <button class="primary" @click="executeDeleteComment">{{ t('ressources.supprimer') }}</button>
         </div>
       </div>
     </div>
@@ -272,6 +269,8 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { t } from '../i18n'
+import Chargement from '../components/Chargement.vue'
 import axios from 'axios'
 import VideoEmbed from '../components/VideoEmbed.vue'
 import { notify } from '../services/notify'
@@ -281,7 +280,7 @@ const user = JSON.parse(localStorage.getItem('user') || '{"id": 1, "nom": "Utili
 const currentUserId = ref(user.id)
 const currentUserName = ref(user.nom)
 
-const API_BASE_URL = 'http://localhost:8082/api'
+import { API_BASE_URL } from '../services'
 
 // États
 const resources = ref([])
@@ -303,21 +302,21 @@ const commentSubmitting = ref({})
 const confirmCommentDelete = ref({ show: false, resourceId: null, commentId: null })
 
 // Options filtres
-const typeOptions = [
-  { value: '', label: 'Tous', iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
-  { value: 'fiche', label: 'Fiche', iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
-  { value: 'video', label: 'Vidéo', iconPath: 'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z' },
-  { value: 'pdf', label: 'PDF', iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
-  { value: 'bloc', label: 'Bloc', iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' }
-]
+const typeOptions = computed(() => [
+  { value: '', label: t('ressources.tous'), iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
+  { value: 'fiche', label: t('ressources.fiche'), iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
+  { value: 'video', label: t('ressources.video'), iconPath: 'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z' },
+  { value: 'pdf', label: t('ressources.pdf'), iconPath: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z' },
+  { value: 'bloc', label: t('ressources.bloc'), iconPath: 'M4 6h16v2H4V6zm2-4h12v2H6V2zm16 8H2v2h20v-2zm-4 4H6v2h12v-2zm-4 4h-4v2h4v-2z' },
+])
 
-const ageOptions = [
-  { value: '', label: 'Tous âges', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '1-3', label: '1-3 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '3-5', label: '3-5 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: '5-7', label: '5-7 ans', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
-  { value: 'Professionnel', label: 'Professionnel', iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' }
-]
+const ageOptions = computed(() => [
+  { value: '', label: t('ressources.tousAges'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '1-3', label: t('ressources.ans13'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '3-5', label: t('ressources.ans35'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: '5-7', label: t('ressources.ans57'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+  { value: 'Professionnel', label: t('ressources.professionnel'), iconPath: 'M12 2a9 9 0 0 0-9 9c0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11a9 9 0 0 0-9-9z' },
+])
 
 // Filtrage local (seulement ressources partagées)
 const filteredResources = computed(() => {
@@ -330,7 +329,12 @@ const filteredResources = computed(() => {
 // Helpers
 const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('fr-FR') : ''
 const getFileUrl = (id, updatedAt = null) => `${API_BASE_URL}/resources/${id}/file?t=${updatedAt ? new Date(updatedAt).getTime() : Date.now()}`
-const getTypeLabel = (type) => ({ fiche: 'Fiche activité', video: 'Vidéo', pdf: 'PDF', bloc: 'Bloc pédagogique' }[type] || type)
+const getTypeLabel = (type) => ({
+  fiche: t('ressources.ficheActivite'),
+  video: t('ressources.video'),
+  pdf: t('ressources.pdf'),
+  bloc: t('ressources.blocPedagogique'),
+}[type] || type)
 const badgeIconPath = (type) => ({
   fiche: 'M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l2 2H20v10z',
   video: 'M18 9v4h-4V9h4zm-2 0h-2v2h2V9zm-8 4H4v-2h4v2zm0-4H4V7h4v2zm6 8h-2v-2h2v2zm2 0v-2h2v2h-2zm-8 0H6v-2h2v2zm10-4h-2v-2h2v2zm-6 0h-2v-2h2v2zm-6 0H4v-2h2v2z',
@@ -360,7 +364,7 @@ const fetchResources = async () => {
       comments: r.comments || []
     }))
   } catch (error) {
-    showToast('Erreur de chargement des ressources')
+    showToast(t('ressources.erreurChargement'))
   } finally {
     loading.value = false
   }
@@ -370,7 +374,7 @@ const fetchResources = async () => {
 const sendLike = async (id) => {
   const resource = resources.value.find(r => r.id === id)
   if (!resource || resource.liked) {
-    if (resource?.liked) showToast('Vous avez déjà aimé cette ressource')
+    if (resource?.liked) showToast(t('ressources.dejaAime'))
     return
   }
   likingInProgress.value = id
@@ -379,9 +383,9 @@ const sendLike = async (id) => {
       headers: { 'X-User-Id': currentUserId.value }
     })
     await fetchResources()
-    showToast('Merci pour votre soutien !')
+    showToast(t('ressources.merci'))
   } catch (error) {
-    showToast('Erreur like')
+    showToast(t('ressources.erreurLike'))
   } finally {
     likingInProgress.value = null
   }
@@ -390,7 +394,7 @@ const sendLike = async (id) => {
 // Notation
 const openRatingModal = (res) => {
   if (res.userRated) {
-    showToast('Vous avez déjà noté cette ressource')
+    showToast(t('ressources.dejaNote'))
     return
   }
   selectedRatingResource.value = res
@@ -408,9 +412,9 @@ const submitRating = async () => {
     })
     await fetchResources()
     ratingModalOpen.value = false
-    showToast('Note enregistrée ✓')
+    showToast(t('ressources.noteEnregistree'))
   } catch (error) {
-    showToast('Erreur notation')
+    showToast(t('ressources.erreurNotation'))
   } finally {
     ratingSubmitting.value = null
   }
@@ -418,9 +422,9 @@ const submitRating = async () => {
 
 // Annulation de note avec confirmation
 const confirmCancelRating = (res) => {
-  notify.custom('info', 'Annuler votre note ?', `Voulez-vous vraiment retirer votre note de « ${res.title} » ?`, [
-    { label: 'Oui, annuler ma note', primary: true, onClick: () => cancelRating(res.id) },
-    { label: 'Non, garder ma note' },
+  notify.custom('info', t('ressources.retirerNoteTitre'), t('ressources.retirerNoteTexte', { titre: res.title }), [
+    { label: t('ressources.ouiAnnulerNote'), primary: true, onClick: () => cancelRating(res.id) },
+    { label: t('ressources.nonGarderNote') },
   ])
 }
 
@@ -430,9 +434,9 @@ const cancelRating = async (id) => {
       headers: { 'X-User-Id': currentUserId.value }
     })
     await fetchResources()
-    showToast('Note annulée')
+    showToast(t('ressources.noteAnnulee'))
   } catch (error) {
-    showToast('Erreur lors de l\'annulation')
+    showToast(t('ressources.erreurAnnulation'))
   }
 }
 
@@ -465,9 +469,9 @@ const addComment = async (resourceId) => {
     })
     await fetchComments(resourceId)
     newCommentText.value[resourceId] = ''
-    showToast('Commentaire ajouté ✓')
+    showToast(t('ressources.commentaireAjoute'))
   } catch (error) {
-    showToast('Erreur ajout commentaire')
+    showToast(t('ressources.erreurAjoutCommentaire'))
   } finally {
     commentSubmitting.value[resourceId] = false
   }
@@ -486,9 +490,9 @@ const executeDeleteComment = async () => {
     })
     const res = resources.value.find(r => r.id === resourceId)
     if (res) res.comments = res.comments.filter(c => c.id !== commentId)
-    showToast('Commentaire supprimé')
+    showToast(t('ressources.commentaireSupprime'))
   } catch (error) {
-    showToast('Erreur suppression commentaire')
+    showToast(t('ressources.erreurSuppressionCommentaire'))
   }
 }
 
@@ -507,9 +511,9 @@ const exportResource = async (res) => {
     link.click()
     link.remove()
     window.URL.revokeObjectURL(url)
-    showToast('Export ZIP démarré')
+    showToast(t('ressources.exportDemarre'))
   } catch (error) {
-    showToast('Erreur export')
+    showToast(t('ressources.erreurExport'))
   }
 }
 

@@ -1,10 +1,11 @@
 <template>
   <EventsBoard
-    title="Événements à venir"
-    subtitle="Ateliers et conférences pour accompagner les parents et les professionnels de la petite enfance."
+    :title="t('evenements.titre')"
+    :subtitle="t('evenements.sousTitre')"
   />
 </template>
 
 <script setup>
 import EventsBoard from '../components/EventsBoard.vue'
+import { t } from '../i18n'
 </script>

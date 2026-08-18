@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Parentia">
+  <defs>
+    <linearGradient id="cafe" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C19A6B"/>
+      <stop offset="1" stop-color="#3E2C1F"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#cafe)"/>
+  <!-- Deux silhouettes : un adulte et un enfant -->
+  <circle cx="196" cy="168" r="52" fill="#FBF7F1"/>
+  <path d="M116 372c0-50 36-88 80-88s80 38 80 88z" fill="#FBF7F1"/>
+  <circle cx="330" cy="212" r="38" fill="#F0D9BC"/>
+  <path d="M272 372c0-38 26-66 58-66s58 28 58 66z" fill="#F0D9BC"/>
+</svg>

@@ -14,27 +14,27 @@
               <!-- Options du filtre avec icône "✓" devant l'option active -->
               <button @click="setFilter('all')" :class="{ active: currentFilter === 'all' }">
                 <span v-if="currentFilter === 'all'" class="check-icon">✓</span>
-                Toutes
+                {{ t('chat.toutes') }}
               </button>
               <button @click="setFilter('unread')" :class="{ active: currentFilter === 'unread' }">
                 <span v-if="currentFilter === 'unread'" class="check-icon">✓</span>
-                Non lus
+                {{ t('chat.nonLus') }}
               </button>
               <button @click="setFilter('read')" :class="{ active: currentFilter === 'read' }">
                 <span v-if="currentFilter === 'read'" class="check-icon">✓</span>
-                Lus
+                {{ t('chat.lus') }}
               </button>
               <button @click="setFilter('read_no_reply')" :class="{ active: currentFilter === 'read_no_reply' }">
                 <span v-if="currentFilter === 'read_no_reply'" class="check-icon">✓</span>
-                Lus sans réponse
+                {{ t('chat.lusSansReponse') }}
               </button>
               <button @click="setFilter('read_with_reply')" :class="{ active: currentFilter === 'read_with_reply' }">
                 <span v-if="currentFilter === 'read_with_reply'" class="check-icon">✓</span>
-                Lus avec réponse
+                {{ t('chat.lusAvecReponse') }}
               </button>
             </div>
           </div>
-          <h3>Messages</h3>
+          <h3>{{ t('chat.messages') }}</h3>
         </div>
         <button @click="showNewMessageModal = true" class="new-message-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,20 +68,17 @@
               </svg>
             </button>
             <div v-if="activeMenu === conv.id" class="menu-dropdown" @click.stop>
-              <button @click="markAsRead(conv)" class="menu-item">Marquer comme lu</button>
-              <button @click="markAsUnread(conv)" class="menu-item">Marquer comme non lu</button>
-              <button @click="confirmDeleteConversation(conv)" class="menu-item delete">Supprimer</button>
+              <button @click="markAsRead(conv)" class="menu-item">{{ t('chat.marquerLu') }}</button>
+              <button @click="markAsUnread(conv)" class="menu-item">{{ t('chat.marquerNonLu') }}</button>
+              <button @click="confirmDeleteConversation(conv)" class="menu-item delete">{{ t('chat.supprimer') }}</button>
             </div>
           </div>
         </div>
 
         <div v-if="conversations.length === 0 && !isLoadingConv" class="no-conversations">
-          <p>Aucune conversation</p>
+          <p>{{ t('chat.aucuneConversation') }}</p>
         </div>
-        <div v-if="isLoadingConv" class="loading-conv">
-          <div class="spinner-small"></div>
-          <span>Chargement...</span>
-        </div>
+        <Chargement v-if="isLoadingConv" compact />
       </div>
     </div>
 
@@ -103,9 +100,9 @@
       </div>
 
       <div class="messages-area" ref="messagesArea">
-        <div v-if="isLoadingMessages" class="loading-messages"><div class="spinner-small"></div><span>Chargement...</span></div>
+        <Chargement v-if="isLoadingMessages" />
         <div v-else-if="messages.length === 0" class="no-messages">
-          <p>Aucun message. Commencez la conversation !</p>
+          <p>{{ t('chat.aucunMessage') }}</p>
         </div>
         <div
           v-for="message in messages"
@@ -114,7 +111,7 @@
         >
           <div class="message-content">
             <div v-if="message.messageType === 'IMAGE'" class="message-image">
-              <img :src="`data:${message.fileType || 'image/jpeg'};base64,${message.fileData}`" alt="Image">
+              <img :src="`data:${message.fileType || 'image/jpeg'};base64,${message.fileData}`" :alt="t('chat.image')">
             </div>
             <div v-else-if="message.messageType === 'FILE'" class="message-file">
               <a :href="`data:${message.fileType || 'application/pdf'};base64,${message.fileData}`" :download="message.fileName" class="file-link">
@@ -124,10 +121,40 @@
                 {{ message.fileName }}
               </a>
             </div>
-            <p v-else>{{ message.contenu }}</p>
+            <VoiceMessage
+              v-else-if="message.messageType === 'AUDIO'"
+              :file-data="message.fileData"
+              :file-type="message.fileType || 'audio/webm'"
+              :duration-seconds="message.durationSeconds || 0"
+              :sortant="message.senderId === user.id" />
+            <p v-else-if="editionId !== message.id" :class="{ 'message-retire': message.supprime }">{{ message.contenu }}</p>
+
+            <!-- Édition en place d'un message déjà envoyé -->
+            <div v-if="editionId === message.id" class="edition-message">
+              <input v-model="editionTexte" class="edition-champ" :aria-label="t('chat.modifier')"
+                     @keyup.enter="enregistrerEdition(message)" @keyup.esc="annulerEdition()" />
+              <button type="button" class="edition-ok" @click="enregistrerEdition(message)">{{ t('commun.enregistrer') }}</button>
+              <button type="button" class="edition-non" @click="annulerEdition()">{{ t('commun.annuler') }}</button>
+            </div>
+
             <div class="message-footer">
               <span class="time">{{ formatMessageTime(message.createdAt) }}</span>
+              <span v-if="message.modifie && !message.supprime" class="marque-modifie">{{ t('chat.modifie') }}</span>
               <span v-if="message.senderId === user.id && message.isRead" class="read-status">✓</span>
+            </div>
+
+            <!-- Actions sur ses propres messages -->
+            <div v-if="message.senderId === user.id && !message.supprime" class="actions-message">
+              <button type="button" class="actions-declencheur" :aria-label="t('commun.modifier')"
+                      @click.stop="menuMessageId = menuMessageId === message.id ? null : message.id">⋯</button>
+              <div v-if="menuMessageId === message.id" class="actions-menu" @click.stop>
+                <button v-if="message.messageType === 'TEXT'" type="button" @click="demarrerEdition(message)">
+                  {{ t('commun.modifier') }}
+                </button>
+                <button type="button" class="rouge" @click="supprimerCeMessage(message)">
+                  {{ t('commun.supprimer') }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -135,15 +162,23 @@
       </div>
 
       <div class="chat-input-area">
-        <button @click="triggerFileUpload" class="action-btn">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button v-show="etatVocal === 'idle'" type="button" @click="triggerFileUpload"
+                class="action-btn" :aria-label="t('chat.joindre')" :title="t('chat.joindre')">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
           </svg>
         </button>
-        <input type="file" ref="fileInput" class="hidden" @change="sendFile" accept="image/*,application/pdf">
-        <input v-model="newMessage" @keyup.enter="sendMessage" @keyup="onTyping" type="text" placeholder="Écrire un message..." class="message-input">
-        <button @click="sendMessage" class="send-btn">
-          <svg class="w-6 h-6 send-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <input type="file" ref="fileInput" class="hidden" tabindex="-1" @change="sendFile" accept="image/*,application/pdf">
+
+        <input v-show="etatVocal === 'idle'" v-model="newMessage" @keyup.enter="sendMessage" @keyup="onTyping"
+               type="text" :placeholder="t('chat.ecrire')" :aria-label="t('chat.ecrire')" class="message-input">
+
+        <!-- Message vocal -->
+        <VoiceRecorder @envoyer="envoyerVocal" @etat="etatVocal = $event" />
+
+        <button v-show="etatVocal === 'idle'" type="button" @click="sendMessage"
+                class="send-btn" :aria-label="t('chat.envoyer')" :title="t('chat.envoyer')">
+          <svg class="w-6 h-6 send-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
           </svg>
         </button>
@@ -156,23 +191,23 @@
         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
-        <span>Nouveau message</span>
+        <span>{{ t('chat.nouveau') }}</span>
       </button>
-      <p>Sélectionnez une conversation ou commencez-en une nouvelle</p>
+      <p>{{ t('chat.selectionnez') }}</p>
     </div>
 
     <!-- Modal Nouveau message -->
     <div v-if="showNewMessageModal" class="modal-overlay" @click.self="showNewMessageModal = false">
       <div class="modal-content">
-        <div class="modal-header"><h3>Nouveau message</h3><button @click="showNewMessageModal = false">✕</button></div>
-        <div class="search-bar"><input v-model="searchQuery" @input="searchUsers" placeholder="Rechercher..." class="search-input"></div>
+        <div class="modal-header"><h3>{{ t('chat.nouveau') }}</h3><button @click="showNewMessageModal = false">✕</button></div>
+        <div class="search-bar"><input v-model="searchQuery" @input="searchUsers" :placeholder="t('chat.rechercher')" class="search-input"></div>
         <div class="users-list">
-          <div v-if="isSearching" class="searching">Recherche...</div>
+          <div v-if="isSearching" class="searching">{{ t('chat.recherche') }}</div>
           <div v-for="u in searchResults" :key="u.id" @click="startConversation(u)" class="user-item">
             <div class="avatar">{{ u.nom.charAt(0).toUpperCase() }}</div>
             <div><div class="name">{{ u.nom }}</div><div class="email">{{ u.email }}</div></div>
           </div>
-          <div v-if="searchResults.length === 0 && searchQuery && !isSearching">Aucun utilisateur</div>
+          <div v-if="searchResults.length === 0 && searchQuery && !isSearching">{{ t('chat.aucunUtilisateur') }}</div>
         </div>
       </div>
     </div>
@@ -187,11 +222,11 @@
             <line x1="14" y1="11" x2="14" y2="17" />
           </svg>
         </div>
-        <h3>Supprimer la conversation ?</h3>
-        <p>Cette action est irréversible.</p>
+        <h3>{{ t('chat.supprimerConversation') }}</h3>
+        <p>{{ t('chat.irreversible') }}</p>
         <div class="delete-modal-buttons">
-          <button @click="closeDeleteModal" class="cancel-btn">Annuler</button>
-          <button @click="deleteConversation" class="confirm-delete-btn">Supprimer</button>
+          <button @click="closeDeleteModal" class="cancel-btn">{{ t('chat.annuler') }}</button>
+          <button @click="deleteConversation" class="confirm-delete-btn">{{ t('chat.supprimer') }}</button>
         </div>
       </div>
     </div>
@@ -206,13 +241,20 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import Chargement from '../components/Chargement.vue'
 import { Client } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 import axios from 'axios'
 
-const api = axios.create({ baseURL: 'http://localhost:8082/api', headers: { 'Content-Type': 'application/json' } })
-const user = JSON.parse(localStorage.getItem('user') || '{"id": 6, "nom": "Lora", "role": "PSY"}')
-const WS_URL = 'http://localhost:8082/ws'
+// Client HTTP partagé + adresse WebSocket : local ou en ligne selon la détection
+import { api, WS_URL, utilisateurCourant } from '../services'
+import { messageVocal, modifierMessage, supprimerMessage } from '../services/messageService'
+import VoiceRecorder from '../components/VoiceRecorder.vue'
+import VoiceMessage from '../components/VoiceMessage.vue'
+import { t } from '../i18n'
+import { notify } from '../services/notify'
+
+const user = utilisateurCourant() || { id: 0, nom: t('chat.invite'), role: 'PARENT' }
 
 // États
 const conversations = ref([])
@@ -245,7 +287,8 @@ const fileInput = ref(null)
 const showToast = (msg, type) => {
   if (toast.value.timeoutId) clearTimeout(toast.value.timeoutId)
   toast.value = { show: true, message: msg, type, timeoutId: null }
-  toast.value.timeoutId = setTimeout(() => { toast.value.show = false }, 20000)
+  // 4 s : assez pour lire le message sans gêner la conversation
+  toast.value.timeoutId = setTimeout(() => { toast.value.show = false }, 4000)
 }
 const closeToast = () => {
   if (toast.value.timeoutId) clearTimeout(toast.value.timeoutId)
@@ -266,7 +309,7 @@ const fetchConversations = async () => {
   try {
     const res = await api.get(`/messages/conversations/${user.id}?filter=${currentFilter.value}`)
     if (res.data.success) conversations.value = res.data.conversations
-  } catch (err) { console.error(err); showToast('Erreur chargement', 'error') }
+  } catch (err) { console.error(err); showToast(t('chat.erreurChargement'), 'error') }
   finally { isLoadingConv.value = false }
 }
 
@@ -312,14 +355,14 @@ const markAsRead = async (conv) => {
     await api.post('/messages/mark-read', { userId: user.id, otherUserId: conv.otherUser.id })
     conv.unreadCount = 0
     activeMenu.value = null
-    showToast('Conversation marquée comme lue', 'success')
+    showToast(t('chat.marqueeLue'), 'success')
     await fetchConversations() // recharge pour mettre à jour les filtres
-  } catch (err) { showToast('Erreur', 'error') }
+  } catch (err) { showToast(t('commun.erreur'), 'error') }
 }
 
 const markAsUnread = async (conv) => {
   if (conv.lastMessageSenderId === user.id) {
-    showToast('Vous avez déjà répondu', 'error')
+    showToast(t('chat.dejaRepondu'), 'error')
     activeMenu.value = null
     return
   }
@@ -327,9 +370,9 @@ const markAsUnread = async (conv) => {
     await api.post('/messages/mark-unread', { userId: user.id, otherUserId: conv.otherUser.id })
     conv.unreadCount = 1
     activeMenu.value = null
-    showToast('Conversation marquée comme non lue', 'success')
+    showToast(t('chat.marqueeNonLue'), 'success')
     await fetchConversations()
-  } catch (err) { showToast('Erreur', 'error') }
+  } catch (err) { showToast(t('commun.erreur'), 'error') }
 }
 
 const confirmDeleteConversation = (conv) => {
@@ -348,9 +391,9 @@ const deleteConversation = async () => {
       selectedConversation.value = null
       messages.value = []
     }
-    showToast('Conversation supprimée', 'success')
+    showToast(t('chat.conversationSupprimee'), 'success')
     closeDeleteModal()
-  } catch (err) { showToast('Erreur suppression', 'error') }
+  } catch (err) { showToast(t('chat.erreurSuppression'), 'error') }
 }
 
 const startConversation = async (otherUser) => {
@@ -408,6 +451,71 @@ const sendMessage = async () => {
   newMessage.value = ''
 }
 
+// --- Modifier / supprimer un message envoyé ---
+const menuMessageId = ref(null)
+const editionId = ref(null)
+const editionTexte = ref('')
+
+const demarrerEdition = (message) => {
+  editionId.value = message.id
+  editionTexte.value = message.contenu
+  menuMessageId.value = null
+}
+const annulerEdition = () => { editionId.value = null; editionTexte.value = '' }
+
+const enregistrerEdition = async (message) => {
+  const texte = editionTexte.value.trim()
+  if (!texte) return
+  try {
+    await modifierMessage(message.id, texte)
+    message.contenu = texte
+    message.modifie = true
+    annulerEdition()
+  } catch (err) {
+    showToast(err.response?.data?.error || t('chat.modificationImpossible'), 'error')
+  }
+}
+
+const supprimerCeMessage = (message) => {
+  menuMessageId.value = null
+  notify.confirmDelete(t('notif.ceMessage'), () => supprimerVraiment(message))
+}
+
+const supprimerVraiment = async (message) => {
+  try {
+    await supprimerMessage(message.id)
+    message.supprime = true
+    message.contenu = t('chat.supprime')
+    message.messageType = 'TEXT'
+    message.fileData = null
+  } catch (err) {
+    showToast(err.response?.data?.error || t('chat.suppressionImpossible'), 'error')
+  }
+}
+
+// --- Message vocal ---
+const etatVocal = ref('idle')
+
+/** Envoie l'enregistrement produit par le composant micro. */
+const envoyerVocal = ({ base64, mimeType, secondes }) => {
+  if (!selectedConversation.value) return
+  const messageData = messageVocal({
+    base64, mimeType, secondes,
+    senderId: user.id,
+    receiverId: selectedConversation.value.otherUser.id,
+  })
+  messages.value.push({
+    ...messageData,
+    id: Date.now(),
+    isRead: false,
+    senderId: user.id,
+    receiverId: selectedConversation.value.otherUser.id,
+  })
+  scrollToBottom()
+  if (stompClient?.connected) stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(messageData) })
+  else connectWebSocket()
+}
+
 const triggerFileUpload = () => fileInput.value?.click()
 const sendFile = async (event) => {
   const target = event.target
@@ -456,8 +564,8 @@ const scrollToBottom = () => {
 const formatTime = (dateStr) => {
   if (!dateStr) return ''
   const d = new Date(dateStr), now = new Date(), diff = now - d
-  if (diff < 60000) return "À l'instant"
-  if (diff < 3600000) return `il y a ${Math.floor(diff/60000)} min`
+  if (diff < 60000) return t('chat.alInstant')
+  if (diff < 3600000) return t('chat.ilYaMinutes', { n: Math.floor(diff / 60000) })
   if (diff < 86400000) return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
   return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
 }
@@ -513,12 +621,42 @@ const handleClickOutside = (e) => {
   if (!e.target.closest('.filter-menu')) showFilterMenu.value = false
 }
 
+
+/**
+ * Ouverture directe d'une conversation.
+ *
+ * Le bouton « Message » du fil dépose l'interlocuteur dans le stockage local
+ * puis navigue ici. Sans cette reprise, on arrivait sur la liste des messages
+ * sans que la conversation visée soit ouverte.
+ */
+const checkAndStartSelectedUser = async () => {
+  const selectedUserStr = localStorage.getItem('selectedChatUser')
+  if (!selectedUserStr) return
+  localStorage.removeItem('selectedChatUser')
+  let targetUser
+  try {
+    targetUser = JSON.parse(selectedUserStr)
+  } catch (e) {
+    console.error('Erreur parsing selectedChatUser', e)
+    return
+  }
+  if (!targetUser || !targetUser.id) {
+    showToast(t('chat.cibleInvalide'), 'error')
+    return
+  }
+  if (targetUser.id === user.id) {
+    showToast(t('chat.dejaSurMessages'), 'info')
+    return
+  }
+  await startConversation(targetUser)
+}
 onMounted(async () => {
   document.addEventListener('click', handleClickOutside)
   window.addEventListener('resize', handleResize)
   handleResize()
   await fetchConversations()
   connectWebSocket()
+  await checkAndStartSelectedUser()
 })
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
@@ -955,4 +1093,45 @@ watch(messages, () => scrollToBottom(), { deep: true })
   .delete-modal-custom { width: 85%; padding: 24px 20px; }
   .delete-icon svg { width: 48px; height: 48px; }
 }
+
+/* --- Modifier / supprimer un message --- */
+.message-content { position: relative; }
+.message-retire { font-style: italic; opacity: .7; }
+.marque-modifie { font-size: .62rem; opacity: .65; margin-left: 6px; }
+
+.actions-message { position: absolute; top: 2px; right: 6px; }
+.message.received .actions-message { right: auto; left: 6px; }
+.actions-declencheur {
+  border: none; background: transparent; cursor: pointer; color: inherit;
+  opacity: 0; line-height: 1; padding: 0 4px; border-radius: 6px;
+  font-size: 1rem; transition: opacity .2s;
+}
+.message:hover .actions-declencheur, .actions-declencheur:focus-visible { opacity: .75; }
+.actions-menu {
+  position: absolute; top: 22px; right: 0; z-index: 30;
+  display: flex; flex-direction: column; min-width: 132px;
+  background: #fff; border: 1px solid #EDE4D8; border-radius: 12px;
+  box-shadow: 0 12px 26px rgba(62,44,31,.16); overflow: hidden;
+}
+.message.received .actions-menu { right: auto; left: 0; }
+.actions-menu button {
+  border: none; background: transparent; cursor: pointer; text-align: left;
+  padding: 9px 13px; font-size: .8rem; color: #4a3c2f;
+}
+.actions-menu button:hover { background: #FBF7F1; }
+.actions-menu button.rouge { color: #c0563f; }
+
+.edition-message { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.edition-champ {
+  flex: 1 1 140px; min-width: 0; border: 1px solid #EDE4D8; border-radius: 10px;
+  padding: 7px 10px; font-size: .85rem; font-family: inherit; color: #3E2C1F; background: #fff;
+}
+.edition-champ:focus { outline: none; border-color: #C19A6B; }
+.edition-ok, .edition-non {
+  border: none; cursor: pointer; border-radius: 10px; padding: 7px 12px;
+  font-size: .74rem; font-weight: 700;
+}
+.edition-ok { background: #6F4E37; color: #fff; }
+.edition-non { background: #F0EDE9; color: #6b5d4f; }
+
 </style>

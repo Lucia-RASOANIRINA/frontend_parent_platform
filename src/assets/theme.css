@@ -1,0 +1,134 @@
+/**
+ * Repères visuels communs à toute la plateforme.
+ *
+ * Ce fichier ne redessine pas les pages : il pose les bases partagées
+ * (couleurs, focus visible, confort de lecture, accessibilité) pour que
+ * l'ensemble reste cohérent et utilisable au clavier comme au doigt.
+ */
+
+:root {
+  /* Palette café — identité Parentia */
+  --p-brun-900: #2b1f16;
+  --p-brun-800: #3E2C1F;
+  --p-brun-700: #6F4E37;
+  --p-brun-500: #8a6d4b;
+  --p-sable-400: #C19A6B;
+  --p-sable-200: #EDE4D8;
+  --p-sable-100: #F4EFE8;
+  --p-creme: #FBF7F1;
+  --p-blanc: #ffffff;
+
+  --p-texte: #3E2C1F;
+  --p-texte-doux: #6b5d4f;
+  --p-texte-discret: #a99e90;
+
+  --p-succes: #2E7D32;
+  --p-alerte: #a8590a;
+  --p-danger: #c0563f;
+
+  --p-rayon-s: 12px;
+  --p-rayon-m: 18px;
+  --p-rayon-l: 28px;
+  --p-rayon-pilule: 30px;
+
+  --p-ombre-s: 0 6px 20px rgba(62, 44, 31, .06);
+  --p-ombre-m: 0 18px 36px rgba(62, 44, 31, .14);
+  --p-ombre-l: 0 25px 50px rgba(0, 0, 0, .25);
+
+  --p-focus: 3px solid rgba(193, 154, 107, .5);
+
+  /* Hauteur de l'en-tête fixe : évite les contenus masqués */
+  --p-entete: 76px;
+}
+
+/* --- Confort de lecture --- */
+body {
+  color: var(--p-texte);
+  background: var(--p-creme);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Un texte ne doit jamais déborder de son conteneur sur petit écran */
+h1, h2, h3, h4, p, li, td, th { overflow-wrap: break-word; }
+
+/* --- Accessibilité : focus toujours visible --- */
+:focus-visible {
+  outline: var(--p-focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+/* Le focus n'est masqué que pour la souris, jamais pour le clavier */
+:focus:not(:focus-visible) { outline: none; }
+
+/* Cibles tactiles : 40px minimum, recommandation d'ergonomie mobile */
+button, [role="button"], a.btn, input[type="submit"] { min-height: 40px; }
+
+/* --- Lien d'évitement (passer au contenu) --- */
+.skip-link {
+  position: absolute; top: -60px; left: 12px; z-index: 2000;
+  background: var(--p-brun-700); color: #fff;
+  padding: 10px 18px; border-radius: 0 0 var(--p-rayon-s) var(--p-rayon-s);
+  font-weight: 700; font-size: .85rem; text-decoration: none;
+  transition: top .2s;
+}
+.skip-link:focus { top: 0; }
+
+/* --- Réservé aux lecteurs d'écran --- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* --- Sélection et barres de défilement --- */
+::selection { background: rgba(193, 154, 107, .3); color: var(--p-brun-900); }
+
+* { scrollbar-width: thin; scrollbar-color: var(--p-sable-200) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: var(--p-sable-200); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--p-sable-400); background-clip: content-box; }
+
+/* --- Champs de formulaire : cohérence entre navigateurs --- */
+input, select, textarea, button { font-family: inherit; font-size: inherit; }
+input[type="search"]::-webkit-search-cancel-button { cursor: pointer; }
+textarea { resize: vertical; }
+
+/* Un champ invalide se signale sans dépendre uniquement de la couleur */
+input:user-invalid, select:user-invalid, textarea:user-invalid {
+  border-color: var(--p-danger) !important;
+}
+
+/* --- Images : jamais de débordement horizontal --- */
+img, video, canvas, svg { max-width: 100%; }
+img { height: auto; }
+
+/* --- Mode économie de données --- */
+/* Ne concerne que ce qui coûte réellement de la bande passante : images et
+   vidéos décoratives. Surtout pas les dégradés CSS, qui ne téléchargent rien
+   et portent toute l'identité visuelle (en-tête, pied de page, boutons). */
+html.economie img[data-decoratif="true"],
+html.economie video[data-decoratif="true"],
+html.economie .visuel-decoratif { display: none !important; }
+
+/* --- Impression : garder l'essentiel --- */
+@media print {
+  header, footer, nav, .no-print { display: none !important; }
+  body { background: #fff; }
+}
+
+/* --- Respect des préférences système --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Bandeau hors ligne : décale l'en-tête fixe au lieu de le recouvrir --- */
+html.hors-ligne body { padding-top: 38px; }
+html.hors-ligne header { top: 38px; }
+
+/* Le sélecteur de langue vit dans l'en-tête : aucun élément flottant ne vient
+   recouvrir le contenu ni le pied de page. */

@@ -3,25 +3,38 @@
     <div v-if="preview" class="impersonation-banner">
       <span class="dot"></span>
       <span class="txt">
-        Mode visite — vous parcourez le site en tant que <strong>{{ roleLabel }}</strong>
+        {{ t('entete.modeVisite') }} <strong>{{ roleLabel }}</strong>
       </span>
-      <button class="back" @click="back">Revenir à l'administration</button>
+      <button class="back" @click="back">{{ t('entete.revenirAdmin') }}</button>
     </div>
   </transition>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { isPreview, previewRole, stopViewing } from '../services/impersonate'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { t } from '../i18n'
+import { previewRole, stopViewing } from '../services/impersonate'
 
-const preview = ref(false)
-const roleLabel = ref('')
-const LABELS = { PARENT: 'Parent', EDUCATEUR: 'Éducatrice', PSY: 'Psychologue' }
+/**
+ * La bannière lisait l'état une seule fois au montage. Après une déconnexion,
+ * qui est une simple navigation interne, elle restait donc affichée alors qu'il
+ * n'y avait plus de session. On relit l'état à chaque changement de page.
+ */
+const route = useRoute()
 
-onMounted(() => {
-  preview.value = isPreview()
-  roleLabel.value = LABELS[previewRole()] || ''
+const role = computed(() => {
+  route.fullPath // relecture à chaque navigation
+  return previewRole()
 })
+
+const preview = computed(() => !!role.value)
+
+const roleLabel = computed(() => ({
+  PARENT: t('roles.parent'),
+  EDUCATEUR: t('roles.educatrice'),
+  PSY: t('roles.psychologue'),
+}[role.value] || ''))
 
 function back() { stopViewing() }
 </script>

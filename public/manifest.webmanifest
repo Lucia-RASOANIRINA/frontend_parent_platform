@@ -1,0 +1,40 @@
+{
+  "name": "Parentia — Communauté parentale",
+  "short_name": "Parentia",
+  "description": "Plateforme communautaire pour le bien-être des enfants : publications, ressources, discussions, ateliers et conférences.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FBF7F1",
+  "theme_color": "#6F4E37",
+  "categories": ["education", "social", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon-parentia.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-parentia-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Évènements",
+      "short_name": "Évènements",
+      "url": "/evenements"
+    },
+    {
+      "name": "Conférences",
+      "short_name": "Conférences",
+      "url": "/conferences"
+    }
+  ]
+}
